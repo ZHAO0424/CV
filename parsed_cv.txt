@@ -1,0 +1,165 @@
+﻿
+
+
+ZHAO ZIRUI
+
+Mobile (+44)7884010831 | Email: zzhao010@campus.goldsmiths.ac.uk
+
+My Portfolio: https://zzrsnow.wixsite.com/zhaosphere
+
+
+EDUCATIONAL BACKGROUND
+
+Harbin Institute of Technology                                                 Sep.2019 鈥?Jun.2024
+
+Bachelor of architecture
+
+Core modules: Novel Spatial Structure for the future, The Design and Research of New Industrialized Green Energy-saving Building System, Augmented Reality, VR Creative Image design, 3D Printing Technology and Application
+
+
+
+Goldsmiths, University of London                                      Sep.2024 鈥?Oct.2025 (Expected)
+
+MA Virtual and Augmented Reality
+
+Core modules: Augmented Realities, Modelling and Animation, Virtual Reality, Approaches to Play, Games Programming For Game Engines
+
+Research Interests: Multimodal Perception in VR, Cognitive Behavior Modeling, VR Exposure Therapy, Cultural Heritage Preservation, Brain鈥揅omputer Interfaces, Virtual Social Environments
+
+
+
+RESEARCH EXPERIENCE
+
+
+Research Assistant, Oxford Cognitive Approaches to Psychosis, Oxford,2025.03-08
+
+
+Developed a multimodal emotion-aware VR dialogue system for mental health intervention, integrating speech and text emotion analysis. Investigated the effectiveness of empathy-based AI responses in VR therapeutic settings.
+
+
+Implemented VR dialogue system using Unity and ONNX-
+Sentis
+, created prompts leveraging VAD emotion models, and designed emotionally adaptive avatars. Focused on core architecture and AI response calibration.
+
+
+Research Intern, Narrative Space Lab, City University of Hong Kong,2025.03-08
+
+
+Developed a multi-agent-powered narrative game to explore how group dynamics in virtual communities influence users鈥?/w:t> sustainability attitudes and decision-making. The game used real-time environmental feedback to simulate collective persuasion and its effects on value alignment.
+
+
+Designed multi-agent dialogue systems using prompt engineering and built visual assets representing differing social stances (supportive, opposing, neutral), enabling complex, emotionally responsive interactions.
+
+
+Research Assistant, SEE VR Lab, Goldsmiths, University of London, 2025.01-04 
+
+
+Investigated the potential effectiveness of AI-driven VR therapy for Social Anxiety Disorder (SAD), comparing outcomes with traditional CBT through a qualitative systematic review and prototype simulation. 
+
+
+Built the Unity-based VR simulation, performed data analysis using GAD-7 and STAI-S metrics, and visualized comparative results between AI+VR and CBT interventions.
+
+
+Research Intern, Virtual Reality Laboratory, (HIT) 2023.09-2024.03
+
+
+Evaluated how virtual natural environments affect psychological recovery among students using physiological data (e.g., HR, BVP) in immersive VR settings.
+
+
+Constructed VR scenes in Unity using HTC-
+Vive
+, collected biometric data with E4 wristbands, and conducted statistical analyses to propose design guidelines for restorative academic VR environments.
+
+
+Research Intern, Center for Digital Design &amp; Innovation, (HIT) 2022.03-05
+
+
+Analyzed the restorative psychological effects of varying indoor green space designs in university environments using visual greenery metrics and recovery scales.
+
+
+Modeled different indoor planting configurations, calculated Green View Index (GLR), and ran statistical tests (reliability analysis, ANOVA, t-tests) using SPSS to identify effective design patterns.
+
+
+
+
+
+PUBLICATIONS
+
+
+Zhao, Z. (2026). Designing Constrained Generative NPCs with a Dynamic Evidence Graph for Investigative Narrative Worlds. In Extended Abstracts of the 2026 CHI Conference on Human Factors in Computing Systems (CHI EA '26). ACM. https://doi.org/10.1145/3772363.3798387
+
+
+Zhao, Z. (2026). Multimodal Emotion Perception for VR Dialogue: Towards Improved User Experience. In Proceedings of the IEEE VR 2026 Conference on Virtual Reality and 3D User Interfaces (IEEE VR 2026). IEEE.
+
+
+Zhao, Z., &amp; Yin, C. (2025, July). Leveraging AI鈥恉riven VR environments to reshape urban planning and community engagement. Paper presented at the 19th International Conference on Computational Urban Planning and Urban Management (CUPUM 2025), Lond https://doi.org/10.17605/OSF.IO/ABYQH 
+
+
+Yin, C., Li, T., Xue, B., &amp; Zhao, Z. (2025). Influence of virtual reality restorative environments on psychological well-being in university students: An evidence-based experimental study. Exploration of Digital Health Technologies, 3, 101155. https://doi.org/10.37349/edht.2025.101155
+
+WORK EXPERIENCE
+
+
+Feeling AI (Shanghai 
+Yunwu
+ Tech)                           AI Product Design Intern 2025.11-2026.03
+
+
+Worked on an immersive VR museum in Unreal Engine to digitally reconstruct over 200 Brazilian Indigenous artifacts. I was responsible for 3D modeling, interactive narrative logic, and ensuring cultural accuracy in collaboration with anthropologists.
+
+
+UCL Multimedia Anthropology Laboratory                 3D Design Artists and VR Artists 2025.02-05
+
+
+Worked on an immersive VR museum in Unreal Engine to digitally reconstruct over 200 Brazilian Indigenous artifacts. I was responsible for 3D modeling, interactive narrative logic, and ensuring cultural accuracy in collaboration with anthropologists.
+
+
+PTA Design Consulting Co., Ltd., Shanghai                     Architectural Design Intern 2022.06-08
+
+
+Contributed to the early-phase urban planning of mixed-use complexes. My work included site analysis, zoning diagrams, Rhino-based volumetric studies, and assisting with technical design documentation. 
+
+
+Architectural Design Institute Co., Ltd., Xinjiang                   Parametric Design Intern 2023.07-09
+
+
+Assisted in concept and fa莽ade design using Rhino + Grasshopper. Participated in performance-driven modeling, drawing revisions, and interdisciplinary coordination for project optimization.
+
+
+PROJECT
+
+Digital Heritage 鈥?Nanjing Da Bao En Temple                                       2025.06 鈥?2025.07
+
+Led the design of an AR/VR heritage experience reconstructing a UNESCO site with interactive storytelling and AI dialogues for a global competition.
+
+
+Carbonis
+: Siren's 
+Elegia
+ - VR Interactive Film (Unreal)                               2024.09 鈥?/w:t> 2025.03
+
+Developed a symbolic underwater VR film in Unreal blending mythology with ecological critique, presented in virtual art showcases. The project was also featured at the "Shanghai Three Days 路 Future: To the Future" exhibition.
+
+
+Bloomiverse
+ - AR Planting Adventure Game (Unity)                                  2024.10 鈥?/w:t> 2024.12
+
+Created an AR eco-game featuring magical plants and interactive feedback loops to enhance environmental awareness through playful mechanics.
+
+SKILLS
+
+
+AI Interaction: LLM Prompt Design, Multi-Agent Dialogue, Emotion-Adaptive Systems, Conversational Memory
+
+
+Programming Languages: C#, C++, Python
+
+
+Game Engines: Unity3D (C#), Unreal Engine (Blueprint &amp; C++), NPC Logic &amp; System Architecture
+
+
+Design Tools: Maya, 
+ZBrush
+, Rhino, Blender, Cinema 4D
+
+

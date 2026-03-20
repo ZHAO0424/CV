@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unreal Experiments</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">Unreal Engine</span>
+            <span class="proj-pill">Interactive Systems</span>
+          </div>
+          <h1 class="proj-title">Unreal Experiments</h1>
+          <p class="proj-subtitle">A paired Unreal Engine study featuring a gravity manipulation prototype and a survival systems prototype, both focused on interaction logic, environmental feedback, and real-time player state control.</p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2">Changing Gravity</h2>
+            <p class="proj-p">This prototype explores interactive physics and manual gravity control through a custom `BP_PhysicsCharacter` system. The player can move in 3D space, redirect gravity in real time, and influence tagged objects in the environment, creating a spatial interaction experiment centered on orientation, force, and player-controlled physical rules.</p>
+            <p class="proj-p" style="margin-top: 1rem;">The project includes movement via WASD, gravity reset with the `Q` key, mouse-based gravity direction updates, and on-screen direction visualization. Technically, it was built around Unreal's Enhanced Input system, with custom blueprints for the character, player controller, input handling, and game mode, alongside gravity-specific materials for zero-gravity and high-drag behavior.</p>
+            <p class="proj-p" style="margin-top: 1rem;">During development, the project addressed several technical challenges, including migration from deprecated input mappings, normalization of direction vectors, and tuning gravity scale with mass-aware force calculations to ensure physically convincing motion.</p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2">Survival Simulation</h2>
+            <p class="proj-p">The second Unreal project is a functional survival game prototype built around resource management, environmental interaction, and player status systems. Players can explore, pick up items, store them in a fully working inventory, equip tools or objects for buffs and utility, and monitor core survival stats including health, hunger, and stamina.</p>
+            <p class="proj-p" style="margin-top: 1rem;">A key feature of the prototype is character switching between human and animal forms, extending the survival framework into a more dynamic control system. Together, the inventory, pickup, equipment, and stat systems create a solid survival gameplay foundation while demonstrating modular Unreal blueprint logic and systems design.</p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2">Technical Focus</h2>
+            <p class="proj-p">Across both projects, the emphasis is on gameplay systems prototyping in Unreal: input architecture, physics-driven interaction, player state management, and modular blueprint structures that can scale into more complete interactive environments.</p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title">Projects</div>
+            <div class="side-text">Changing Gravity / Survival Simulation</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title">Engine</div>
+            <div class="side-text">Unreal Engine 5</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title">Systems</div>
+            <div class="side-tags">
+              <span class="tag">Blueprints</span>
+              <span class="tag">Enhanced Input</span>
+              <span class="tag">Physics</span>
+              <span class="tag">Inventory</span>
+              <span class="tag">Player Stats</span>
+              <span class="tag">Interaction Logic</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/unreal-experiments/cover.jpg" alt="Unreal experiments cover">
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title">Documentation</h2>
+          <p class="portfolio-subtitle">Project videos are placed at the end, following the summary sections.</p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <video class="shot-img" src="../images/projects/unreal-experiments/gravity.mp4" controls playsinline aria-label="Changing Gravity video"></video>
+            <figcaption class="shot-cap">Changing Gravity prototype demonstration.</figcaption>
+          </figure>
+          <figure class="shot shot-wide">
+            <video class="shot-img" src="../images/projects/unreal-experiments/survival.mp4" controls playsinline aria-label="Survival Simulation video"></video>
+            <figcaption class="shot-cap">Survival Simulation prototype demonstration.</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js"></script>
+</body>
+</html>
+
+
