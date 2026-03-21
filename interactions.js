@@ -335,6 +335,8 @@ function setupLogoPixelBurst() {
       obstacleRestUntil: 0,
       restX: 0,
       restY: 0,
+      restSlideVX: 0,
+      restMaxX: 0,
       lastObstacleId: -1,
       rightPush: 0.0038 + Math.random() * 0.0035
     });
@@ -412,23 +414,31 @@ function setupLogoPixelBurst() {
       fragment.vx = Math.max(fragment.vx * 0.4, fragment.rightPush * 6);
       fragment.restX = fragment.x;
       fragment.restY = fragment.y;
-      fragment.obstacleRestUntil = now + 3000 + Math.random() * 1000;
-      fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 180;
+      fragment.restSlideVX = Math.max(fragment.vx * 0.75, 0.35 + fragment.rightPush * 12);
+      fragment.restMaxX = obstacle.right - fragment.width - 14;
+      fragment.obstacleRestUntil = now + 1000 + Math.random() * 250;
+      fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 120;
       fragment.lastObstacleId = obstacle.id;
       return true;
     }
 
     return false;
   }
-function tick(now) {
+
+  function tick(now) {
     for (let i = fragments.length - 1; i >= 0; i -= 1) {
       const fragment = fragments[i];
 
       if (!fragment.settled) {
         if (now < fragment.obstacleRestUntil) {
+          fragment.restX = Math.min(fragment.restMaxX, fragment.restX + fragment.restSlideVX);
           fragment.x = fragment.restX;
           fragment.y = fragment.restY;
           fragment.rotate += fragment.spin * 0.08;
+
+          if (fragment.restX >= fragment.restMaxX - 0.5) {
+            fragment.restSlideVX = 0;
+          }
         } else {
           const prevBottom = fragment.y + fragment.height;
           fragment.vy += fragment.gravity;
