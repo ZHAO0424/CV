@@ -261,11 +261,11 @@ function setupLogoPixelBurst() {
   }
 
   const palettes = [
-    { fill: 'linear-gradient(135deg, rgba(30,77,178,0.98), rgba(92,163,255,0.92))', glow: 'rgba(80, 148, 255, 0.35)', border: 'rgba(197, 223, 255, 0.55)' },
-    { fill: 'linear-gradient(135deg, rgba(145,18,68,0.98), rgba(255,108,170,0.92))', glow: 'rgba(255, 112, 169, 0.32)', border: 'rgba(255, 212, 232, 0.55)' },
-    { fill: 'linear-gradient(135deg, rgba(171,87,14,0.98), rgba(255,189,88,0.94))', glow: 'rgba(255, 187, 93, 0.34)', border: 'rgba(255, 226, 182, 0.52)' },
-    { fill: 'linear-gradient(135deg, rgba(15,121,97,0.98), rgba(101,231,201,0.9))', glow: 'rgba(102, 232, 201, 0.30)', border: 'rgba(204, 255, 243, 0.50)' },
-    { fill: 'linear-gradient(135deg, rgba(89,32,153,0.98), rgba(176,123,255,0.90))', glow: 'rgba(172, 121, 255, 0.28)', border: 'rgba(226, 213, 255, 0.52)' }
+    { fill: 'linear-gradient(135deg, rgba(87, 111, 146, 0.96), rgba(178, 198, 222, 0.88))', glow: 'rgba(157, 183, 220, 0.22)', border: 'rgba(220, 231, 245, 0.42)' },
+    { fill: 'linear-gradient(135deg, rgba(127, 90, 109, 0.94), rgba(214, 184, 198, 0.86))', glow: 'rgba(210, 181, 197, 0.2)', border: 'rgba(236, 219, 227, 0.4)' },
+    { fill: 'linear-gradient(135deg, rgba(141, 117, 84, 0.94), rgba(223, 203, 174, 0.88))', glow: 'rgba(214, 195, 163, 0.2)', border: 'rgba(239, 229, 209, 0.42)' },
+    { fill: 'linear-gradient(135deg, rgba(84, 123, 120, 0.94), rgba(177, 209, 206, 0.86))', glow: 'rgba(172, 206, 201, 0.18)', border: 'rgba(216, 234, 231, 0.4)' },
+    { fill: 'linear-gradient(135deg, rgba(108, 108, 138, 0.94), rgba(196, 195, 218, 0.86))', glow: 'rgba(186, 186, 213, 0.18)', border: 'rgba(225, 225, 239, 0.4)' }
   ];
 
   const fragments = [];
@@ -321,7 +321,7 @@ function setupLogoPixelBurst() {
       height,
       x: originX + (Math.random() - 0.08) * 6,
       y: originY + (Math.random() - 0.5) * 4,
-      vx: 1.15 + Math.random() * 1.1 + (floorX - originX) / (170 + Math.random() * 24),
+      vx: 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
       vy: 0.14 + Math.random() * 0.14,
       gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
@@ -333,7 +333,7 @@ function setupLogoPixelBurst() {
       bounceCount: 0,
       obstacleCooldownUntil: 0,
       lastObstacleId: -1,
-      rightPush: 0.008 + Math.random() * 0.0075
+      rightPush: 0.0038 + Math.random() * 0.0035
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -406,7 +406,7 @@ function setupLogoPixelBurst() {
 
       fragment.y = obstacle.top - fragment.height;
       fragment.vy = -Math.max(0.55, Math.min(1.35, Math.abs(fragment.vy) * 0.22));
-      fragment.vx = Math.max(fragment.vx * 0.92 + 0.12 + fragment.rightPush * 24, fragment.rightPush * 12);
+      fragment.vx = Math.max(fragment.vx * 0.88 + 0.06 + fragment.rightPush * 18, fragment.rightPush * 10);
       fragment.obstacleCooldownUntil = now + 120;
       fragment.lastObstacleId = obstacle.id;
       return true;
@@ -424,7 +424,7 @@ function setupLogoPixelBurst() {
         fragment.vy += fragment.gravity;
         fragment.vx += fragment.rightPush;
         fragment.vx *= 0.993;
-        fragment.vx = Math.max(fragment.vx, fragment.rightPush * 12);
+        fragment.vx = Math.max(fragment.vx, fragment.rightPush * 8);
         fragment.x += fragment.vx;
         fragment.y += fragment.vy;
         fragment.rotate += fragment.spin;
