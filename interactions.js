@@ -174,14 +174,12 @@ function setupCursorEffects() {
     <div class="cursor-trail cursor-trail-3"></div>
     <div class="cursor-aura"></div>
     <div class="cursor-ring"></div>
-    <div class="cursor-label"></div>
   `;
   body.appendChild(shell);
   body.classList.add('has-custom-cursor');
 
   const aura = shell.querySelector('.cursor-aura');
   const ring = shell.querySelector('.cursor-ring');
-  const label = shell.querySelector('.cursor-label');
   const trails = Array.from(shell.querySelectorAll('.cursor-trail'));
 
   const state = {
@@ -197,7 +195,6 @@ function setupCursorEffects() {
   function applyHoverState(kind) {
     state.hover = kind;
     body.dataset.cursor = kind;
-    label.textContent = kind === 'video' ? 'PLAY' : kind === 'link' ? 'OPEN' : '';
   }
 
   function resolveHoverKind(target) {
@@ -229,7 +226,6 @@ function setupCursorEffects() {
 
     aura.style.transform = `translate3d(${(state.currentX - auraSize / 2).toFixed(2)}px, ${(state.currentY - auraSize / 2).toFixed(2)}px, 0)`;
     ring.style.transform = `translate3d(${(state.currentX - ringSize / 2).toFixed(2)}px, ${(state.currentY - ringSize / 2).toFixed(2)}px, 0)`;
-    label.style.transform = `translate3d(${(state.currentX + 18).toFixed(2)}px, ${(state.currentY - 18).toFixed(2)}px, 0)`;
 
     let leaderX = state.currentX;
     let leaderY = state.currentY;
@@ -250,8 +246,6 @@ function setupCursorEffects() {
   window.addEventListener('blur', onPointerLeave);
   window.requestAnimationFrame(animate);
 }
-
-
 function setupLogoPixelBurst() {
   if (prefersReducedMotion()) return;
 
@@ -309,7 +303,7 @@ function setupLogoPixelBurst() {
     const laneCount = burstBase.length;
     const lane = Math.min(laneCount - 1, Math.floor(Math.pow(Math.random(), 0.7) * laneCount));
     const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.15) * 8;
+    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.08) * 10;
     const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
     burstBase[lane] += 1;
 
@@ -325,9 +319,9 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: originX + (Math.random() - 0.28) * 4,
+      x: originX + (Math.random() - 0.2) * 5,
       y: originY + (Math.random() - 0.5) * 4,
-      vx: (floorX - originX) / (230 + Math.random() * 34),
+      vx: (floorX - originX) / (220 + Math.random() * 34),
       vy: 0.14 + Math.random() * 0.14,
       gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
@@ -340,7 +334,10 @@ function setupLogoPixelBurst() {
       blockedUntil: 0,
       holdX: null,
       holdY: null,
-      visitedObstacleIds: new Set()
+      visitedObstacleIds: new Set(),
+      rightPush: 0.0015 + Math.random() * 0.0035,
+      slideSpeed: 0.45 + Math.random() * 0.62,
+      activeObstacleRight: null
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -350,8 +347,8 @@ function setupLogoPixelBurst() {
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const burstWidth = 102;
-    const burstLeft = Math.max(42, originX - burstWidth * 0.28);
+    const burstWidth = 112;
+    const burstLeft = Math.max(42, originX - burstWidth * 0.22);
     const burstBase = new Array(7).fill(0);
     const count = 15 + Math.round(Math.random() * 4);
 
@@ -413,6 +410,8 @@ function setupLogoPixelBurst() {
       fragment.blockedUntil = now + 900 + Math.random() * 900;
       fragment.holdX = fragment.x;
       fragment.holdY = fragment.y;
+      fragment.activeObstacleRight = obstacle.right;
+      fragment.vx = Math.max(fragment.vx, 0.08 + fragment.rightPush * 90);
       fragment.visitedObstacleIds.add(obstacle.id);
       return true;
     }
@@ -426,9 +425,15 @@ function setupLogoPixelBurst() {
 
       if (!fragment.settled) {
         if (now < fragment.blockedUntil) {
+          const maxSlideX = fragment.activeObstacleRight !== null ? fragment.activeObstacleRight - fragment.width - 14 : fragment.holdX;
+          fragment.holdX = Math.min(maxSlideX, fragment.holdX + fragment.slideSpeed);
           fragment.x = fragment.holdX;
           fragment.y = fragment.holdY;
           fragment.rotate += fragment.spin * 0.45;
+
+          if (fragment.x >= maxSlideX - 0.5) {
+            fragment.blockedUntil = now;
+          }
         } else {
           const prevBottom = fragment.y + fragment.height;
           fragment.vy += fragment.gravity;
@@ -436,6 +441,7 @@ function setupLogoPixelBurst() {
           fragment.y += fragment.vy;
           fragment.rotate += fragment.spin;
 
+          fragment.vx += fragment.rightPush;
           fragment.vx += (fragment.floorX - fragment.x) * 0.00016;
           fragment.vx *= 0.995;
 
@@ -448,6 +454,7 @@ function setupLogoPixelBurst() {
             } else {
               fragment.vy = 0;
               fragment.vx *= 0.34;
+              fragment.activeObstacleRight = null;
               fragment.settled = true;
               fragment.settledAt = now;
               fragment.el.classList.add('is-settled');
@@ -457,6 +464,7 @@ function setupLogoPixelBurst() {
       } else {
         const age = now - fragment.settledAt;
         if (age > 3000) {
+          fragment.activeObstacleRight = null;
           const fade = Math.max(0, 1 - (age - 3000) / 1800);
           fragment.el.style.opacity = `${fade * 0.9}`;
           if (fade <= 0) {
