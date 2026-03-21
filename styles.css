@@ -1729,3 +1729,110 @@ body[data-cursor='video'] .cursor-label {
     display: none;
   }
 }
+
+/* Cursor refinement and footer field */
+.cursor-dot {
+  display: none !important;
+}
+
+.cursor-aura,
+.cursor-ring,
+.cursor-trail,
+.cursor-label {
+  position: fixed;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.cursor-aura {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(232, 241, 255, 0.52) 0%, rgba(185, 208, 246, 0.18) 44%, rgba(185, 208, 246, 0) 72%);
+  filter: blur(9px);
+  opacity: 0.95;
+  transition: width 220ms ease, height 220ms ease, opacity 220ms ease, filter 220ms ease;
+}
+
+.cursor-ring {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(180, 204, 244, 0.04));
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 32px rgba(86, 111, 158, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+  backdrop-filter: blur(8px) saturate(1.05);
+  -webkit-backdrop-filter: blur(8px) saturate(1.05);
+}
+
+.cursor-trail {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(188, 211, 248, 0.34), rgba(188, 211, 248, 0));
+  filter: blur(1.2px);
+}
+
+body[data-cursor='card'] .cursor-aura {
+  width: 52px;
+  height: 52px;
+}
+
+body[data-cursor='link'] .cursor-aura {
+  width: 58px;
+  height: 58px;
+}
+
+body[data-cursor='video'] .cursor-aura {
+  width: 66px;
+  height: 66px;
+  filter: blur(12px);
+}
+
+body[data-cursor='card'] .cursor-ring {
+  width: 36px;
+  height: 36px;
+}
+
+body[data-cursor='link'] .cursor-ring {
+  width: 42px;
+  height: 42px;
+}
+
+body[data-cursor='video'] .cursor-ring {
+  width: 48px;
+  height: 48px;
+}
+
+.footer {
+  position: relative;
+  z-index: 2;
+}
+
+.page > .footer-field {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 0;
+  height: 320px;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 0 0 28px 28px;
+  overflow: hidden;
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.84) 40%, rgba(0, 0, 0, 0) 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.84) 40%, rgba(0, 0, 0, 0) 100%);
+}
+
+.footer-field-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .page > .footer-field {
+    height: 240px;
+  }
+}

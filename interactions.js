@@ -2,6 +2,10 @@
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
+function supportsFinePointer() {
+  return window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+}
+
 function setupReveal() {
   const nodes = Array.from(document.querySelectorAll('.reveal, .fade-slide-up'));
   if (nodes.length === 0) return;
@@ -132,8 +136,6 @@ function setupMagneticTargets() {
   );
 
   targets.forEach((target) => {
-    if (target.classList.contains('project-card')) return;
-
     const strength = target.matches('.nav-link, .lang-btn, .proj-back, .footer-link, .tag') ? 7 : 10;
 
     function onMove(ev) {
@@ -159,8 +161,7 @@ function setupMagneticTargets() {
 }
 
 function setupCursorEffects() {
-  const supportsFinePointer = window.matchMedia && window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  if (!supportsFinePointer || prefersReducedMotion()) return;
+  if (!supportsFinePointer() || prefersReducedMotion()) return;
 
   const body = document.body;
   if (!body) return;
@@ -171,14 +172,14 @@ function setupCursorEffects() {
     <div class="cursor-trail cursor-trail-1"></div>
     <div class="cursor-trail cursor-trail-2"></div>
     <div class="cursor-trail cursor-trail-3"></div>
+    <div class="cursor-aura"></div>
     <div class="cursor-ring"></div>
-    <div class="cursor-dot"></div>
     <div class="cursor-label"></div>
   `;
   body.appendChild(shell);
   body.classList.add('has-custom-cursor');
 
-  const dot = shell.querySelector('.cursor-dot');
+  const aura = shell.querySelector('.cursor-aura');
   const ring = shell.querySelector('.cursor-ring');
   const label = shell.querySelector('.cursor-label');
   const trails = Array.from(shell.querySelectorAll('.cursor-trail'));
@@ -188,7 +189,6 @@ function setupCursorEffects() {
     y: window.innerHeight / 2,
     currentX: window.innerWidth / 2,
     currentY: window.innerHeight / 2,
-    visible: false,
     hover: 'default'
   };
 
@@ -211,35 +211,32 @@ function setupCursorEffects() {
   function onPointerMove(ev) {
     state.x = ev.clientX;
     state.y = ev.clientY;
-    state.visible = true;
     shell.classList.add('is-visible');
     applyHoverState(resolveHoverKind(ev.target));
   }
 
   function onPointerLeave() {
-    state.visible = false;
     shell.classList.remove('is-visible');
     applyHoverState('default');
   }
 
   function animate() {
-    state.currentX += (state.x - state.currentX) * 0.2;
-    state.currentY += (state.y - state.currentY) * 0.2;
+    state.currentX += (state.x - state.currentX) * 0.18;
+    state.currentY += (state.y - state.currentY) * 0.18;
 
-    const ringOffsetX = state.hover === 'link' ? 18 : state.hover === 'video' ? 22 : state.hover === 'card' ? 20 : 16;
-    const ringOffsetY = ringOffsetX;
-    const dotOffset = 4;
+    const auraSize = state.hover === 'video' ? 66 : state.hover === 'link' ? 58 : state.hover === 'card' ? 52 : 42;
+    const ringSize = state.hover === 'video' ? 48 : state.hover === 'link' ? 42 : state.hover === 'card' ? 36 : 28;
 
-    ring.style.transform = `translate3d(${(state.currentX - ringOffsetX).toFixed(2)}px, ${(state.currentY - ringOffsetY).toFixed(2)}px, 0)`;
-    dot.style.transform = `translate3d(${(state.currentX - dotOffset).toFixed(2)}px, ${(state.currentY - dotOffset).toFixed(2)}px, 0)`;
+    aura.style.transform = `translate3d(${(state.currentX - auraSize / 2).toFixed(2)}px, ${(state.currentY - auraSize / 2).toFixed(2)}px, 0)`;
+    ring.style.transform = `translate3d(${(state.currentX - ringSize / 2).toFixed(2)}px, ${(state.currentY - ringSize / 2).toFixed(2)}px, 0)`;
     label.style.transform = `translate3d(${(state.currentX + 18).toFixed(2)}px, ${(state.currentY - 18).toFixed(2)}px, 0)`;
 
     let leaderX = state.currentX;
     let leaderY = state.currentY;
     trails.forEach((trail, index) => {
       const point = trailPoints[index];
-      point.x += (leaderX - point.x) * (0.24 - index * 0.03);
-      point.y += (leaderY - point.y) * (0.24 - index * 0.03);
+      point.x += (leaderX - point.x) * (0.22 - index * 0.03);
+      point.y += (leaderY - point.y) * (0.22 - index * 0.03);
       trail.style.transform = `translate3d(${(point.x - 5).toFixed(2)}px, ${(point.y - 5).toFixed(2)}px, 0)`;
       leaderX = point.x;
       leaderY = point.y;
@@ -254,6 +251,174 @@ function setupCursorEffects() {
   window.requestAnimationFrame(animate);
 }
 
+function setupFooterField() {
+  if (!supportsFinePointer() || prefersReducedMotion()) return;
+
+  document.querySelectorAll('.page').forEach((page) => {
+    if (page.querySelector('.footer-field')) return;
+
+    const field = document.createElement('div');
+    field.className = 'footer-field';
+    field.innerHTML = '<canvas class="footer-field-canvas"></canvas>';
+    page.appendChild(field);
+
+    const canvas = field.querySelector('canvas');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    const mouse = { x: -9999, y: -9999, active: false };
+    const pairs = [];
+    let width = 0;
+    let height = 0;
+    let visible = false;
+
+    function buildPairs() {
+      pairs.length = 0;
+      const pairCount = Math.max(18, Math.round(width / 70));
+      for (let i = 0; i < pairCount; i += 1) {
+        const cx = Math.random() * width;
+        const cy = height * (0.18 + Math.random() * 0.68);
+        pairs.push({
+          cx,
+          cy,
+          length: 16 + Math.random() * 18,
+          angle: Math.random() * Math.PI * 2,
+          speed: 0.0015 + Math.random() * 0.0025,
+          driftX: (Math.random() - 0.5) * 0.22,
+          driftY: (Math.random() - 0.5) * 0.12,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    }
+
+    function resize() {
+      const rect = field.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = Math.max(320, Math.round(rect.width));
+      height = Math.max(220, Math.round(rect.height));
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      buildPairs();
+    }
+
+    function updateMouse(ev) {
+      const rect = field.getBoundingClientRect();
+      if (ev.clientX < rect.left || ev.clientX > rect.right || ev.clientY < rect.top || ev.clientY > rect.bottom) {
+        mouse.active = false;
+        return;
+      }
+      mouse.x = ev.clientX - rect.left;
+      mouse.y = ev.clientY - rect.top;
+      mouse.active = true;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      if (!visible) {
+        window.requestAnimationFrame(draw);
+        return;
+      }
+
+      const nodes = [];
+      const now = performance.now();
+
+      pairs.forEach((pair) => {
+        pair.cx += pair.driftX;
+        pair.cy += pair.driftY;
+        if (pair.cx < -40) pair.cx = width + 40;
+        if (pair.cx > width + 40) pair.cx = -40;
+        if (pair.cy < 30 || pair.cy > height - 12) pair.driftY *= -1;
+
+        const angle = pair.angle + now * pair.speed;
+        let ax = pair.cx + Math.cos(angle) * pair.length * 0.5;
+        let ay = pair.cy + Math.sin(angle) * pair.length * 0.5;
+        let bx = pair.cx - Math.cos(angle) * pair.length * 0.5;
+        let by = pair.cy - Math.sin(angle) * pair.length * 0.5;
+
+        if (mouse.active) {
+          [
+            { x: ax, y: ay, side: 'a' },
+            { x: bx, y: by, side: 'b' }
+          ].forEach((node) => {
+            const dx = node.x - mouse.x;
+            const dy = node.y - mouse.y;
+            const dist = Math.hypot(dx, dy) || 1;
+            if (dist < 120) {
+              const force = (1 - dist / 120) * 18;
+              const pushX = (dx / dist) * force;
+              const pushY = (dy / dist) * force;
+              if (node.side === 'a') {
+                ax += pushX;
+                ay += pushY;
+              } else {
+                bx += pushX;
+                by += pushY;
+              }
+            }
+          });
+        }
+
+        const intensity = mouse.active ? Math.max(0, 1 - Math.min(Math.hypot(pair.cx - mouse.x, pair.cy - mouse.y), 220) / 220) : 0;
+
+        ctx.strokeStyle = `rgba(180, 204, 244, ${0.16 + intensity * 0.26})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
+
+        ctx.fillStyle = `rgba(244, 248, 255, ${0.52 + intensity * 0.24})`;
+        ctx.beginPath();
+        ctx.arc(ax, ay, 1.6 + intensity * 0.4, 0, Math.PI * 2);
+        ctx.arc(bx, by, 1.6 + intensity * 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        nodes.push({ x: pair.cx, y: pair.cy, intensity });
+      });
+
+      for (let i = 0; i < nodes.length; i += 1) {
+        for (let j = i + 1; j < nodes.length; j += 1) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 96) {
+            const opacity = (1 - dist / 96) * 0.08 + Math.max(nodes[i].intensity, nodes[j].intensity) * 0.08;
+            ctx.strokeStyle = `rgba(164, 190, 240, ${opacity})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      window.requestAnimationFrame(draw);
+    }
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        visible = entries.some((entry) => entry.isIntersecting);
+      }, { threshold: 0.05 });
+      io.observe(field);
+    } else {
+      visible = true;
+    }
+
+    window.addEventListener('pointermove', updateMouse, { passive: true });
+    window.addEventListener('pointerleave', () => {
+      mouse.active = false;
+    });
+    window.addEventListener('resize', resize);
+
+    resize();
+    window.requestAnimationFrame(draw);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
   setupCardTilt();
@@ -261,4 +426,5 @@ document.addEventListener('DOMContentLoaded', () => {
   setupManagedVideos();
   setupMagneticTargets();
   setupCursorEffects();
+  setupFooterField();
 });
