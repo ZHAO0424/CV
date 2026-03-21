@@ -281,12 +281,12 @@ function setupLogoPixelBurst() {
     const node = document.createElement('span');
     node.className = 'logo-pixel';
     const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const width = 12 + Math.random() * 14;
-    const height = width * (0.78 + Math.random() * 0.48);
+    const width = 10 + Math.random() * 11;
+    const height = width * (0.8 + Math.random() * 0.42);
     const laneCount = burstBase.length;
-    const lane = Math.floor(Math.random() * laneCount);
+    const lane = Math.min(laneCount - 1, Math.floor(Math.pow(Math.random(), 0.82) * laneCount));
     const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.5) * 5;
+    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.32) * 7;
     const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
     burstBase[lane] += 1;
 
@@ -302,9 +302,9 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: originX + (Math.random() - 0.5) * 3,
+      x: originX + (Math.random() - 0.38) * 4,
       y: originY + (Math.random() - 0.5) * 4,
-      vx: (floorX - originX) / (290 + Math.random() * 45),
+      vx: (floorX - originX) / (255 + Math.random() * 40),
       vy: 0.16 + Math.random() * 0.16,
       gravity: 0.14 + Math.random() * 0.02,
       rotate: (Math.random() - 0.5) * 8,
@@ -323,7 +323,7 @@ function setupLogoPixelBurst() {
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const burstWidth = 72;
+    const burstWidth = 84;
     const burstLeft = Math.max(36, originX - burstWidth / 2);
     const burstBase = new Array(6).fill(0);
     const count = 15 + Math.round(Math.random() * 4);
