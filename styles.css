@@ -1568,3 +1568,25 @@ html {
     padding: 8px;
   }
 }
+
+/* Performance tuning for long pages and media-heavy sections */
+.resume-section,
+.proj-gallery,
+.project-grid,
+.gallery-grid,
+.photo-stage,
+.photo-wall,
+.photo-ribbon {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 900px;
+}
+
+img[loading='lazy'] {
+  content-visibility: auto;
+}
+
+.shot-img,
+.photo-img,
+.project-image {
+  transform: translateZ(0);
+}

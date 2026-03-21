@@ -75,3 +75,57 @@ document.addEventListener('DOMContentLoaded', () => {
   setupCardTilt();
 });
 
+
+function optimizeMediaLoading() {
+  const images = Array.from(document.querySelectorAll('img'));
+  images.forEach((img, index) => {
+    const isPriority = index < 3 || !!img.closest('.hero, .resume-hero, .proj-hero, .side-cover-box, .project-card-media');
+    if (!img.hasAttribute('decoding')) img.decoding = 'async';
+    if (!img.hasAttribute('loading')) img.loading = isPriority ? 'eager' : 'lazy';
+    if (!img.hasAttribute('fetchpriority')) img.fetchPriority = isPriority ? 'high' : 'low';
+  });
+
+  document.querySelectorAll('video').forEach((video, index) => {
+    if (!video.hasAttribute('preload')) video.preload = index === 0 ? 'metadata' : 'none';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', optimizeMediaLoading);
+
+function setupManagedVideos() {
+  const videos = Array.from(document.querySelectorAll('video[data-managed-video="autoplay"]'));
+  if (videos.length === 0) return;
+
+  if (prefersReducedMotion() || !('IntersectionObserver' in window)) {
+    videos.forEach((video) => {
+      video.preload = video.getAttribute('preload') || 'metadata';
+      video.muted = true;
+      video.playsInline = true;
+      video.play().catch(() => {});
+    });
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const video = entry.target;
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    },
+    { threshold: 0.2, rootMargin: '120px 0px' }
+  );
+
+  videos.forEach((video) => {
+    video.muted = true;
+    video.playsInline = true;
+    video.pause();
+    observer.observe(video);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', setupManagedVideos);
