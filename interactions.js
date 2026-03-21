@@ -442,8 +442,8 @@ function setupLogoPixelBurst() {
           fragment.rotate += fragment.spin;
 
           fragment.vx += fragment.rightPush;
-          fragment.vx += (fragment.floorX - fragment.x) * 0.00028;
-          fragment.vx *= 0.995;
+          fragment.vx *= 0.992;
+          fragment.vx = Math.max(fragment.vx, fragment.rightPush * 12);
 
           if (!tryObstacleCatch(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
             fragment.y = fragment.floorY;
