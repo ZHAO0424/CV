@@ -276,17 +276,40 @@ function setupLogoPixelBurst() {
 
   const fragments = [];
   let raf = 0;
+  let obstacleMap = [];
+
+  function collectObstacles(originY) {
+    const selector = '.glass, .resume-section, .photo-card, .project-card, .shot';
+    const nodes = Array.from(new Set(Array.from(document.querySelectorAll(selector))));
+
+    return nodes
+      .filter((node) => node !== trigger && !node.contains(trigger) && !node.classList.contains('footer-field'))
+      .map((node, index) => {
+        const rect = node.getBoundingClientRect();
+        return {
+          id: index,
+          left: rect.left,
+          right: rect.right,
+          top: rect.top,
+          bottom: rect.bottom,
+          width: rect.width,
+          height: rect.height
+        };
+      })
+      .filter((rect) => rect.width > 160 && rect.height > 48 && rect.bottom > originY + 20 && rect.top < window.innerHeight - 36)
+      .sort((a, b) => a.top - b.top);
+  }
 
   function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase) {
     const node = document.createElement('span');
     node.className = 'logo-pixel';
     const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const width = 10 + Math.random() * 11;
-    const height = width * (0.8 + Math.random() * 0.42);
+    const width = 10 + Math.random() * 10;
+    const height = width * (0.82 + Math.random() * 0.38);
     const laneCount = burstBase.length;
-    const lane = Math.min(laneCount - 1, Math.floor(Math.pow(Math.random(), 0.82) * laneCount));
+    const lane = Math.min(laneCount - 1, Math.floor(Math.pow(Math.random(), 0.7) * laneCount));
     const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.32) * 7;
+    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.15) * 8;
     const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
     burstBase[lane] += 1;
 
@@ -302,18 +325,22 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: originX + (Math.random() - 0.38) * 4,
+      x: originX + (Math.random() - 0.28) * 4,
       y: originY + (Math.random() - 0.5) * 4,
-      vx: (floorX - originX) / (255 + Math.random() * 40),
-      vy: 0.16 + Math.random() * 0.16,
-      gravity: 0.14 + Math.random() * 0.02,
+      vx: (floorX - originX) / (230 + Math.random() * 34),
+      vy: 0.14 + Math.random() * 0.14,
+      gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
-      spin: (Math.random() - 0.5) * 0.28,
+      spin: (Math.random() - 0.5) * 0.24,
       floorY,
       floorX,
       settled: false,
       settledAt: 0,
-      bounceCount: 0
+      bounceCount: 0,
+      blockedUntil: 0,
+      holdX: null,
+      holdY: null,
+      visitedObstacleIds: new Set()
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -323,10 +350,12 @@ function setupLogoPixelBurst() {
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const burstWidth = 84;
-    const burstLeft = Math.max(36, originX - burstWidth / 2);
-    const burstBase = new Array(6).fill(0);
+    const burstWidth = 102;
+    const burstLeft = Math.max(42, originX - burstWidth * 0.28);
+    const burstBase = new Array(7).fill(0);
     const count = 15 + Math.round(Math.random() * 4);
+
+    obstacleMap = collectObstacles(originY);
 
     for (let i = 0; i < count; i += 1) {
       const delay = i * (34 + Math.random() * 22);
@@ -334,14 +363,14 @@ function setupLogoPixelBurst() {
     }
   }
 
-  function resolveFragmentCollisions() {
+  function resolveFragmentCollisions(now) {
     for (let i = 0; i < fragments.length; i += 1) {
       const a = fragments[i];
-      if (a.settled) continue;
+      if (a.settled || now < a.blockedUntil) continue;
 
       for (let j = i + 1; j < fragments.length; j += 1) {
         const b = fragments[j];
-        if (b.settled) continue;
+        if (b.settled || now < b.blockedUntil) continue;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -355,21 +384,40 @@ function setupLogoPixelBurst() {
         const dirX = dx === 0 ? (Math.random() > 0.5 ? 1 : -1) : Math.sign(dx);
 
         if (overlapX <= overlapY) {
-          const shift = overlapX * 0.24;
+          const shift = overlapX * 0.22;
           a.x -= dirX * shift;
           b.x += dirX * shift;
-          a.vx -= dirX * 0.018;
-          b.vx += dirX * 0.018;
+          a.vx -= dirX * 0.015;
+          b.vx += dirX * 0.015;
         } else {
           const dirY = dy === 0 ? 1 : Math.sign(dy);
-          const shift = overlapY * 0.18;
+          const shift = overlapY * 0.16;
           a.y -= dirY * shift;
           b.y += dirY * shift;
-          a.vy *= 0.992;
-          b.vy *= 0.992;
         }
       }
     }
+  }
+
+  function tryObstacleCatch(fragment, prevBottom, now) {
+    const centerX = fragment.x + fragment.width / 2;
+
+    for (let i = 0; i < obstacleMap.length; i += 1) {
+      const obstacle = obstacleMap[i];
+      if (fragment.visitedObstacleIds.has(obstacle.id)) continue;
+      if (centerX < obstacle.left + 10 || centerX > obstacle.right - 10) continue;
+      if (prevBottom > obstacle.top || fragment.y + fragment.height < obstacle.top) continue;
+
+      fragment.y = obstacle.top - fragment.height;
+      fragment.vy = 0;
+      fragment.blockedUntil = now + 900 + Math.random() * 900;
+      fragment.holdX = fragment.x;
+      fragment.holdY = fragment.y;
+      fragment.visitedObstacleIds.add(obstacle.id);
+      return true;
+    }
+
+    return false;
   }
 
   function tick(now) {
@@ -377,26 +425,33 @@ function setupLogoPixelBurst() {
       const fragment = fragments[i];
 
       if (!fragment.settled) {
-        fragment.vy += fragment.gravity;
-        fragment.x += fragment.vx;
-        fragment.y += fragment.vy;
-        fragment.rotate += fragment.spin;
+        if (now < fragment.blockedUntil) {
+          fragment.x = fragment.holdX;
+          fragment.y = fragment.holdY;
+          fragment.rotate += fragment.spin * 0.45;
+        } else {
+          const prevBottom = fragment.y + fragment.height;
+          fragment.vy += fragment.gravity;
+          fragment.x += fragment.vx;
+          fragment.y += fragment.vy;
+          fragment.rotate += fragment.spin;
 
-        fragment.vx += (fragment.floorX - fragment.x) * 0.00018;
-        fragment.vx *= 0.994;
+          fragment.vx += (fragment.floorX - fragment.x) * 0.00016;
+          fragment.vx *= 0.995;
 
-        if (fragment.y >= fragment.floorY) {
-          fragment.y = fragment.floorY;
-          if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.72) {
-            fragment.vy *= -0.14;
-            fragment.vx *= 0.62;
-            fragment.bounceCount += 1;
-          } else {
-            fragment.vy = 0;
-            fragment.vx *= 0.34;
-            fragment.settled = true;
-            fragment.settledAt = now;
-            fragment.el.classList.add('is-settled');
+          if (!tryObstacleCatch(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
+            fragment.y = fragment.floorY;
+            if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
+              fragment.vy *= -0.12;
+              fragment.vx *= 0.58;
+              fragment.bounceCount += 1;
+            } else {
+              fragment.vy = 0;
+              fragment.vx *= 0.34;
+              fragment.settled = true;
+              fragment.settledAt = now;
+              fragment.el.classList.add('is-settled');
+            }
           }
         }
       } else {
@@ -415,7 +470,7 @@ function setupLogoPixelBurst() {
       fragment.el.style.transform = `translate3d(${fragment.x.toFixed(2)}px, ${fragment.y.toFixed(2)}px, 0) rotate(${fragment.rotate.toFixed(2)}deg)`;
     }
 
-    resolveFragmentCollisions();
+    resolveFragmentCollisions(now);
 
     if (fragments.length > 0) {
       raf = requestAnimationFrame(tick);
