@@ -261,11 +261,11 @@ function setupLogoPixelBurst() {
   }
 
   const palettes = [
-    { fill: 'linear-gradient(135deg, rgba(87, 111, 146, 0.96), rgba(178, 198, 222, 0.88))', glow: 'rgba(157, 183, 220, 0.22)', border: 'rgba(220, 231, 245, 0.42)' },
-    { fill: 'linear-gradient(135deg, rgba(127, 90, 109, 0.94), rgba(214, 184, 198, 0.86))', glow: 'rgba(210, 181, 197, 0.2)', border: 'rgba(236, 219, 227, 0.4)' },
-    { fill: 'linear-gradient(135deg, rgba(141, 117, 84, 0.94), rgba(223, 203, 174, 0.88))', glow: 'rgba(214, 195, 163, 0.2)', border: 'rgba(239, 229, 209, 0.42)' },
-    { fill: 'linear-gradient(135deg, rgba(84, 123, 120, 0.94), rgba(177, 209, 206, 0.86))', glow: 'rgba(172, 206, 201, 0.18)', border: 'rgba(216, 234, 231, 0.4)' },
-    { fill: 'linear-gradient(135deg, rgba(108, 108, 138, 0.94), rgba(196, 195, 218, 0.86))', glow: 'rgba(186, 186, 213, 0.18)', border: 'rgba(225, 225, 239, 0.4)' }
+    { fill: 'linear-gradient(135deg, rgba(32, 86, 196, 0.97), rgba(118, 193, 255, 0.9))', glow: 'rgba(106, 175, 255, 0.34)', border: 'rgba(210, 232, 255, 0.54)' },
+    { fill: 'linear-gradient(135deg, rgba(162, 28, 74, 0.96), rgba(255, 129, 171, 0.9))', glow: 'rgba(255, 118, 168, 0.32)', border: 'rgba(255, 218, 233, 0.52)' },
+    { fill: 'linear-gradient(135deg, rgba(170, 92, 16, 0.96), rgba(255, 196, 88, 0.92))', glow: 'rgba(255, 188, 92, 0.3)', border: 'rgba(255, 229, 184, 0.5)' },
+    { fill: 'linear-gradient(135deg, rgba(18, 128, 104, 0.96), rgba(110, 233, 201, 0.9))', glow: 'rgba(109, 232, 202, 0.28)', border: 'rgba(208, 255, 244, 0.5)' },
+    { fill: 'linear-gradient(135deg, rgba(96, 46, 164, 0.96), rgba(189, 133, 255, 0.9))', glow: 'rgba(185, 132, 255, 0.28)', border: 'rgba(230, 215, 255, 0.5)' }
   ];
 
   const fragments = [];
