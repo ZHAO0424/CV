@@ -271,6 +271,8 @@ function setupLogoPixelBurst() {
   const fragments = [];
   let raf = 0;
   let obstacleMap = [];
+  const maxHorizontalSpeed = 1.75;
+  const maxRestSlideSpeed = 0.6;
 
   function collectObstacles(originY) {
     const selector = '.glass, .resume-section, .photo-card, .project-card, .shot';
@@ -411,10 +413,10 @@ function setupLogoPixelBurst() {
 
       fragment.y = obstacle.top - fragment.height;
       fragment.vy = 0;
-      fragment.vx = Math.max(fragment.vx * 0.4, fragment.rightPush * 6);
+      fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx * 0.4, fragment.rightPush * 6));
       fragment.restX = fragment.x;
       fragment.restY = fragment.y;
-      fragment.restSlideVX = Math.min(0.95, Math.max(fragment.vx * 0.32, 0.22 + fragment.rightPush * 8));
+      fragment.restSlideVX = Math.min(maxRestSlideSpeed, Math.max(fragment.vx * 0.32, 0.22 + fragment.rightPush * 8));
       fragment.restMaxX = obstacle.right - fragment.width - 14;
       fragment.obstacleRestUntil = now + 1000 + Math.random() * 250;
       fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 120;
@@ -444,7 +446,7 @@ function setupLogoPixelBurst() {
           fragment.vy += fragment.gravity;
           fragment.vx += fragment.rightPush;
           fragment.vx *= 0.993;
-          fragment.vx = Math.max(fragment.vx, fragment.rightPush * 8);
+          fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
           fragment.x += fragment.vx;
           fragment.y += fragment.vy;
           fragment.rotate += fragment.spin;
@@ -453,7 +455,7 @@ function setupLogoPixelBurst() {
             fragment.y = fragment.floorY;
             if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
               fragment.vy *= -0.16;
-              fragment.vx *= 0.72;
+              fragment.vx = Math.min(maxHorizontalSpeed, fragment.vx * 0.72);
               fragment.bounceCount += 1;
             } else {
               fragment.vy = 0;
