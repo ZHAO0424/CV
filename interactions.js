@@ -332,6 +332,9 @@ function setupLogoPixelBurst() {
       settledAt: 0,
       bounceCount: 0,
       obstacleCooldownUntil: 0,
+      obstacleRestUntil: 0,
+      restX: 0,
+      restY: 0,
       lastObstacleId: -1,
       rightPush: 0.0038 + Math.random() * 0.0035
     });
@@ -405,42 +408,50 @@ function setupLogoPixelBurst() {
       if (prevBottom > obstacle.top || bottom < obstacle.top) continue;
 
       fragment.y = obstacle.top - fragment.height;
-      fragment.vy = -Math.max(0.55, Math.min(1.35, Math.abs(fragment.vy) * 0.22));
-      fragment.vx = Math.max(fragment.vx * 0.88 + 0.06 + fragment.rightPush * 18, fragment.rightPush * 10);
-      fragment.obstacleCooldownUntil = now + 120;
+      fragment.vy = 0;
+      fragment.vx = Math.max(fragment.vx * 0.4, fragment.rightPush * 6);
+      fragment.restX = fragment.x;
+      fragment.restY = fragment.y;
+      fragment.obstacleRestUntil = now + 3000 + Math.random() * 1000;
+      fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 180;
       fragment.lastObstacleId = obstacle.id;
       return true;
     }
 
     return false;
   }
-
-  function tick(now) {
+function tick(now) {
     for (let i = fragments.length - 1; i >= 0; i -= 1) {
       const fragment = fragments[i];
 
       if (!fragment.settled) {
-        const prevBottom = fragment.y + fragment.height;
-        fragment.vy += fragment.gravity;
-        fragment.vx += fragment.rightPush;
-        fragment.vx *= 0.993;
-        fragment.vx = Math.max(fragment.vx, fragment.rightPush * 8);
-        fragment.x += fragment.vx;
-        fragment.y += fragment.vy;
-        fragment.rotate += fragment.spin;
+        if (now < fragment.obstacleRestUntil) {
+          fragment.x = fragment.restX;
+          fragment.y = fragment.restY;
+          fragment.rotate += fragment.spin * 0.08;
+        } else {
+          const prevBottom = fragment.y + fragment.height;
+          fragment.vy += fragment.gravity;
+          fragment.vx += fragment.rightPush;
+          fragment.vx *= 0.993;
+          fragment.vx = Math.max(fragment.vx, fragment.rightPush * 8);
+          fragment.x += fragment.vx;
+          fragment.y += fragment.vy;
+          fragment.rotate += fragment.spin;
 
-        if (!handleObstacleBounce(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
-          fragment.y = fragment.floorY;
-          if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
-            fragment.vy *= -0.16;
-            fragment.vx *= 0.72;
-            fragment.bounceCount += 1;
-          } else {
-            fragment.vy = 0;
-            fragment.vx *= 0.4;
-            fragment.settled = true;
-            fragment.settledAt = now;
-            fragment.el.classList.add('is-settled');
+          if (!handleObstacleBounce(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
+            fragment.y = fragment.floorY;
+            if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
+              fragment.vy *= -0.16;
+              fragment.vx *= 0.72;
+              fragment.bounceCount += 1;
+            } else {
+              fragment.vy = 0;
+              fragment.vx *= 0.4;
+              fragment.settled = true;
+              fragment.settledAt = now;
+              fragment.el.classList.add('is-settled');
+            }
           }
         }
       } else {
