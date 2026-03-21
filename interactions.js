@@ -331,13 +331,9 @@ function setupLogoPixelBurst() {
       settled: false,
       settledAt: 0,
       bounceCount: 0,
-      blockedUntil: 0,
-      holdX: null,
-      holdY: null,
-      visitedObstacleIds: new Set(),
-      rightPush: 0.008 + Math.random() * 0.0075,
-      slideSpeed: 0.45 + Math.random() * 0.62,
-      activeObstacleRight: null
+      obstacleCooldownUntil: 0,
+      lastObstacleId: -1,
+      rightPush: 0.008 + Math.random() * 0.0075
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
