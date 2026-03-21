@@ -363,11 +363,11 @@ function setupLogoPixelBurst() {
   function resolveFragmentCollisions(now) {
     for (let i = 0; i < fragments.length; i += 1) {
       const a = fragments[i];
-      if (a.settled || now < a.blockedUntil) continue;
+      if (a.settled) continue;
 
       for (let j = i + 1; j < fragments.length; j += 1) {
         const b = fragments[j];
-        if (b.settled || now < b.blockedUntil) continue;
+        if (b.settled) continue;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -379,40 +379,40 @@ function setupLogoPixelBurst() {
         const overlapX = minX - Math.abs(dx);
         const overlapY = minY - Math.abs(dy);
         const dirX = dx === 0 ? (Math.random() > 0.5 ? 1 : -1) : Math.sign(dx);
+        const dirY = dy === 0 ? 1 : Math.sign(dy);
 
         if (overlapX <= overlapY) {
           const shift = overlapX * 0.22;
           a.x -= dirX * shift;
           b.x += dirX * shift;
-          a.vx -= dirX * 0.015;
-          b.vx += dirX * 0.015;
+          a.vx = Math.max(a.vx - dirX * 0.04, a.rightPush * 8);
+          b.vx = Math.max(b.vx + dirX * 0.04, b.rightPush * 8);
         } else {
-          const dirY = dy === 0 ? 1 : Math.sign(dy);
           const shift = overlapY * 0.16;
           a.y -= dirY * shift;
           b.y += dirY * shift;
+          a.vy *= 0.9;
+          b.vy *= 0.9;
         }
       }
     }
   }
 
-  function tryObstacleCatch(fragment, prevBottom, now) {
+  function handleObstacleBounce(fragment, prevBottom, now) {
     const centerX = fragment.x + fragment.width / 2;
+    const bottom = fragment.y + fragment.height;
 
     for (let i = 0; i < obstacleMap.length; i += 1) {
       const obstacle = obstacleMap[i];
-      if (fragment.visitedObstacleIds.has(obstacle.id)) continue;
+      if (now < fragment.obstacleCooldownUntil && fragment.lastObstacleId === obstacle.id) continue;
       if (centerX < obstacle.left + 10 || centerX > obstacle.right - 10) continue;
-      if (prevBottom > obstacle.top || fragment.y + fragment.height < obstacle.top) continue;
+      if (prevBottom > obstacle.top || bottom < obstacle.top) continue;
 
       fragment.y = obstacle.top - fragment.height;
-      fragment.vy = 0;
-      fragment.blockedUntil = now + 900 + Math.random() * 900;
-      fragment.holdX = fragment.x;
-      fragment.holdY = fragment.y;
-      fragment.activeObstacleRight = obstacle.right;
-      fragment.vx = Math.max(fragment.vx, 0.7 + fragment.rightPush * 120);
-      fragment.visitedObstacleIds.add(obstacle.id);
+      fragment.vy = -Math.max(0.55, Math.min(1.35, Math.abs(fragment.vy) * 0.22));
+      fragment.vx = Math.max(fragment.vx * 0.92 + 0.12 + fragment.rightPush * 24, fragment.rightPush * 12);
+      fragment.obstacleCooldownUntil = now + 120;
+      fragment.lastObstacleId = obstacle.id;
       return true;
     }
 
@@ -424,47 +424,32 @@ function setupLogoPixelBurst() {
       const fragment = fragments[i];
 
       if (!fragment.settled) {
-        if (now < fragment.blockedUntil) {
-          const maxSlideX = fragment.activeObstacleRight !== null ? fragment.activeObstacleRight - fragment.width - 14 : fragment.holdX;
-          fragment.holdX = Math.min(maxSlideX, fragment.holdX + fragment.slideSpeed);
-          fragment.x = fragment.holdX;
-          fragment.y = fragment.holdY;
-          fragment.rotate += fragment.spin * 0.45;
+        const prevBottom = fragment.y + fragment.height;
+        fragment.vy += fragment.gravity;
+        fragment.vx += fragment.rightPush;
+        fragment.vx *= 0.993;
+        fragment.vx = Math.max(fragment.vx, fragment.rightPush * 12);
+        fragment.x += fragment.vx;
+        fragment.y += fragment.vy;
+        fragment.rotate += fragment.spin;
 
-          if (fragment.x >= maxSlideX - 0.5) {
-            fragment.blockedUntil = now;
-          }
-        } else {
-          const prevBottom = fragment.y + fragment.height;
-          fragment.vy += fragment.gravity;
-          fragment.x += fragment.vx;
-          fragment.y += fragment.vy;
-          fragment.rotate += fragment.spin;
-
-          fragment.vx += fragment.rightPush;
-          fragment.vx *= 0.992;
-          fragment.vx = Math.max(fragment.vx, fragment.rightPush * 12);
-
-          if (!tryObstacleCatch(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
-            fragment.y = fragment.floorY;
-            if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
-              fragment.vy *= -0.12;
-              fragment.vx *= 0.58;
-              fragment.bounceCount += 1;
-            } else {
-              fragment.vy = 0;
-              fragment.vx *= 0.34;
-              fragment.activeObstacleRight = null;
-              fragment.settled = true;
-              fragment.settledAt = now;
-              fragment.el.classList.add('is-settled');
-            }
+        if (!handleObstacleBounce(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
+          fragment.y = fragment.floorY;
+          if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
+            fragment.vy *= -0.16;
+            fragment.vx *= 0.72;
+            fragment.bounceCount += 1;
+          } else {
+            fragment.vy = 0;
+            fragment.vx *= 0.4;
+            fragment.settled = true;
+            fragment.settledAt = now;
+            fragment.el.classList.add('is-settled');
           }
         }
       } else {
         const age = now - fragment.settledAt;
         if (age > 3000) {
-          fragment.activeObstacleRight = null;
           const fade = Math.max(0, 1 - (age - 3000) / 1800);
           fragment.el.style.opacity = `${fade * 0.9}`;
           if (fade <= 0) {
@@ -486,7 +471,6 @@ function setupLogoPixelBurst() {
       raf = 0;
     }
   }
-
   trigger.addEventListener('pointerdown', triggerBurst);
   trigger.addEventListener('click', triggerBurst);
 }
