@@ -254,9 +254,8 @@ function setupCursorEffects() {
 
 function setupLogoPixelBurst() {
   if (prefersReducedMotion()) return;
-  if (!/(^|\\/)index\\.html$/.test(location.pathname) && !/\\/$/.test(location.pathname)) return;
 
-  const trigger = document.querySelector('.pixel-square');
+  const trigger = document.querySelector('.logo');
   if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
   trigger.dataset.pixelBurstBound = 'true';
 
@@ -272,7 +271,8 @@ function setupLogoPixelBurst() {
   let raf = 0;
 
   function spawn() {
-    const rect = trigger.getBoundingClientRect();
+    const square = trigger.querySelector('.pixel-square') || trigger;
+    const rect = square.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
     const count = 22;
@@ -352,6 +352,7 @@ function setupLogoPixelBurst() {
     }
   }
 
+  trigger.addEventListener('pointerdown', spawn);
   trigger.addEventListener('click', spawn);
 }
 function setupFooterField() {
@@ -532,5 +533,6 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFooterField();
   setupLogoPixelBurst();
 });
+
 
 

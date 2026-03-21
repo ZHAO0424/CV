@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #f4f6ff;
   --bg-elevated: #ffffff;
   --accent: #3b82f6;
@@ -1591,7 +1591,7 @@ img[loading='lazy'] {
   transform: translateZ(0);
 }
 
-/* Custom cursor */
+/* Custom cursor, footer field, and logo burst */
 body.has-custom-cursor,
 body.has-custom-cursor a,
 body.has-custom-cursor button,
@@ -1602,7 +1602,9 @@ body.has-custom-cursor .photo-card,
 body.has-custom-cursor .shot,
 body.has-custom-cursor video,
 body.has-custom-cursor .side-cover-box,
-body.has-custom-cursor .tag {
+body.has-custom-cursor .tag,
+body.has-custom-cursor .logo,
+body.has-custom-cursor .pixel-square {
   cursor: none;
 }
 
@@ -1619,7 +1621,7 @@ body.has-custom-cursor .tag {
   opacity: 1;
 }
 
-.cursor-dot,
+.cursor-aura,
 .cursor-ring,
 .cursor-trail,
 .cursor-label {
@@ -1630,26 +1632,26 @@ body.has-custom-cursor .tag {
   will-change: transform, opacity;
 }
 
-.cursor-dot {
-  width: 8px;
-  height: 8px;
+.cursor-aura {
+  width: 44px;
+  height: 44px;
   border-radius: 999px;
-  background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.98), rgba(162, 185, 219, 0.95) 55%, rgba(39, 71, 117, 0.88));
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.34), 0 0 18px rgba(95, 136, 198, 0.42), 0 0 36px rgba(255, 255, 255, 0.18);
+  background: radial-gradient(circle, rgba(238, 245, 255, 0.42) 0%, rgba(201, 220, 248, 0.18) 38%, rgba(201, 220, 248, 0.05) 58%, rgba(201, 220, 248, 0) 76%);
+  filter: blur(14px);
+  opacity: 0.82;
+  transition: width 220ms ease, height 220ms ease, opacity 220ms ease, filter 220ms ease;
 }
 
 .cursor-ring {
-  width: 32px;
-  height: 32px;
+  width: 24px;
+  height: 24px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.08) 42%, rgba(122, 145, 191, 0.1) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(151, 177, 225, 0.08));
-  box-shadow: 0 10px 30px rgba(80, 108, 157, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.42);
-  backdrop-filter: blur(10px) saturate(1.06);
-  -webkit-backdrop-filter: blur(10px) saturate(1.06);
-  transition: width 220ms ease, height 220ms ease, border-color 220ms ease, background 220ms ease, box-shadow 220ms ease, opacity 220ms ease;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(196, 216, 246, 0.05) 52%, rgba(196, 216, 246, 0) 78%);
+  box-shadow: 0 0 18px rgba(181, 204, 239, 0.1), 0 12px 28px rgba(86, 111, 158, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(14px) saturate(1.04);
+  -webkit-backdrop-filter: blur(14px) saturate(1.04);
+  filter: blur(0.3px);
 }
 
 .cursor-label {
@@ -1672,46 +1674,48 @@ body.has-custom-cursor .tag {
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(164, 196, 255, 0.4), rgba(164, 196, 255, 0));
-  filter: blur(0.4px);
-  opacity: 0.6;
+  background: radial-gradient(circle, rgba(205, 222, 249, 0.22), rgba(205, 222, 249, 0));
+  filter: blur(2.2px);
+  opacity: 0.28;
 }
 
 .cursor-trail-2 {
-  opacity: 0.34;
-  transform: scale(0.9);
+  opacity: 0.18;
 }
 
 .cursor-trail-3 {
-  opacity: 0.18;
-  transform: scale(0.82);
+  opacity: 0.1;
+}
+
+body[data-cursor='card'] .cursor-aura {
+  width: 56px;
+  height: 56px;
+}
+
+body[data-cursor='link'] .cursor-aura {
+  width: 62px;
+  height: 62px;
+}
+
+body[data-cursor='video'] .cursor-aura {
+  width: 68px;
+  height: 68px;
+  filter: blur(16px);
 }
 
 body[data-cursor='card'] .cursor-ring {
-  width: 40px;
-  height: 40px;
-  border-color: rgba(214, 225, 246, 0.92);
-  box-shadow: 0 16px 36px rgba(74, 103, 153, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  width: 30px;
+  height: 30px;
 }
 
 body[data-cursor='link'] .cursor-ring {
-  width: 46px;
-  height: 46px;
-  border-color: rgba(243, 247, 255, 0.96);
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.12) 42%, rgba(164, 190, 240, 0.16) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(151, 177, 225, 0.14));
-  box-shadow: 0 18px 40px rgba(74, 103, 153, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.62);
+  width: 34px;
+  height: 34px;
 }
 
 body[data-cursor='video'] .cursor-ring {
-  width: 52px;
-  height: 52px;
-  border-color: rgba(248, 251, 255, 0.98);
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.48), rgba(255, 255, 255, 0.14) 42%, rgba(152, 190, 255, 0.2) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(151, 177, 225, 0.18));
-  box-shadow: 0 22px 50px rgba(74, 103, 153, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  width: 38px;
+  height: 38px;
 }
 
 body[data-cursor='link'] .cursor-label,
@@ -1722,88 +1726,6 @@ body[data-cursor='video'] .cursor-label {
 .cursor-magnetic {
   transform: translate3d(var(--cursor-mx, 0), var(--cursor-my, 0), 0);
   transition: transform 180ms cubic-bezier(0.2, 0.75, 0.22, 1);
-}
-
-@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
-  .cursor-shell {
-    display: none;
-  }
-}
-
-/* Cursor refinement and footer field */
-.cursor-dot {
-  display: none !important;
-}
-
-.cursor-aura,
-.cursor-ring,
-.cursor-trail,
-.cursor-label {
-  position: fixed;
-  left: 0;
-  top: 0;
-  pointer-events: none;
-  will-change: transform, opacity;
-}
-
-.cursor-aura {
-  width: 42px;
-  height: 42px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(232, 241, 255, 0.52) 0%, rgba(185, 208, 246, 0.18) 44%, rgba(185, 208, 246, 0) 72%);
-  filter: blur(9px);
-  opacity: 0.95;
-  transition: width 220ms ease, height 220ms ease, opacity 220ms ease, filter 220ms ease;
-}
-
-.cursor-ring {
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(180, 204, 244, 0.04));
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 32px rgba(86, 111, 158, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.36);
-  backdrop-filter: blur(8px) saturate(1.05);
-  -webkit-backdrop-filter: blur(8px) saturate(1.05);
-}
-
-.cursor-trail {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(188, 211, 248, 0.34), rgba(188, 211, 248, 0));
-  filter: blur(1.2px);
-}
-
-body[data-cursor='card'] .cursor-aura {
-  width: 52px;
-  height: 52px;
-}
-
-body[data-cursor='link'] .cursor-aura {
-  width: 58px;
-  height: 58px;
-}
-
-body[data-cursor='video'] .cursor-aura {
-  width: 66px;
-  height: 66px;
-  filter: blur(12px);
-}
-
-body[data-cursor='card'] .cursor-ring {
-  width: 36px;
-  height: 36px;
-}
-
-body[data-cursor='link'] .cursor-ring {
-  width: 42px;
-  height: 42px;
-}
-
-body[data-cursor='video'] .cursor-ring {
-  width: 48px;
-  height: 48px;
 }
 
 .footer {
@@ -1831,80 +1753,8 @@ body[data-cursor='video'] .cursor-ring {
   display: block;
 }
 
-@media (max-width: 900px) {
-  .page > .footer-field {
-    height: 240px;
-  }
-}
-
-/* Final cursor softness refinements */
-.cursor-aura {
-  width: 56px;
-  height: 56px;
-  background: radial-gradient(circle, rgba(238, 245, 255, 0.42) 0%, rgba(201, 220, 248, 0.18) 38%, rgba(201, 220, 248, 0.05) 58%, rgba(201, 220, 248, 0) 76%);
-  filter: blur(16px);
-  opacity: 0.9;
-}
-
-.cursor-ring {
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(196, 216, 246, 0.05) 52%, rgba(196, 216, 246, 0) 78%);
-  box-shadow: 0 0 22px rgba(181, 204, 239, 0.14), 0 16px 36px rgba(86, 111, 158, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  backdrop-filter: blur(14px) saturate(1.04);
-  -webkit-backdrop-filter: blur(14px) saturate(1.04);
-  filter: blur(0.3px);
-}
-
-.cursor-trail {
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, rgba(205, 222, 249, 0.22), rgba(205, 222, 249, 0));
-  filter: blur(2.2px);
-  opacity: 0.4;
-}
-
-.cursor-trail-2 {
-  opacity: 0.24;
-}
-
-.cursor-trail-3 {
-  opacity: 0.14;
-}
-
-body[data-cursor='card'] .cursor-aura {
-  width: 68px;
-  height: 68px;
-}
-
-body[data-cursor='link'] .cursor-aura {
-  width: 74px;
-  height: 74px;
-}
-
-body[data-cursor='video'] .cursor-aura {
-  width: 82px;
-  height: 82px;
-  filter: blur(18px);
-}
-
-body[data-cursor='card'] .cursor-ring {
-  width: 40px;
-  height: 40px;
-}
-
-body[data-cursor='link'] .cursor-ring {
-  width: 46px;
-  height: 46px;
-}
-
-body[data-cursor='video'] .cursor-ring {
-  width: 52px;
-  height: 52px;
-}
-
-.pixel-square {
+.pixel-square,
+.logo {
   cursor: pointer;
 }
 
@@ -1912,7 +1762,7 @@ body[data-cursor='video'] .cursor-ring {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  z-index: 18;
+  z-index: 64;
   overflow: hidden;
 }
 
@@ -1929,52 +1779,14 @@ body[data-cursor='video'] .cursor-ring {
   filter: blur(0.2px);
 }
 
-.cursor-aura {
-  width: 44px;
-  height: 44px;
-  filter: blur(14px);
-  opacity: 0.82;
+@media (max-width: 900px) {
+  .page > .footer-field {
+    height: 240px;
+  }
 }
 
-.cursor-ring {
-  width: 24px;
-  height: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  box-shadow: 0 0 18px rgba(181, 204, 239, 0.1), 0 12px 28px rgba(86, 111, 158, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-.cursor-trail {
-  width: 10px;
-  height: 10px;
-  opacity: 0.28;
-}
-
-body[data-cursor='card'] .cursor-aura {
-  width: 56px;
-  height: 56px;
-}
-
-body[data-cursor='link'] .cursor-aura {
-  width: 62px;
-  height: 62px;
-}
-
-body[data-cursor='video'] .cursor-aura {
-  width: 68px;
-  height: 68px;
-}
-
-body[data-cursor='card'] .cursor-ring {
-  width: 30px;
-  height: 30px;
-}
-
-body[data-cursor='link'] .cursor-ring {
-  width: 34px;
-  height: 34px;
-}
-
-body[data-cursor='video'] .cursor-ring {
-  width: 38px;
-  height: 38px;
+@media (hover: none), (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .cursor-shell {
+    display: none;
+  }
 }
