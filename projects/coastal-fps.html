@@ -46,48 +46,48 @@
       <section class="proj-layout">
         <section class="proj-main glass reveal">
           <div class="proj-section">
-            <h2 class="proj-h2">Project Overview</h2>
-            <p class="proj-p">
+            <h2 class="proj-h2" data-i18n="coastal_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="coastal_overview_text">
               Coastal FPS is a first-person action prototype set in a near-future shoreline devastated by pollution. Toxic waste has transformed marine life into hostile mutated creatures, turning the coast into a hazardous combat zone. Players take on the role of a Cleaner, entering a ruined beach environment to eliminate threats and reclaim a damaged ecosystem through fast-paced shooting and environmental survival.
             </p>
           </div>
 
           <div class="proj-section">
-            <h2 class="proj-h2">Game Analysis</h2>
-            <p class="proj-p">
+            <h2 class="proj-h2" data-i18n="coastal_analysis_title">Game Analysis</h2>
+            <p class="proj-p" data-i18n="coastal_analysis_text">
               The project was developed as a de-make study referencing <em>Dungeonball</em>, focusing on the core appeal of first-person combat, enemy pressure, and emergent gameplay while simplifying features that were too heavy for the production scope, such as procedural level generation, complex map systems, and prop animation pipelines.
             </p>
-            <p class="proj-p" style="margin-top: 1rem;">
+            <p class="proj-p" style="margin-top: 1rem;" data-i18n="coastal_analysis_text_2">
               In our version, we concentrated on FPS shooting, enemy patrol and pursuit, player health and progression, physical collision with scene props, and a hybrid tower-defense mechanic that introduces strategic support during combat.
             </p>
           </div>
 
           <div class="proj-section">
-            <h2 class="proj-h2">Core Features</h2>
-            <p class="proj-p">
+            <h2 class="proj-h2" data-i18n="coastal_features_title">Core Features</h2>
+            <p class="proj-p" data-i18n="coastal_features_text">
               The game includes first-person shooting with muzzle shake and firing sound effects, enemy spawning and AI navigation, death animation feedback, destructible-feeling obstacle interaction through cardboard box collisions, and an experience-based upgrade loop that improves player attributes as enemies are defeated.
             </p>
-            <p class="proj-p" style="margin-top: 1rem;">
+            <p class="proj-p" style="margin-top: 1rem;" data-i18n="coastal_features_text_2">
               Its most distinctive mechanic is a low-probability tower spawn triggered by enemy death. When activated, a lighthouse-inspired defense tower appears at the defeated enemy's location and automatically attacks newly spawned monsters, adding an unexpected tactical layer to the combat rhythm.
             </p>
           </div>
 
           <div class="proj-section">
-            <h2 class="proj-h2">Technical Overview</h2>
-            <p class="proj-p">
+            <h2 class="proj-h2" data-i18n="coastal_technical_title">Technical Overview</h2>
+            <p class="proj-p" data-i18n="coastal_technical_text">
               The prototype uses Unity Starter Assets to build the first-person controller, together with a custom laser gun shooter system for attack logic, recoil, and sound feedback. Enemies are generated through a spawner system, then controlled through code and NavMesh Agent behaviors to patrol, detect the player, chase, and attack.
             </p>
-            <p class="proj-p" style="margin-top: 1rem;">
+            <p class="proj-p" style="margin-top: 1rem;" data-i18n="coastal_technical_text_2">
               Additional work included collider setup for environmental props and enemies, tuning agent height and speed, defining base gameplay data, binding animations, and scripting the tower-generation mechanic so that support towers can identify enemies and fire automatically.
             </p>
           </div>
 
           <div class="proj-section">
-            <h2 class="proj-h2">Art & Collaboration</h2>
-            <p class="proj-p">
+            <h2 class="proj-h2" data-i18n="coastal_collab_title">Art & Collaboration</h2>
+            <p class="proj-p" data-i18n="coastal_collab_text">
               The world was modeled as a polluted coastal battlefield in Maya, using uneven sand, sea surfaces, giant rock boundaries, and scattered waste objects to create a ruined beach atmosphere. The hidden defense tower draws visual inspiration from a seaside lighthouse, while the enemy models reinterpret marine creatures with a slightly futuristic and mutated aesthetic.
             </p>
-            <p class="proj-p" style="margin-top: 1rem;">
+            <p class="proj-p" style="margin-top: 1rem;" data-i18n="coastal_collab_text_2">
               The project was developed through a clear division of labor: Xiangqi Wen focused on scene construction and tower defense systems, while I was responsible for enemy modeling and the FPS gameplay side. We collaborated remotely across countries and time zones by exchanging Unity packages and C# files throughout development.
             </p>
           </div>
@@ -95,15 +95,15 @@
 
         <aside class="proj-side glass reveal">
           <div class="side-block">
-            <div class="side-title">Role</div>
-            <div class="side-text">Enemy Modeling · FPS Gameplay · Combat Interaction · Remote Team Collaboration</div>
+            <div class="side-title" data-i18n="coastal_side_role_title">Role</div>
+            <div class="side-text" data-i18n="coastal_side_role_value">Enemy Modeling · FPS Gameplay · Combat Interaction · Remote Team Collaboration</div>
           </div>
           <div class="side-block">
-            <div class="side-title">Project Type</div>
-            <div class="side-text">De-make Study · FPS Prototype · Hybrid Tower Defense</div>
+            <div class="side-title" data-i18n="coastal_side_type_title">Project Type</div>
+            <div class="side-text" data-i18n="coastal_side_type_value">De-make Study · FPS Prototype · Hybrid Tower Defense</div>
           </div>
           <div class="side-block">
-            <div class="side-title">Tech Stack</div>
+            <div class="side-title" data-i18n="coastal_side_stack_title">Tech Stack</div>
             <div class="side-tags">
               <span class="tag">Unity</span>
               <span class="tag">C#</span>
@@ -120,26 +120,32 @@
 
       <section class="proj-gallery glass reveal">
         <div class="gallery-head">
-          <h2 class="section-title">Gallery</h2>
+          <h2 class="section-title" data-i18n="coastal_gallery_title">Gallery</h2>
         </div>
         <div class="gallery-grid gallery-grid-coastal">
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/main-menu.png" alt="Main Menu" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_1">Main menu / title scene</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/gameplay.png" alt="Gameplay Screenshot" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_2">Gameplay / combat scene</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/master3.png" alt="Environment view" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_3">Coastal environment / world view</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/OSFiPk.png" alt="Additional gameplay view" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_4">Additional gameplay / support system</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/monster-1.png" alt="Monster Model 1" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_5">Mutated enemy model 1</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/coastal-fps/monster-2.png" alt="Monster Model 2" />
+            <figcaption class="shot-cap" data-i18n="coastal_cap_6">Mutated enemy model 2</figcaption>
           </figure>
         </div>
       </section>
