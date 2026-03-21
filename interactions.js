@@ -301,9 +301,9 @@ function setupLogoPixelBurst() {
     const width = 10 + Math.random() * 10;
     const height = width * (0.82 + Math.random() * 0.38);
     const laneCount = burstBase.length;
-    const lane = Math.min(laneCount - 1, Math.floor(Math.pow(Math.random(), 0.7) * laneCount));
+    const lane = Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
     const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.08) * 10;
+    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.02) * 12;
     const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
     burstBase[lane] += 1;
 
@@ -319,9 +319,9 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: originX + (Math.random() - 0.2) * 5,
+      x: originX + (Math.random() - 0.08) * 6,
       y: originY + (Math.random() - 0.5) * 4,
-      vx: (floorX - originX) / (220 + Math.random() * 34),
+      vx: 1.15 + Math.random() * 1.1 + (floorX - originX) / (170 + Math.random() * 24),
       vy: 0.14 + Math.random() * 0.14,
       gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
@@ -335,7 +335,7 @@ function setupLogoPixelBurst() {
       holdX: null,
       holdY: null,
       visitedObstacleIds: new Set(),
-      rightPush: 0.0015 + Math.random() * 0.0035,
+      rightPush: 0.008 + Math.random() * 0.0075,
       slideSpeed: 0.45 + Math.random() * 0.62,
       activeObstacleRight: null
     });
@@ -347,8 +347,8 @@ function setupLogoPixelBurst() {
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const burstWidth = 112;
-    const burstLeft = Math.max(42, originX - burstWidth * 0.22);
+    const burstWidth = 138;
+    const burstLeft = Math.max(60, originX + 18);
     const burstBase = new Array(7).fill(0);
     const count = 15 + Math.round(Math.random() * 4);
 
@@ -411,7 +411,7 @@ function setupLogoPixelBurst() {
       fragment.holdX = fragment.x;
       fragment.holdY = fragment.y;
       fragment.activeObstacleRight = obstacle.right;
-      fragment.vx = Math.max(fragment.vx, 0.08 + fragment.rightPush * 90);
+      fragment.vx = Math.max(fragment.vx, 0.7 + fragment.rightPush * 120);
       fragment.visitedObstacleIds.add(obstacle.id);
       return true;
     }
@@ -442,7 +442,7 @@ function setupLogoPixelBurst() {
           fragment.rotate += fragment.spin;
 
           fragment.vx += fragment.rightPush;
-          fragment.vx += (fragment.floorX - fragment.x) * 0.00016;
+          fragment.vx += (fragment.floorX - fragment.x) * 0.00028;
           fragment.vx *= 0.995;
 
           if (!tryObstacleCatch(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
