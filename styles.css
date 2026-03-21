@@ -1753,8 +1753,7 @@ body[data-cursor='video'] .cursor-label {
   display: block;
 }
 
-.pixel-square,
-.logo {
+.pixel-square {
   cursor: pointer;
 }
 
@@ -1770,13 +1769,23 @@ body[data-cursor='video'] .cursor-label {
   position: fixed;
   left: 0;
   top: 0;
-  border-radius: 1px;
-  box-shadow: 0 0 8px rgba(255, 255, 255, 0.16);
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   will-change: transform, opacity;
+  transform-origin: center center;
+}
+
+.logo-pixel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0));
+  mix-blend-mode: screen;
 }
 
 .logo-pixel.is-settled {
-  filter: blur(0.2px);
+  filter: blur(0.15px) saturate(1.08);
 }
 
 @media (max-width: 900px) {
@@ -1790,3 +1799,4 @@ body[data-cursor='video'] .cursor-label {
     display: none;
   }
 }
+

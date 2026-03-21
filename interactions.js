@@ -255,7 +255,7 @@ function setupCursorEffects() {
 function setupLogoPixelBurst() {
   if (prefersReducedMotion()) return;
 
-  const trigger = document.querySelector('.logo');
+  const trigger = document.querySelector('.pixel-square');
   if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
   trigger.dataset.pixelBurstBound = 'true';
 
@@ -266,94 +266,137 @@ function setupLogoPixelBurst() {
     document.body.appendChild(layer);
   }
 
-  const palette = ['#6ea8ff', '#9cc7ff', '#ff7bbf', '#ffb86b', '#ffd36f', '#8df0d6'];
-  const settled = [];
+  const palettes = [
+    {
+      fill: 'linear-gradient(135deg, rgba(30,77,178,0.98), rgba(92,163,255,0.92))',
+      glow: 'rgba(80, 148, 255, 0.35)',
+      border: 'rgba(197, 223, 255, 0.55)'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(145,18,68,0.98), rgba(255,108,170,0.92))',
+      glow: 'rgba(255, 112, 169, 0.32)',
+      border: 'rgba(255, 212, 232, 0.55)'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(171,87,14,0.98), rgba(255,189,88,0.94))',
+      glow: 'rgba(255, 187, 93, 0.34)',
+      border: 'rgba(255, 226, 182, 0.52)'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(15,121,97,0.98), rgba(101,231,201,0.9))',
+      glow: 'rgba(102, 232, 201, 0.30)',
+      border: 'rgba(204, 255, 243, 0.50)'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(89,32,153,0.98), rgba(176,123,255,0.90))',
+      glow: 'rgba(172, 121, 255, 0.28)',
+      border: 'rgba(226, 213, 255, 0.52)'
+    }
+  ];
+
+  const fragments = [];
+  const laneCounts = new Array(18).fill(0);
   let raf = 0;
 
-  function spawn() {
-    const square = trigger.querySelector('.pixel-square') || trigger;
-    const rect = square.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2;
-    const originY = rect.top + rect.height / 2;
-    const count = 22;
+  function laneX(lane) {
+    const usable = window.innerWidth - 120;
+    return 60 + (usable / Math.max(1, laneCounts.length - 1)) * lane;
+  }
 
-    for (let i = 0; i < count; i += 1) {
-      const node = document.createElement('span');
-      node.className = 'logo-pixel';
-      const size = 4 + Math.random() * 4;
-      const pixel = {
-        el: node,
-        x: originX + (Math.random() - 0.5) * 10,
-        y: originY + (Math.random() - 0.5) * 10,
-        vx: (Math.random() - 0.5) * 2.6,
-        vy: 0.2 + Math.random() * 1.4,
-        gravity: 0.08 + Math.random() * 0.04,
-        drag: 0.992,
-        rotate: (Math.random() - 0.5) * 9,
-        spin: (Math.random() - 0.5) * 1.8,
-        size,
-        floor: window.innerHeight - 8 - size,
-        settledAt: 0,
-        settled: false
-      };
+  function spawnFragment(originX, originY) {
+    const lane = Math.floor(Math.random() * laneCounts.length);
+    const stackIndex = laneCounts[lane];
+    laneCounts[lane] += 1;
 
-      node.style.width = `${size}px`;
-      node.style.height = `${size}px`;
-      node.style.background = palette[Math.floor(Math.random() * palette.length)];
-      node.style.opacity = `${0.65 + Math.random() * 0.35}`;
-      layer.appendChild(node);
-      settled.push(pixel);
-    }
+    const node = document.createElement('span');
+    node.className = 'logo-pixel';
+    const palette = palettes[Math.floor(Math.random() * palettes.length)];
+    const width = 10 + Math.random() * 16;
+    const height = width * (0.72 + Math.random() * 0.58);
+    const targetX = laneX(lane) + (Math.random() - 0.5) * 30;
+    const floor = window.innerHeight - 10 - height - stackIndex * (6 + Math.random() * 5);
+
+    node.style.width = `${width}px`;
+    node.style.height = `${height}px`;
+    node.style.background = palette.fill;
+    node.style.borderColor = palette.border;
+    node.style.boxShadow = `0 0 14px ${palette.glow}, inset 0 1px 0 rgba(255,255,255,0.28)`;
+    node.style.opacity = `${0.78 + Math.random() * 0.18}`;
+    layer.appendChild(node);
+
+    fragments.push({
+      el: node,
+      x: originX + (Math.random() - 0.5) * 8,
+      y: originY + (Math.random() - 0.5) * 8,
+      vx: (targetX - originX) / (72 + Math.random() * 26),
+      vy: 0.7 + Math.random() * 0.7,
+      gravity: 0.11 + Math.random() * 0.05,
+      swing: (Math.random() - 0.5) * 0.2,
+      rotate: (Math.random() - 0.5) * 12,
+      spin: (Math.random() - 0.5) * 1.1,
+      floor,
+      lane,
+      settled: false,
+      settledAt: 0
+    });
 
     if (!raf) raf = requestAnimationFrame(tick);
   }
 
-  function tick(now) {
-    for (let i = settled.length - 1; i >= 0; i -= 1) {
-      const p = settled[i];
-      if (!p.settled) {
-        p.vy += p.gravity;
-        p.vx *= p.drag;
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rotate += p.spin;
+  function triggerBurst() {
+    const rect = trigger.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    const count = 20 + Math.round(Math.random() * 6);
 
-        if (p.y >= p.floor) {
-          p.y = p.floor;
-          p.vx *= 0.55;
-          p.vy *= -0.18;
-          if (Math.abs(p.vy) < 0.18) {
-            p.vy = 0;
-            p.settled = true;
-            p.settledAt = now;
-            p.el.classList.add('is-settled');
-          }
+    for (let i = 0; i < count; i += 1) {
+      const delay = i * (22 + Math.random() * 16);
+      window.setTimeout(() => spawnFragment(originX, originY), delay);
+    }
+  }
+
+  function tick(now) {
+    for (let i = fragments.length - 1; i >= 0; i -= 1) {
+      const fragment = fragments[i];
+
+      if (!fragment.settled) {
+        fragment.vy += fragment.gravity;
+        fragment.x += fragment.vx + Math.sin((now + i * 40) * 0.003) * fragment.swing;
+        fragment.y += fragment.vy;
+        fragment.rotate += fragment.spin;
+
+        if (fragment.y >= fragment.floor) {
+          fragment.y = fragment.floor;
+          fragment.settled = true;
+          fragment.settledAt = now;
+          fragment.el.classList.add('is-settled');
         }
       } else {
-        const age = now - p.settledAt;
-        if (age > 3200) {
-          const fade = Math.max(0, 1 - (age - 3200) / 1600);
-          p.el.style.opacity = `${fade * 0.75}`;
+        const age = now - fragment.settledAt;
+        if (age > 3000) {
+          const fade = Math.max(0, 1 - (age - 3000) / 1800);
+          fragment.el.style.opacity = `${fade * 0.88}`;
           if (fade <= 0) {
-            p.el.remove();
-            settled.splice(i, 1);
+            fragment.el.remove();
+            laneCounts[fragment.lane] = Math.max(0, laneCounts[fragment.lane] - 1);
+            fragments.splice(i, 1);
             continue;
           }
         }
       }
 
-      p.el.style.transform = `translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0) rotate(${p.rotate.toFixed(2)}deg)`;
+      fragment.el.style.transform = `translate3d(${fragment.x.toFixed(2)}px, ${fragment.y.toFixed(2)}px, 0) rotate(${fragment.rotate.toFixed(2)}deg)`;
     }
 
-    if (settled.length > 0) {
+    if (fragments.length > 0) {
       raf = requestAnimationFrame(tick);
     } else {
       raf = 0;
     }
   }
 
-  trigger.addEventListener('pointerdown', spawn);
-  trigger.addEventListener('click', spawn);
+  trigger.addEventListener('pointerdown', triggerBurst);
+  trigger.addEventListener('click', triggerBurst);
 }
 function setupFooterField() {
   if (!supportsFinePointer() || prefersReducedMotion()) return;
@@ -533,6 +576,9 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFooterField();
   setupLogoPixelBurst();
 });
+
+
+
 
 
 
