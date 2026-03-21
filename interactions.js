@@ -1,4 +1,4 @@
-﻿function prefersReducedMotion() {
+function prefersReducedMotion() {
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
@@ -267,77 +267,53 @@ function setupLogoPixelBurst() {
   }
 
   const palettes = [
-    {
-      fill: 'linear-gradient(135deg, rgba(30,77,178,0.98), rgba(92,163,255,0.92))',
-      glow: 'rgba(80, 148, 255, 0.35)',
-      border: 'rgba(197, 223, 255, 0.55)'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(145,18,68,0.98), rgba(255,108,170,0.92))',
-      glow: 'rgba(255, 112, 169, 0.32)',
-      border: 'rgba(255, 212, 232, 0.55)'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(171,87,14,0.98), rgba(255,189,88,0.94))',
-      glow: 'rgba(255, 187, 93, 0.34)',
-      border: 'rgba(255, 226, 182, 0.52)'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(15,121,97,0.98), rgba(101,231,201,0.9))',
-      glow: 'rgba(102, 232, 201, 0.30)',
-      border: 'rgba(204, 255, 243, 0.50)'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(89,32,153,0.98), rgba(176,123,255,0.90))',
-      glow: 'rgba(172, 121, 255, 0.28)',
-      border: 'rgba(226, 213, 255, 0.52)'
-    }
+    { fill: 'linear-gradient(135deg, rgba(30,77,178,0.98), rgba(92,163,255,0.92))', glow: 'rgba(80, 148, 255, 0.35)', border: 'rgba(197, 223, 255, 0.55)' },
+    { fill: 'linear-gradient(135deg, rgba(145,18,68,0.98), rgba(255,108,170,0.92))', glow: 'rgba(255, 112, 169, 0.32)', border: 'rgba(255, 212, 232, 0.55)' },
+    { fill: 'linear-gradient(135deg, rgba(171,87,14,0.98), rgba(255,189,88,0.94))', glow: 'rgba(255, 187, 93, 0.34)', border: 'rgba(255, 226, 182, 0.52)' },
+    { fill: 'linear-gradient(135deg, rgba(15,121,97,0.98), rgba(101,231,201,0.9))', glow: 'rgba(102, 232, 201, 0.30)', border: 'rgba(204, 255, 243, 0.50)' },
+    { fill: 'linear-gradient(135deg, rgba(89,32,153,0.98), rgba(176,123,255,0.90))', glow: 'rgba(172, 121, 255, 0.28)', border: 'rgba(226, 213, 255, 0.52)' }
   ];
 
   const fragments = [];
-  const laneCounts = new Array(18).fill(0);
   let raf = 0;
 
-  function laneX(lane) {
-    const usable = window.innerWidth - 120;
-    return 60 + (usable / Math.max(1, laneCounts.length - 1)) * lane;
-  }
-
-  function spawnFragment(originX, originY) {
-    const lane = Math.floor(Math.random() * laneCounts.length);
-    const stackIndex = laneCounts[lane];
-    laneCounts[lane] += 1;
-
+  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase) {
     const node = document.createElement('span');
     node.className = 'logo-pixel';
     const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const width = 10 + Math.random() * 16;
-    const height = width * (0.72 + Math.random() * 0.58);
-    const targetX = laneX(lane) + (Math.random() - 0.5) * 30;
-    const floor = window.innerHeight - 10 - height - stackIndex * (6 + Math.random() * 5);
+    const width = 12 + Math.random() * 14;
+    const height = width * (0.78 + Math.random() * 0.48);
+    const laneCount = burstBase.length;
+    const lane = Math.floor(Math.random() * laneCount);
+    const laneGap = burstWidth / Math.max(1, laneCount - 1);
+    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.5) * 5;
+    const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
+    burstBase[lane] += 1;
 
     node.style.width = `${width}px`;
     node.style.height = `${height}px`;
     node.style.background = palette.fill;
     node.style.borderColor = palette.border;
     node.style.boxShadow = `0 0 14px ${palette.glow}, inset 0 1px 0 rgba(255,255,255,0.28)`;
-    node.style.opacity = `${0.78 + Math.random() * 0.18}`;
+    node.style.opacity = `${0.8 + Math.random() * 0.16}`;
     layer.appendChild(node);
 
     fragments.push({
       el: node,
-      x: originX + (Math.random() - 0.5) * 8,
-      y: originY + (Math.random() - 0.5) * 8,
-      vx: (targetX - originX) / (72 + Math.random() * 26),
-      vy: 0.7 + Math.random() * 0.7,
-      gravity: 0.11 + Math.random() * 0.05,
-      swing: (Math.random() - 0.5) * 0.2,
-      rotate: (Math.random() - 0.5) * 12,
-      spin: (Math.random() - 0.5) * 1.1,
-      floor,
-      lane,
+      width,
+      height,
+      x: originX + (Math.random() - 0.5) * 3,
+      y: originY + (Math.random() - 0.5) * 4,
+      vx: (floorX - originX) / (290 + Math.random() * 45),
+      vy: 0.16 + Math.random() * 0.16,
+      gravity: 0.14 + Math.random() * 0.02,
+      rotate: (Math.random() - 0.5) * 8,
+      spin: (Math.random() - 0.5) * 0.28,
+      floorY,
+      floorX,
       settled: false,
-      settledAt: 0
+      settledAt: 0,
+      bounceCount: 0
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -347,11 +323,52 @@ function setupLogoPixelBurst() {
     const rect = trigger.getBoundingClientRect();
     const originX = rect.left + rect.width / 2;
     const originY = rect.top + rect.height / 2;
-    const count = 20 + Math.round(Math.random() * 6);
+    const burstWidth = 72;
+    const burstLeft = Math.max(36, originX - burstWidth / 2);
+    const burstBase = new Array(6).fill(0);
+    const count = 15 + Math.round(Math.random() * 4);
 
     for (let i = 0; i < count; i += 1) {
-      const delay = i * (22 + Math.random() * 16);
-      window.setTimeout(() => spawnFragment(originX, originY), delay);
+      const delay = i * (34 + Math.random() * 22);
+      window.setTimeout(() => spawnFragment(originX, originY, burstLeft, burstWidth, burstBase), delay);
+    }
+  }
+
+  function resolveFragmentCollisions() {
+    for (let i = 0; i < fragments.length; i += 1) {
+      const a = fragments[i];
+      if (a.settled) continue;
+
+      for (let j = i + 1; j < fragments.length; j += 1) {
+        const b = fragments[j];
+        if (b.settled) continue;
+
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const minX = (a.width + b.width) * 0.42;
+        const minY = (a.height + b.height) * 0.4;
+
+        if (Math.abs(dx) >= minX || Math.abs(dy) >= minY) continue;
+
+        const overlapX = minX - Math.abs(dx);
+        const overlapY = minY - Math.abs(dy);
+        const dirX = dx === 0 ? (Math.random() > 0.5 ? 1 : -1) : Math.sign(dx);
+
+        if (overlapX <= overlapY) {
+          const shift = overlapX * 0.24;
+          a.x -= dirX * shift;
+          b.x += dirX * shift;
+          a.vx -= dirX * 0.018;
+          b.vx += dirX * 0.018;
+        } else {
+          const dirY = dy === 0 ? 1 : Math.sign(dy);
+          const shift = overlapY * 0.18;
+          a.y -= dirY * shift;
+          b.y += dirY * shift;
+          a.vy *= 0.992;
+          b.vy *= 0.992;
+        }
+      }
     }
   }
 
@@ -361,24 +378,34 @@ function setupLogoPixelBurst() {
 
       if (!fragment.settled) {
         fragment.vy += fragment.gravity;
-        fragment.x += fragment.vx + Math.sin((now + i * 40) * 0.003) * fragment.swing;
+        fragment.x += fragment.vx;
         fragment.y += fragment.vy;
         fragment.rotate += fragment.spin;
 
-        if (fragment.y >= fragment.floor) {
-          fragment.y = fragment.floor;
-          fragment.settled = true;
-          fragment.settledAt = now;
-          fragment.el.classList.add('is-settled');
+        fragment.vx += (fragment.floorX - fragment.x) * 0.00018;
+        fragment.vx *= 0.994;
+
+        if (fragment.y >= fragment.floorY) {
+          fragment.y = fragment.floorY;
+          if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.72) {
+            fragment.vy *= -0.14;
+            fragment.vx *= 0.62;
+            fragment.bounceCount += 1;
+          } else {
+            fragment.vy = 0;
+            fragment.vx *= 0.34;
+            fragment.settled = true;
+            fragment.settledAt = now;
+            fragment.el.classList.add('is-settled');
+          }
         }
       } else {
         const age = now - fragment.settledAt;
         if (age > 3000) {
           const fade = Math.max(0, 1 - (age - 3000) / 1800);
-          fragment.el.style.opacity = `${fade * 0.88}`;
+          fragment.el.style.opacity = `${fade * 0.9}`;
           if (fade <= 0) {
             fragment.el.remove();
-            laneCounts[fragment.lane] = Math.max(0, laneCounts[fragment.lane] - 1);
             fragments.splice(i, 1);
             continue;
           }
@@ -387,6 +414,8 @@ function setupLogoPixelBurst() {
 
       fragment.el.style.transform = `translate3d(${fragment.x.toFixed(2)}px, ${fragment.y.toFixed(2)}px, 0) rotate(${fragment.rotate.toFixed(2)}deg)`;
     }
+
+    resolveFragmentCollisions();
 
     if (fragments.length > 0) {
       raf = requestAnimationFrame(tick);
@@ -576,6 +605,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFooterField();
   setupLogoPixelBurst();
 });
+
 
 
 
