@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --bg: #f4f6ff;
   --bg-elevated: #ffffff;
   --accent: #3b82f6;
@@ -1770,22 +1770,46 @@ body[data-cursor='video'] .cursor-label {
   left: 0;
   top: 0;
   border-radius: 2px;
-  border: 1px solid rgba(255, 255, 255, 0.26);
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.24);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 14px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.24);
   will-change: transform, opacity;
   transform-origin: center center;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  overflow: visible;
+}
+
+.logo-pixel::before,
+.logo-pixel::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
 }
 
 .logo-pixel::before {
-  content: '';
-  position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0));
+  border-radius: 2px;
+  background: var(--pixel-top, linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0)));
+  transform: translate3d(-1px, -2px, 0) scale(0.94);
+  opacity: 0.58;
   mix-blend-mode: screen;
 }
 
+.logo-pixel::after {
+  top: 1px;
+  right: -3px;
+  width: 34%;
+  height: calc(100% - 2px);
+  border-radius: 0 2px 2px 0;
+  background: var(--pixel-side, linear-gradient(180deg, rgba(255,255,255,0.2), rgba(0,0,0,0.18)));
+  transform: skewY(32deg) translate3d(0, 0, 0);
+  transform-origin: left center;
+  opacity: 0.9;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.12);
+}
+
 .logo-pixel.is-settled {
-  filter: blur(0.15px) saturate(1.08);
+  filter: blur(0.15px) saturate(1.12) brightness(1.02);
 }
 
 @media (max-width: 900px) {

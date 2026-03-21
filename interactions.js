@@ -261,18 +261,48 @@ function setupLogoPixelBurst() {
   }
 
   const palettes = [
-    { fill: 'linear-gradient(135deg, rgba(32, 86, 196, 0.97), rgba(118, 193, 255, 0.9))', glow: 'rgba(106, 175, 255, 0.34)', border: 'rgba(210, 232, 255, 0.54)' },
-    { fill: 'linear-gradient(135deg, rgba(162, 28, 74, 0.96), rgba(255, 129, 171, 0.9))', glow: 'rgba(255, 118, 168, 0.32)', border: 'rgba(255, 218, 233, 0.52)' },
-    { fill: 'linear-gradient(135deg, rgba(170, 92, 16, 0.96), rgba(255, 196, 88, 0.92))', glow: 'rgba(255, 188, 92, 0.3)', border: 'rgba(255, 229, 184, 0.5)' },
-    { fill: 'linear-gradient(135deg, rgba(18, 128, 104, 0.96), rgba(110, 233, 201, 0.9))', glow: 'rgba(109, 232, 202, 0.28)', border: 'rgba(208, 255, 244, 0.5)' },
-    { fill: 'linear-gradient(135deg, rgba(96, 46, 164, 0.96), rgba(189, 133, 255, 0.9))', glow: 'rgba(185, 132, 255, 0.28)', border: 'rgba(230, 215, 255, 0.5)' }
+    {
+      fill: 'linear-gradient(135deg, rgba(32, 86, 196, 0.97), rgba(118, 193, 255, 0.9))',
+      glow: 'rgba(106, 175, 255, 0.34)',
+      border: 'rgba(210, 232, 255, 0.54)',
+      top: 'linear-gradient(135deg, rgba(164, 214, 255, 0.94), rgba(79, 144, 235, 0.76))',
+      side: 'linear-gradient(180deg, rgba(15, 53, 124, 0.94), rgba(62, 120, 214, 0.82))'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(162, 28, 74, 0.96), rgba(255, 129, 171, 0.9))',
+      glow: 'rgba(255, 118, 168, 0.32)',
+      border: 'rgba(255, 218, 233, 0.52)',
+      top: 'linear-gradient(135deg, rgba(255, 194, 215, 0.94), rgba(227, 90, 142, 0.74))',
+      side: 'linear-gradient(180deg, rgba(116, 14, 49, 0.94), rgba(193, 54, 105, 0.82))'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(170, 92, 16, 0.96), rgba(255, 196, 88, 0.92))',
+      glow: 'rgba(255, 188, 92, 0.3)',
+      border: 'rgba(255, 229, 184, 0.5)',
+      top: 'linear-gradient(135deg, rgba(255, 223, 157, 0.94), rgba(237, 160, 56, 0.76))',
+      side: 'linear-gradient(180deg, rgba(121, 63, 10, 0.94), rgba(205, 126, 36, 0.84))'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(18, 128, 104, 0.96), rgba(110, 233, 201, 0.9))',
+      glow: 'rgba(109, 232, 202, 0.28)',
+      border: 'rgba(208, 255, 244, 0.5)',
+      top: 'linear-gradient(135deg, rgba(174, 246, 229, 0.94), rgba(64, 186, 155, 0.76))',
+      side: 'linear-gradient(180deg, rgba(12, 88, 71, 0.94), rgba(42, 154, 128, 0.82))'
+    },
+    {
+      fill: 'linear-gradient(135deg, rgba(96, 46, 164, 0.96), rgba(189, 133, 255, 0.9))',
+      glow: 'rgba(185, 132, 255, 0.28)',
+      border: 'rgba(230, 215, 255, 0.5)',
+      top: 'linear-gradient(135deg, rgba(220, 188, 255, 0.94), rgba(145, 91, 225, 0.76))',
+      side: 'linear-gradient(180deg, rgba(63, 25, 117, 0.94), rgba(118, 70, 191, 0.82))'
+    }
   ];
 
   const fragments = [];
   let raf = 0;
   let obstacleMap = [];
-  const maxHorizontalSpeed = 1.75;
-  const maxRestSlideSpeed = 0.6;
+  const maxHorizontalSpeed = 2.25;
+  const maxRestSlideSpeed = 0.78;
 
   function collectObstacles(originY) {
     const selector = '.glass, .resume-section, .photo-card, .project-card, .shot';
@@ -303,9 +333,12 @@ function setupLogoPixelBurst() {
     const width = 10 + Math.random() * 10;
     const height = width * (0.82 + Math.random() * 0.38);
     const laneCount = burstBase.length;
-    const lane = Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
+    const directionRoll = Math.random();
+    const lane = directionRoll < 0.18
+      ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
+      : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
     const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (Math.random() - 0.02) * 12;
+    const floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
     const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
     burstBase[lane] += 1;
 
@@ -315,15 +348,19 @@ function setupLogoPixelBurst() {
     node.style.borderColor = palette.border;
     node.style.boxShadow = `0 0 14px ${palette.glow}, inset 0 1px 0 rgba(255,255,255,0.28)`;
     node.style.opacity = `${0.8 + Math.random() * 0.16}`;
+    node.style.setProperty('--pixel-top', palette.top);
+    node.style.setProperty('--pixel-side', palette.side);
     layer.appendChild(node);
 
     fragments.push({
       el: node,
       width,
       height,
-      x: originX + (Math.random() - 0.08) * 6,
+      x: originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
       y: originY + (Math.random() - 0.5) * 4,
-      vx: 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
+      vx: directionRoll < 0.18
+        ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
+        : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
       vy: 0.14 + Math.random() * 0.14,
       gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
