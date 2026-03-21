@@ -364,11 +364,11 @@ function setupLogoPixelBurst() {
   function resolveFragmentCollisions(now) {
     for (let i = 0; i < fragments.length; i += 1) {
       const a = fragments[i];
-      if (a.settled) continue;
+      if (a.settled || now < a.obstacleRestUntil) continue;
 
       for (let j = i + 1; j < fragments.length; j += 1) {
         const b = fragments[j];
-        if (b.settled) continue;
+        if (b.settled || now < b.obstacleRestUntil) continue;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -414,7 +414,7 @@ function setupLogoPixelBurst() {
       fragment.vx = Math.max(fragment.vx * 0.4, fragment.rightPush * 6);
       fragment.restX = fragment.x;
       fragment.restY = fragment.y;
-      fragment.restSlideVX = Math.max(fragment.vx * 0.75, 0.35 + fragment.rightPush * 12);
+      fragment.restSlideVX = Math.min(0.95, Math.max(fragment.vx * 0.32, 0.22 + fragment.rightPush * 8));
       fragment.restMaxX = obstacle.right - fragment.width - 14;
       fragment.obstacleRestUntil = now + 1000 + Math.random() * 250;
       fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 120;
@@ -431,7 +431,7 @@ function setupLogoPixelBurst() {
 
       if (!fragment.settled) {
         if (now < fragment.obstacleRestUntil) {
-          fragment.restX = Math.min(fragment.restMaxX, fragment.restX + fragment.restSlideVX);
+          fragment.restX = Math.max(fragment.x, Math.min(fragment.restMaxX, fragment.restX + fragment.restSlideVX));
           fragment.x = fragment.restX;
           fragment.y = fragment.restY;
           fragment.rotate += fragment.spin * 0.08;
