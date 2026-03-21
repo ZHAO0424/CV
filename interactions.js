@@ -224,8 +224,8 @@ function setupCursorEffects() {
     state.currentX += (state.x - state.currentX) * 0.18;
     state.currentY += (state.y - state.currentY) * 0.18;
 
-    const auraSize = state.hover === 'video' ? 66 : state.hover === 'link' ? 58 : state.hover === 'card' ? 52 : 42;
-    const ringSize = state.hover === 'video' ? 48 : state.hover === 'link' ? 42 : state.hover === 'card' ? 36 : 28;
+    const auraSize = state.hover === 'video' ? 58 : state.hover === 'link' ? 52 : state.hover === 'card' ? 46 : 36;
+    const ringSize = state.hover === 'video' ? 42 : state.hover === 'link' ? 38 : state.hover === 'card' ? 32 : 24;
 
     aura.style.transform = `translate3d(${(state.currentX - auraSize / 2).toFixed(2)}px, ${(state.currentY - auraSize / 2).toFixed(2)}px, 0)`;
     ring.style.transform = `translate3d(${(state.currentX - ringSize / 2).toFixed(2)}px, ${(state.currentY - ringSize / 2).toFixed(2)}px, 0)`;
@@ -251,6 +251,109 @@ function setupCursorEffects() {
   window.requestAnimationFrame(animate);
 }
 
+
+function setupLogoPixelBurst() {
+  if (prefersReducedMotion()) return;
+  if (!/(^|\\/)index\\.html$/.test(location.pathname) && !/\\/$/.test(location.pathname)) return;
+
+  const trigger = document.querySelector('.pixel-square');
+  if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
+  trigger.dataset.pixelBurstBound = 'true';
+
+  let layer = document.querySelector('.logo-pixel-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.className = 'logo-pixel-layer';
+    document.body.appendChild(layer);
+  }
+
+  const palette = ['#6ea8ff', '#9cc7ff', '#ff7bbf', '#ffb86b', '#ffd36f', '#8df0d6'];
+  const settled = [];
+  let raf = 0;
+
+  function spawn() {
+    const rect = trigger.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2;
+    const originY = rect.top + rect.height / 2;
+    const count = 22;
+
+    for (let i = 0; i < count; i += 1) {
+      const node = document.createElement('span');
+      node.className = 'logo-pixel';
+      const size = 4 + Math.random() * 4;
+      const pixel = {
+        el: node,
+        x: originX + (Math.random() - 0.5) * 10,
+        y: originY + (Math.random() - 0.5) * 10,
+        vx: (Math.random() - 0.5) * 2.6,
+        vy: 0.2 + Math.random() * 1.4,
+        gravity: 0.08 + Math.random() * 0.04,
+        drag: 0.992,
+        rotate: (Math.random() - 0.5) * 9,
+        spin: (Math.random() - 0.5) * 1.8,
+        size,
+        floor: window.innerHeight - 8 - size,
+        settledAt: 0,
+        settled: false
+      };
+
+      node.style.width = `${size}px`;
+      node.style.height = `${size}px`;
+      node.style.background = palette[Math.floor(Math.random() * palette.length)];
+      node.style.opacity = `${0.65 + Math.random() * 0.35}`;
+      layer.appendChild(node);
+      settled.push(pixel);
+    }
+
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  function tick(now) {
+    for (let i = settled.length - 1; i >= 0; i -= 1) {
+      const p = settled[i];
+      if (!p.settled) {
+        p.vy += p.gravity;
+        p.vx *= p.drag;
+        p.x += p.vx;
+        p.y += p.vy;
+        p.rotate += p.spin;
+
+        if (p.y >= p.floor) {
+          p.y = p.floor;
+          p.vx *= 0.55;
+          p.vy *= -0.18;
+          if (Math.abs(p.vy) < 0.18) {
+            p.vy = 0;
+            p.settled = true;
+            p.settledAt = now;
+            p.el.classList.add('is-settled');
+          }
+        }
+      } else {
+        const age = now - p.settledAt;
+        if (age > 3200) {
+          const fade = Math.max(0, 1 - (age - 3200) / 1600);
+          p.el.style.opacity = `${fade * 0.75}`;
+          if (fade <= 0) {
+            p.el.remove();
+            settled.splice(i, 1);
+            continue;
+          }
+        }
+      }
+
+      p.el.style.transform = `translate3d(${p.x.toFixed(2)}px, ${p.y.toFixed(2)}px, 0) rotate(${p.rotate.toFixed(2)}deg)`;
+    }
+
+    if (settled.length > 0) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      raf = 0;
+    }
+  }
+
+  trigger.addEventListener('click', spawn);
+}
 function setupFooterField() {
   if (!supportsFinePointer() || prefersReducedMotion()) return;
 
@@ -427,4 +530,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupMagneticTargets();
   setupCursorEffects();
   setupFooterField();
+  setupLogoPixelBurst();
 });
+
+
