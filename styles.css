@@ -1836,3 +1836,70 @@ body[data-cursor='video'] .cursor-ring {
     height: 240px;
   }
 }
+
+/* Final cursor softness refinements */
+.cursor-aura {
+  width: 56px;
+  height: 56px;
+  background: radial-gradient(circle, rgba(238, 245, 255, 0.42) 0%, rgba(201, 220, 248, 0.18) 38%, rgba(201, 220, 248, 0.05) 58%, rgba(201, 220, 248, 0) 76%);
+  filter: blur(16px);
+  opacity: 0.9;
+}
+
+.cursor-ring {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.12) 0%, rgba(196, 216, 246, 0.05) 52%, rgba(196, 216, 246, 0) 78%);
+  box-shadow: 0 0 22px rgba(181, 204, 239, 0.14), 0 16px 36px rgba(86, 111, 158, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(14px) saturate(1.04);
+  -webkit-backdrop-filter: blur(14px) saturate(1.04);
+  filter: blur(0.3px);
+}
+
+.cursor-trail {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(205, 222, 249, 0.22), rgba(205, 222, 249, 0));
+  filter: blur(2.2px);
+  opacity: 0.4;
+}
+
+.cursor-trail-2 {
+  opacity: 0.24;
+}
+
+.cursor-trail-3 {
+  opacity: 0.14;
+}
+
+body[data-cursor='card'] .cursor-aura {
+  width: 68px;
+  height: 68px;
+}
+
+body[data-cursor='link'] .cursor-aura {
+  width: 74px;
+  height: 74px;
+}
+
+body[data-cursor='video'] .cursor-aura {
+  width: 82px;
+  height: 82px;
+  filter: blur(18px);
+}
+
+body[data-cursor='card'] .cursor-ring {
+  width: 40px;
+  height: 40px;
+}
+
+body[data-cursor='link'] .cursor-ring {
+  width: 46px;
+  height: 46px;
+}
+
+body[data-cursor='video'] .cursor-ring {
+  width: 52px;
+  height: 52px;
+}

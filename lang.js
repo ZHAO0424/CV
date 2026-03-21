@@ -1,4 +1,4 @@
-const zhTranslations = {
+﻿const zhTranslations = {
   name: '\u8d75\u5b50\u9510',
   footer_contact_label: '\u8054\u7cfb',
   proj_back: '\u8fd4\u56de',
@@ -340,6 +340,7 @@ const zhTranslations = {
 };
 
 const defaultTexts = new Map();
+const defaultHtml = new Map();
 const staticTextSnapshot = new WeakMap();
 const commonStaticTextMap = {
   Overview: '\u6982\u89c8',
@@ -393,11 +394,80 @@ const commonStaticTextMap = {
   'Coming Soon': '\u5373\u5c06\u4e0a\u7ebf',
 };
 
+Object.assign(zhTranslations, {
+  resume_page_title: '赵子锐 | 简历',
+  resume_name_main: '赵子锐',
+  resume_contact_mobile: '电话',
+  resume_contact_email: '邮箱',
+  resume_contact_portfolio: '作品集',
+  resume_side_focus_title: '研究方向',
+  resume_side_focus_text: 'HCI、XR、多智能体交互、情绪感知系统、沉浸式叙事、虚拟社会环境与空间计算。',
+  resume_side_keywords_title: '核心关键词',
+  resume_edu_1_body: '核心课程：增强现实、建模与动画、虚拟现实、游戏机制与玩法、游戏编程、游戏引擎编程、AI 驱动虚拟角色构建、沉浸式交互系统设计。',
+  resume_edu_2_body: '核心课程：未来空间结构、新型工业化绿色节能建筑系统设计与研究、增强现实、虚拟现实创意图像设计、3D 打印技术及应用。',
+  resume_res_1_title: '研究助理，奥克兰大学 Augmented Human Lab',
+  resume_res_1_detail_1: '基于 Unreal Engine 开发沉浸式虚拟现实系统，将实时鸟类三维位置与物种数据转化为动态视觉标记与空间化鸟鸣声，实现生态数据的可视化与声化表达。',
+  resume_res_1_detail_2: '整合 LiDAR 点云森林环境、数据驱动事件触发机制与 Ambisonic 空间音频系统，构建数据驱动的沉浸式生态叙事体验，作品计划于新西兰 Len Lye Centre 艺术博物馆展出。',
+  resume_res_2_title: '研究实习生，香港城市大学叙事空间工作室实验室',
+  resume_res_2_detail_1: '参与设计旨在提升用户可持续意识的多智能体叙事游戏，研究虚拟社区群体如何影响个体的可持续行为态度。',
+  resume_res_2_detail_2: '负责游戏机制设计、AI 提示词构建、对话逻辑设计与视觉美术资源创作，实现群体对个体的情绪感染与认知影响，并支持 CHI PLAY 2026 投稿。',
+  resume_res_3_title: '研究助理，牛津大学精神病认知方法实验室',
+  resume_res_3_detail_1: '负责开发基于 Unity 和 ONNX Sentis 的情绪识别型 VR 对话系统，集成语音与文本多模态分析，并构建 VAD 情绪空间标签注入的语言模型提示词机制。',
+  resume_res_3_detail_2: '完成情绪对话核心模块、提示词生成与虚拟人反馈设计，使 AI 能根据用户情感状态动态调整语气、风格和内容。',
+  resume_res_4_title: '研究助理，SEE VR 实验室，金史密斯学院伦敦大学',
+  resume_res_4_detail_1: '探讨 AI 驱动代理与 VR 技术结合治疗社交焦虑障碍的潜在疗效，并通过定性分析与系统文献综述对比传统 CBT 的结果。',
+  resume_res_4_detail_2: '负责 Unity 技术实现与数据分析，使用 GAD-7 与 STAI-S 量表评估 AI + VR 心理咨询在缓解焦虑方面的效果。',
+  resume_res_5_title: '研究实习生，虚拟现实实验室，哈尔滨工业大学',
+  resume_res_5_detail_1: '使用 HTC VIVE 在 Unity 中构建真实自然场景进行实验，并利用 E4 手环采集学生 BVP、HR 等数据来评估 VR 环境对心理恢复的影响。',
+  resume_res_5_detail_2: '提出学术环境中虚拟现实恢复环境的设计和构建方法，考察虚拟恢复环境的感知质量对心理健康恢复的影响。',
+  resume_res_6_title: '研究实习生，数字设计与创新中心，哈尔滨工业大学',
+  resume_res_6_detail_1: '负责绘制不同绿植与绿墙配置的室内环境绿色视野率（GLR）并进行实验，研究不同校园绿化景观对大学生心理恢复的影响。',
+  resume_res_6_detail_2: '采用简版修订恢复量表（SRRS）评估恢复效益，为创建健康宜居的校园环境设计提供数据支持。',
+  resume_pub_1: '[1]. Zhao, Z. (2026). <span class="pub-title">Designing Constrained Generative NPCs with a Dynamic Evidence Graph for Investigative Narrative Worlds</span>. 收录于 <span class="pub-venue">2026 CHI Conference on Human Factors in Computing Systems 扩展摘要（CHI EA \'26）</span>. ACM. <a href="https://doi.org/10.1145/3772363.3798387" target="_blank" rel="noreferrer">https://doi.org/10.1145/3772363.3798387</a>',
+  resume_pub_2: '[2]. Zhao, Z. (2026). <span class="pub-title">Multimodal Emotion Perception for VR Dialogue: Towards Improved User Experience</span>. 收录于 <span class="pub-venue">IEEE VR 2026 Conference on Virtual Reality and 3D User Interfaces</span>. IEEE.',
+  resume_pub_3: '[3]. Zhao, Z., &amp; Yin, C. (2025, July). <span class="pub-title">Leveraging AI-driven VR environments to reshape urban planning and community engagement</span>. 会议论文，发表于第 19 届 <span class="pub-venue">Computational Urban Planning and Urban Management (CUPUM 2025)</span>，伦敦。',
+  resume_pub_4: '[4]. Yin, C., Li, T., Xue, B., &amp; Zhao, Z. (2025). <span class="pub-title">Influence of virtual reality restorative environments on psychological well-being in university students: An evidence-based experimental study</span>. <span class="pub-venue">Exploration of Digital Health Technologies</span>, 3, 101155. <a href="https://doi.org/10.37349/edht.2025.101155" target="_blank" rel="noreferrer">https://doi.org/10.37349/edht.2025.101155</a>',
+  resume_work_1_title: '上海云梧智能科技 Feeling AI｜AI 产品设计实习生',
+  resume_work_1_detail_1: '主导落地一款 AI 驱动的多角色叙事调查 Demo，构建西部小镇世界观与剧情闭环，规划 NPC 关系网络与信息流转机制，定义语义标签与数据结构标准，推动对话、信任与记忆系统实现，验证 LLM 赋能互动叙事产品的结构化与可推理性。',
+  resume_work_2_title: 'UCL 多媒体人类学实验室｜3D / VR 设计师',
+  resume_work_2_detail_1: '参与基于 Unreal 的沉浸式 VR 博物馆建设，数字化复原 200 余组巴西原住民文化遗产，强调“地方知识”与文化空间的可视化叙事表达，并探索数字遗产在全球化背景下的表达策略。',
+  resume_work_3_title: '新疆建筑设计研究院有限公司｜参数化设计实习生',
+  resume_work_3_detail_1: '参与建筑概念与方案设计，基于 Rhino 和 Grasshopper 进行立面与体量建模，支持设计方案在功能、美学与结构上的综合优化，并参与施工阶段技术问题处理与图纸审校。',
+  resume_work_4_title: '上海 PTA 建筑设计咨询有限公司｜建筑设计实习生',
+  resume_work_4_detail_1: '参与城市规划与综合体前期方案设计，重点负责场地现状分析、功能分区、空间组织研究以及法规与控制指标调研。',
+  resume_proj_1_title: 'Digital Heritage Project – Nanjing Da Bao En Temple',
+  resume_proj_1_desc: '负责开发联合国教科文组织遗址语境下的大报恩寺数字体验，重建历史场景并利用 AR/VR 讲述文物故事，设计 AI 对话与互动系统，统筹技术与美术整合并参与全球竞赛提案提交。',
+  resume_proj_2_title: 'FireEscapeVR - 基于 3D 空间音频定位的 VR 逃生模拟器（Unity）',
+  resume_proj_2_desc: '构建基于 3D 空间音频的 VR 逃生模拟系统，探索空间听觉在紧急逃生中的引导作用，开发沉浸式交互界面与路径系统，具有消防演练与安全培训的教育应用价值。',
+  resume_proj_3_title: 'Carbonis: Siren\'s Elegia - VR 互动电影（Unreal）',
+  resume_proj_3_desc: '主导神话与生态叙事交融的 VR 互动电影，设计象征人类贪婪的水下空间与交互导航系统，批判绿色洗涤与资本主义生态剥削，面向虚拟艺术与时尚传播场景。',
+  resume_proj_4_title: 'Bloomiverse - AR Planting Adventure Game（Unity）',
+  resume_proj_4_desc: '设计植物动画与道具交互机制，开发增强现实魔法花园体验，通过植入式反馈机制加强用户在生态主题游戏中的互动沉浸。',
+  resume_skill_ai_label: 'AI 交互',
+  resume_skill_ai_value: 'LLM 提示词设计、多智能体对话、情绪自适应系统、会话记忆',
+  resume_skill_code_label: '编程语言',
+  resume_skill_engine_label: '游戏引擎',
+  resume_skill_engine_value: 'Unity3D（C#）、Unreal Engine（Blueprint 与 C++）、NPC 逻辑与系统架构',
+  resume_skill_tools_label: '设计工具',
+});
+
+function decodeEscapedUnicode(value) {
+  if (typeof value !== 'string') return value;
+  return value.replace(/\\u([0-9a-fA-F]{4})/g, (_, code) => String.fromCharCode(parseInt(code, 16)));
+}
+
 function captureDefaultTexts() {
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');
     if (!defaultTexts.has(key)) {
       defaultTexts.set(key, el.textContent.trim());
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-html');
+    if (!defaultHtml.has(key)) {
+      defaultHtml.set(key, el.innerHTML.trim());
     }
   });
 }
@@ -408,7 +478,7 @@ function translateCommonStaticText(lang) {
   );
 
   document.querySelectorAll('h2, h3, .side-title, .section-title, .proj-h2').forEach((el) => {
-    if (el.hasAttribute('data-i18n')) return;
+    if (el.hasAttribute('data-i18n') || el.hasAttribute('data-i18n-html')) return;
 
     if (!staticTextSnapshot.has(el)) {
       staticTextSnapshot.set(el, el.textContent.trim());
@@ -472,10 +542,17 @@ function updateLangButtonLabels() {
   });
 }
 
+function getTranslationValue(key) {
+  if (zhTranslations[key] === undefined) return undefined;
+  return decodeEscapedUnicode(zhTranslations[key]);
+}
+
 function getTextForKey(lang, key) {
   const original = defaultTexts.get(key) || '';
-  if (lang === 'zh' && zhTranslations[key] !== undefined) {
-    return zhTranslations[key];
+  const translated = getTranslationValue(key);
+
+  if (lang === 'zh' && translated !== undefined) {
+    return translated;
   }
   if (lang === 'zh' && commonStaticTextMap[original]) {
     return commonStaticTextMap[original];
@@ -486,14 +563,31 @@ function getTextForKey(lang, key) {
   return original;
 }
 
+function getHtmlForKey(lang, key) {
+  const original = defaultHtml.get(key) || '';
+  const translated = getTranslationValue(key);
+  if (lang === 'zh' && translated !== undefined) {
+    return translated;
+  }
+  return original;
+}
+
 function setLanguage(lang) {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
 
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');
     const text = getTextForKey(lang, key);
-    if (text) {
+    if (text !== undefined && text !== null) {
       el.textContent = text;
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-html');
+    const html = getHtmlForKey(lang, key);
+    if (html !== undefined && html !== null) {
+      el.innerHTML = html;
     }
   });
 
@@ -512,7 +606,10 @@ document.addEventListener('DOMContentLoaded', () => {
   captureDefaultTexts();
   updateLangButtonLabels();
 
-  const saved = localStorage.getItem('cv_lang') || 'en';
+  const htmlDefault = document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh')
+    ? 'zh'
+    : 'en';
+  const saved = localStorage.getItem('cv_lang') || htmlDefault;
   setLanguage(saved);
 
   document.querySelectorAll('.lang-btn').forEach((btn) => {
@@ -522,116 +619,3 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
-Object.assign(zhTranslations, {
-  resume_page_title: '\\u8d75\\u5b50\\u9510 | \\u7b80\\u5386',
-  resume_name_main: '\\u8d75\\u5b50\\u9510',
-  resume_contact_mobile: '\\u7535\\u8bdd',
-  resume_contact_email: '\\u90ae\\u7bb1',
-  resume_contact_portfolio: '\\u4f5c\\u54c1\\u96c6',
-  resume_side_focus_title: '\\u7814\\u7a76\\u65b9\\u5411',
-  resume_side_focus_text: 'HCI\\u3001XR\\u3001\\u591a\\u667a\\u80fd\\u4f53\\u4ea4\\u4e92\\u3001\\u60c5\\u7eea\\u611f\\u77e5\\u7cfb\\u7edf\\u3001\\u6c89\\u6d78\\u5f0f\\u53d9\\u4e8b\\u3001\\u865a\\u62df\\u793e\\u4f1a\\u73af\\u5883\\u3001\\u7a7a\\u95f4\\u8ba1\\u7b97\\u3002',
-  resume_side_keywords_title: '\\u6838\\u5fc3\\u5173\\u952e\\u8bcd',
-  resume_edu_1_body: '\\u6838\\u5fc3\\u8bfe\\u7a0b\\uff1a\\u589e\\u5f3a\\u73b0\\u5b9e\\u3001\\u5efa\\u6a21\\u4e0e\\u52a8\\u753b\\u3001\\u865a\\u62df\\u73b0\\u5b9e\\u3001\\u6e38\\u620f\\u673a\\u5236\\u4e0e\\u73a9\\u6cd5\\u3001\\u6e38\\u620f\\u7f16\\u7a0b\\u3001\\u6e38\\u620f\\u5f15\\u64ce\\u7f16\\u7a0b\\u3001AI \\u9a71\\u52a8\\u865a\\u62df\\u89d2\\u8272\\u6784\\u5efa\\u3001\\u6c89\\u6d78\\u5f0f\\u4ea4\\u4e92\\u7cfb\\u7edf\\u8bbe\\u8ba1\\u3002',
-  resume_edu_2_body: '\\u6838\\u5fc3\\u8bfe\\u7a0b\\uff1a\\u672a\\u6765\\u7a7a\\u95f4\\u7ed3\\u6784\\u3001\\u65b0\\u578b\\u5de5\\u4e1a\\u5316\\u7eff\\u8272\\u8282\\u80fd\\u5efa\\u7b51\\u7cfb\\u7edf\\u8bbe\\u8ba1\\u4e0e\\u7814\\u7a76\\u3001\\u589e\\u5f3a\\u73b0\\u5b9e\\u3001\\u865a\\u62df\\u73b0\\u5b9e\\u521b\\u610f\\u56fe\\u50cf\\u8bbe\\u8ba1\\u30013D \\u6253\\u5370\\u6280\\u672f\\u53ca\\u5e94\\u7528\\u3002',
-  resume_res_1_title: '\\u7814\\u7a76\\u52a9\\u7406\\uff0c\\u5965\\u514b\\u5170\\u5927\\u5b66 Augmented Human Lab',
-  resume_res_1_detail_1: '\\u57fa\\u4e8e Unreal Engine \\u5f00\\u53d1\\u6c89\\u6d78\\u5f0f\\u865a\\u62df\\u73b0\\u5b9e\\u7cfb\\u7edf\\uff0c\\u5c06\\u5b9e\\u65f6\\u9e1f\\u7c7b\\u4e09\\u7ef4\\u4f4d\\u7f6e\\u4e0e\\u7269\\u79cd\\u6570\\u636e\\u8f6c\\u5316\\u4e3a\\u52a8\\u6001\\u89c6\\u89c9\\u6807\\u8bb0\\u4e0e\\u7a7a\\u95f4\\u5316\\u9e1f\\u9e23\\u58f0\\uff0c\\u5b9e\\u73b0\\u751f\\u6001\\u6570\\u636e\\u7684\\u53ef\\u89c6\\u5316\\u4e0e\\u58f0\\u5316\\u8868\\u8fbe\\u3002',
-  resume_res_1_detail_2: '\\u6574\\u5408 LiDAR \\u70b9\\u4e91\\u68ee\\u6797\\u73af\\u5883\\u3001\\u6570\\u636e\\u9a71\\u52a8\\u4e8b\\u4ef6\\u89e6\\u53d1\\u673a\\u5236\\u4e0e Ambisonic \\u7a7a\\u95f4\\u97f3\\u9891\\u7cfb\\u7edf\\uff0c\\u6784\\u5efa\\u6570\\u636e\\u9a71\\u52a8\\u7684\\u6c89\\u6d78\\u5f0f\\u751f\\u6001\\u53d9\\u4e8b\\u4f53\\u9a8c\\u3002\\u4f5c\\u54c1\\u8ba1\\u5212\\u4e8e\\u65b0\\u897f\\u5170 Len Lye Centre \\u827a\\u672f\\u535a\\u7269\\u9986\\u5c55\\u51fa\\u3002',
-  resume_res_2_title: '\\u7814\\u7a76\\u5b9e\\u4e60\\u751f\\uff0c\\u9999\\u6e2f\\u57ce\\u5e02\\u5927\\u5b66 \\u53d9\\u4e8b\\u7a7a\\u95f4\\u5de5\\u4f5c\\u5ba4\\u5b9e\\u9a8c\\u5ba4',
-  resume_res_2_detail_1: '\\u53c2\\u4e0e\\u8bbe\\u8ba1\\u65e8\\u5728\\u63d0\\u5347\\u7528\\u6237\\u53ef\\u6301\\u7eed\\u610f\\u8bc6\\u7684\\u591a\\u667a\\u80fd\\u4f53\\u53d9\\u4e8b\\u6e38\\u620f\\uff0c\\u7814\\u7a76\\u865a\\u62df\\u793e\\u533a\\u7fa4\\u4f53\\u5982\\u4f55\\u5f71\\u54cd\\u4e2a\\u4f53\\u7684\\u53ef\\u6301\\u7eed\\u884c\\u4e3a\\u6001\\u5ea6\\uff0c\\u5e76\\u6784\\u5efa\\u7531\\u4e09\\u7c7b AI \\u89d2\\u8272\\u7ec4\\u6210\\u7684\\u865a\\u62df\\u793e\\u533a\\u3002',
-  resume_res_2_detail_2: '\\u8d1f\\u8d23\\u6e38\\u620f\\u673a\\u5236\\u8bbe\\u8ba1\\u3001AI \\u63d0\\u793a\\u8bcd\\u6784\\u5efa\\u3001\\u5bf9\\u8bdd\\u903b\\u8f91\\u8bbe\\u8ba1\\u4e0e\\u89c6\\u89c9\\u7f8e\\u672f\\u8d44\\u6e90\\u521b\\u4f5c\\uff0c\\u5b9e\\u73b0\\u7fa4\\u4f53\\u5bf9\\u4e2a\\u4f53\\u7684\\u60c5\\u7eea\\u611f\\u67d3\\u4e0e\\u8ba4\\u77e5\\u5f71\\u54cd\\uff0c\\u5e76\\u652f\\u6491 CHI PLAY 2026 \\u6295\\u7a3f\\u3002',
-  resume_res_3_title: '\\u7814\\u7a76\\u52a9\\u7406\\uff0c\\u725b\\u6d25\\u5927\\u5b66 \\u7cbe\\u795e\\u75c5\\u8ba4\\u77e5\\u65b9\\u6cd5\\u5b9e\\u9a8c\\u5ba4',
-  resume_res_3_detail_1: '\\u8d1f\\u8d23\\u5f00\\u53d1\\u57fa\\u4e8e Unity \\u548c ONNX Sentis \\u7684\\u60c5\\u7eea\\u8bc6\\u522b\\u578b VR \\u5bf9\\u8bdd\\u7cfb\\u7edf\\uff0c\\u96c6\\u6210\\u8bed\\u97f3\\u4e0e\\u6587\\u672c\\u591a\\u6a21\\u6001\\u5206\\u6790\\uff0c\\u5e76\\u6784\\u5efa VAD \\u60c5\\u7eea\\u7a7a\\u95f4\\u6807\\u7b7e\\u6ce8\\u5165\\u7684\\u8bed\\u8a00\\u6a21\\u578b\\u63d0\\u793a\\u8bcd\\u673a\\u5236\\u3002',
-  resume_res_3_detail_2: '\\u5b8c\\u6210\\u60c5\\u7eea\\u5bf9\\u8bdd\\u6838\\u5fc3\\u6a21\\u5757\\u3001\\u63d0\\u793a\\u8bcd\\u751f\\u6210\\u4e0e\\u865a\\u62df\\u4eba\\u53cd\\u9988\\u8bbe\\u8ba1\\uff0c\\u4f7f AI \\u80fd\\u6839\\u636e\\u7528\\u6237\\u60c5\\u611f\\u72b6\\u6001\\u52a8\\u6001\\u8c03\\u6574\\u8bed\\u6c14\\u3001\\u98ce\\u683c\\u548c\\u5185\\u5bb9\\u3002',
-  resume_res_4_title: '\\u7814\\u7a76\\u52a9\\u7406\\uff0cSEE VR \\u5b9e\\u9a8c\\u5ba4\\uff0c\\u91d1\\u53f2\\u5bc6\\u65af\\u5b66\\u9662\\u4f26\\u6566\\u5927\\u5b66',
-  resume_res_4_detail_1: '\\u63a2\\u8ba8 AI \\u9a71\\u52a8\\u4ee3\\u7406\\u4e0e VR \\u6280\\u672f\\u7ed3\\u5408\\u6cbb\\u7597\\u793e\\u4ea4\\u7126\\u8651\\u969c\\u788d\\u7684\\u6f5c\\u5728\\u7597\\u6548\\uff0c\\u5e76\\u901a\\u8fc7\\u5b9a\\u6027\\u5206\\u6790\\u4e0e\\u7cfb\\u7edf\\u6587\\u732e\\u7efc\\u8ff0\\u5bf9\\u6bd4\\u4f20\\u7edf CBT \\u7684\\u7ed3\\u679c\\u3002',
-  resume_res_4_detail_2: '\\u8d1f\\u8d23 Unity \\u6280\\u672f\\u5b9e\\u73b0\\u548c\\u6570\\u636e\\u5206\\u6790\\uff0c\\u4f7f\\u7528 GAD-7 \\u4e0e STAI-S \\u91cf\\u8868\\u8bc4\\u4f30 AI + VR \\u5fc3\\u7406\\u54a8\\u8be2\\u5728\\u7f13\\u89e3\\u7126\\u8651\\u65b9\\u9762\\u7684\\u6548\\u679c\\u3002',
-  resume_res_5_title: '\\u7814\\u7a76\\u5b9e\\u4e60\\u751f\\uff0c\\u865a\\u62df\\u73b0\\u5b9e\\u5b9e\\u9a8c\\u5ba4\\uff0c\\u54c8\\u5c14\\u6ee8\\u5de5\\u4e1a\\u5927\\u5b66',
-  resume_res_5_detail_1: '\\u4f7f\\u7528 HTC VIVE \\u5728 Unity \\u4e2d\\u6784\\u5efa\\u771f\\u5b9e\\u81ea\\u7136\\u573a\\u666f\\u8fdb\\u884c\\u5b9e\\u9a8c\\uff0c\\u5e76\\u5229\\u7528 E4 \\u624b\\u73af\\u91c7\\u96c6\\u5b66\\u751f BVP\\u3001HR \\u7b49\\u6570\\u636e\\u6765\\u8bc4\\u4f30 VR \\u73af\\u5883\\u5bf9\\u5fc3\\u7406\\u6062\\u590d\\u7684\\u5f71\\u54cd\\u3002',
-  resume_res_5_detail_2: '\\u63d0\\u51fa\\u5b66\\u672f\\u73af\\u5883\\u4e2d\\u865a\\u62df\\u73b0\\u5b9e\\u6062\\u590d\\u73af\\u5883\\u7684\\u8bbe\\u8ba1\\u548c\\u6784\\u5efa\\u65b9\\u6cd5\\uff0c\\u8003\\u5bdf\\u865a\\u62df\\u6062\\u590d\\u73af\\u5883\\u7684\\u611f\\u77e5\\u8d28\\u91cf\\u5bf9\\u5fc3\\u7406\\u5065\\u5eb7\\u6062\\u590d\\u7684\\u5f71\\u54cd\\u3002',
-  resume_res_6_title: '\\u7814\\u7a76\\u5b9e\\u4e60\\u751f\\uff0c\\u6570\\u5b57\\u8bbe\\u8ba1\\u4e0e\\u521b\\u65b0\\u4e2d\\u5fc3\\uff0c\\u54c8\\u5c14\\u6ee8\\u5de5\\u4e1a\\u5927\\u5b66',
-  resume_res_6_detail_1: '\\u8d1f\\u8d23\\u7ed8\\u5236\\u4e0d\\u540c\\u7eff\\u690d\\u4e0e\\u7eff\\u5899\\u914d\\u7f6e\\u7684\\u5ba4\\u5185\\u73af\\u5883\\u7eff\\u8272\\u89c6\\u91ce\\u7387\\uff08GLR\\uff09\\u5e76\\u8fdb\\u884c\\u5b9e\\u9a8c\\uff0c\\u7814\\u7a76\\u4e0d\\u540c\\u6821\\u56ed\\u7eff\\u5316\\u666f\\u89c2\\u5bf9\\u5927\\u5b66\\u751f\\u5fc3\\u7406\\u6062\\u590d\\u7684\\u5f71\\u54cd\\u3002',
-  resume_res_6_detail_2: '\\u91c7\\u7528\\u7b80\\u7248\\u4fee\\u8ba2\\u6062\\u590d\\u91cf\\u8868\\uff08SRRS\\uff09\\u8bc4\\u4f30\\u6062\\u590d\\u6548\\u76ca\\uff0c\\u4e3a\\u521b\\u5efa\\u5065\\u5eb7\\u5b9c\\u5c45\\u7684\\u6821\\u56ed\\u73af\\u5883\\u8bbe\\u8ba1\\u63d0\\u4f9b\\u6570\\u636e\\u652f\\u6301\\u3002',
-  resume_pub_1: '[1]. Zhao, Z. (2026). <span class=\"pub-title\">Designing Constrained Generative NPCs with a Dynamic Evidence Graph for Investigative Narrative Worlds</span>. \\u6536\\u5f55\\u4e8e <span class=\"pub-venue\">2026 CHI Conference on Human Factors in Computing Systems \\u6269\\u5c55\\u6458\\u8981\\uff08CHI EA \\'26\\uff09</span>. ACM. <a href=\"https://doi.org/10.1145/3772363.3798387\" target=\"_blank\" rel=\"noreferrer\">https://doi.org/10.1145/3772363.3798387</a>',
-  resume_pub_2: '[2]. Zhao, Z. (2026). <span class=\"pub-title\">Multimodal Emotion Perception for VR Dialogue: Towards Improved User Experience</span>. \\u6536\\u5f55\\u4e8e <span class=\"pub-venue\">IEEE VR 2026 Conference on Virtual Reality and 3D User Interfaces</span>. IEEE.',
-  resume_pub_3: '[3]. Zhao, Z., &amp; Yin, C. (2025, July). <span class=\"pub-title\">Leveraging AI-driven VR environments to reshape urban planning and community engagement</span>. \\u4f1a\\u8bae\\u8bba\\u6587\\uff0c\\u53d1\\u8868\\u4e8e\\u7b2c 19 \\u5c4a <span class=\"pub-venue\">Computational Urban Planning and Urban Management (CUPUM 2025)</span>\\uff0c\\u4f26\\u6566\\u3002',
-  resume_pub_4: '[4]. Yin, C., Li, T., Xue, B., &amp; Zhao, Z. (2025). <span class=\"pub-title\">Influence of virtual reality restorative environments on psychological well-being in university students: An evidence-based experimental study</span>. <span class=\"pub-venue\">Exploration of Digital Health Technologies</span>, 3, 101155. <a href=\"https://doi.org/10.37349/edht.2025.101155\" target=\"_blank\" rel=\"noreferrer\">https://doi.org/10.37349/edht.2025.101155</a>',
-  resume_work_1_title: '\\u4e0a\\u6d77\\u4e91\\u68a7\\u667a\\u80fd\\u79d1\\u6280 Feeling AI\\uff5cAI \\u4ea7\\u54c1\\u8bbe\\u8ba1\\u5b9e\\u4e60\\u751f',
-  resume_work_1_detail_1: '\\u4e3b\\u5bfc\\u843d\\u5730\\u4e00\\u6b3e AI \\u9a71\\u52a8\\u7684\\u591a\\u89d2\\u8272\\u53d9\\u4e8b\\u8c03\\u67e5 Demo\\uff0c\\u6784\\u5efa\\u897f\\u90e8\\u5c0f\\u9547\\u4e16\\u754c\\u89c2\\u4e0e\\u5267\\u60c5\\u95ed\\u73af\\uff0c\\u89c4\\u5212 NPC \\u5173\\u7cfb\\u7f51\\u7edc\\u4e0e\\u4fe1\\u606f\\u6d41\\u8f6c\\u673a\\u5236\\uff0c\\u5b9a\\u4e49\\u8bed\\u4e49\\u6807\\u7b7e\\u4e0e\\u6570\\u636e\\u7ed3\\u6784\\u6807\\u51c6\\uff0c\\u63a8\\u52a8\\u5bf9\\u8bdd\\u3001\\u4fe1\\u4efb\\u4e0e\\u8bb0\\u5fc6\\u7cfb\\u7edf\\u5b9e\\u73b0\\uff0c\\u9a8c\\u8bc1 LLM \\u8d4b\\u80fd\\u4e92\\u52a8\\u53d9\\u4e8b\\u4ea7\\u54c1\\u7684\\u7ed3\\u6784\\u5316\\u4e0e\\u53ef\\u63a8\\u7406\\u6027\\u3002',
-  resume_work_2_title: 'UCL \\u591a\\u5a92\\u4f53\\u4eba\\u7c7b\\u5b66\\u5b9e\\u9a8c\\u5ba4\\uff5c3D / VR \\u8bbe\\u8ba1\\u5e08',
-  resume_work_2_detail_1: '\\u53c2\\u4e0e\\u57fa\\u4e8e Unreal \\u7684\\u6c89\\u6d78\\u5f0f VR \\u535a\\u7269\\u9986\\u5efa\\u8bbe\\uff0c\\u6570\\u5b57\\u5316\\u590d\\u539f 200 \\u4f59\\u7ec4\\u5df4\\u897f\\u539f\\u4f4f\\u6c11\\u6587\\u5316\\u9057\\u4ea7\\uff0c\\u5f3a\\u8c03\\u201c\\u5730\\u65b9\\u77e5\\u8bc6\\u201d\\u4e0e\\u6587\\u5316\\u7a7a\\u95f4\\u7684\\u53ef\\u89c6\\u5316\\u53d9\\u4e8b\\u8868\\u8fbe\\uff0c\\u5e76\\u63a2\\u7d22\\u6570\\u5b57\\u9057\\u4ea7\\u5728\\u5168\\u7403\\u5316\\u80cc\\u666f\\u4e0b\\u7684\\u8868\\u8fbe\\u7b56\\u7565\\u3002',
-  resume_work_3_title: '\\u65b0\\u7586\\u5efa\\u7b51\\u8bbe\\u8ba1\\u7814\\u7a76\\u9662\\u6709\\u9650\\u516c\\u53f8\\uff5c\\u53c2\\u6570\\u5316\\u8bbe\\u8ba1\\u5b9e\\u4e60\\u751f',
-  resume_work_3_detail_1: '\\u53c2\\u4e0e\\u5efa\\u7b51\\u6982\\u5ff5\\u4e0e\\u65b9\\u6848\\u8bbe\\u8ba1\\uff0c\\u57fa\\u4e8e Rhino \\u548c Grasshopper \\u8fdb\\u884c\\u7acb\\u9762\\u4e0e\\u4f53\\u91cf\\u5efa\\u6a21\\uff0c\\u652f\\u6301\\u8bbe\\u8ba1\\u65b9\\u6848\\u5728\\u529f\\u80fd\\u3001\\u7f8e\\u5b66\\u4e0e\\u7ed3\\u6784\\u4e0a\\u7684\\u7efc\\u5408\\u4f18\\u5316\\uff0c\\u5e76\\u53c2\\u4e0e\\u65bd\\u5de5\\u9636\\u6bb5\\u6280\\u672f\\u95ee\\u9898\\u5904\\u7406\\u4e0e\\u56fe\\u7eb8\\u5ba1\\u6821\\u3002',
-  resume_work_4_title: '\\u4e0a\\u6d77 PTA \\u5efa\\u7b51\\u8bbe\\u8ba1\\u54a8\\u8be2\\u6709\\u9650\\u516c\\u53f8\\uff5c\\u5efa\\u7b51\\u8bbe\\u8ba1\\u5b9e\\u4e60\\u751f',
-  resume_work_4_detail_1: '\\u53c2\\u4e0e\\u57ce\\u5e02\\u89c4\\u5212\\u4e0e\\u7efc\\u5408\\u4f53\\u524d\\u671f\\u65b9\\u6848\\u8bbe\\u8ba1\\uff0c\\u91cd\\u70b9\\u8d1f\\u8d23\\u573a\\u5730\\u73b0\\u72b6\\u5206\\u6790\\u3001\\u529f\\u80fd\\u5206\\u533a\\u3001\\u7a7a\\u95f4\\u7ec4\\u7ec7\\u7814\\u7a76\\u4ee5\\u53ca\\u6cd5\\u89c4\\u4e0e\\u63a7\\u5236\\u6307\\u6807\\u8c03\\u7814\\u3002',
-  resume_proj_1_title: 'Digital Heritage Project - Nanjing Da Bao En Temple',
-  resume_proj_1_desc: '\\u8d1f\\u8d23\\u5f00\\u53d1\\u8054\\u5408\\u56fd\\u6559\\u79d1\\u6587\\u7ec4\\u7ec7\\u9057\\u5740\\u8bed\\u5883\\u4e0b\\u7684\\u5927\\u62a5\\u6069\\u5bfa\\u6570\\u5b57\\u4f53\\u9a8c\\uff0c\\u91cd\\u5efa\\u5386\\u53f2\\u573a\\u666f\\u5e76\\u5229\\u7528 AR/VR \\u8bb2\\u8ff0\\u6587\\u7269\\u6545\\u4e8b\\uff0c\\u8bbe\\u8ba1 AI \\u5bf9\\u8bdd\\u4e0e\\u4e92\\u52a8\\u7cfb\\u7edf\\uff0c\\u7edf\\u7b79\\u6280\\u672f\\u4e0e\\u7f8e\\u672f\\u6574\\u5408\\u5e76\\u53c2\\u4e0e\\u5168\\u7403\\u7ade\\u8d5b\\u63d0\\u6848\\u63d0\\u4ea4\\u3002',
-  resume_proj_2_title: 'FireEscapeVR - \\u57fa\\u4e8e 3D \\u7a7a\\u95f4\\u97f3\\u9891\\u5b9a\\u4f4d\\u7684 VR \\u9003\\u751f\\u6a21\\u62df\\u5668\\uff08Unity\\uff09',
-  resume_proj_2_desc: '\\u6784\\u5efa\\u57fa\\u4e8e 3D \\u7a7a\\u95f4\\u97f3\\u9891\\u7684 VR \\u9003\\u751f\\u6a21\\u62df\\u7cfb\\u7edf\\uff0c\\u63a2\\u7d22\\u7a7a\\u95f4\\u542c\\u89c9\\u5728\\u7d27\\u6025\\u9003\\u751f\\u4e2d\\u7684\\u5f15\\u5bfc\\u4f5c\\u7528\\uff0c\\u5f00\\u53d1\\u6c89\\u6d78\\u5f0f\\u4ea4\\u4e92\\u754c\\u9762\\u4e0e\\u8def\\u5f84\\u7cfb\\u7edf\\uff0c\\u5177\\u6709\\u6d88\\u9632\\u6f14\\u7ec3\\u4e0e\\u5b89\\u5168\\u57f9\\u8bad\\u7684\\u6559\\u80b2\\u5e94\\u7528\\u4ef7\\u503c\\u3002',
-  resume_proj_3_title: 'Carbonis: Siren\\'s Elegia - VR \\u4e92\\u52a8\\u7535\\u5f71\\uff08Unreal\\uff09',
-  resume_proj_3_desc: '\\u4e3b\\u5bfc\\u795e\\u8bdd\\u4e0e\\u751f\\u6001\\u53d9\\u4e8b\\u4ea4\\u878d\\u7684 VR \\u4e92\\u52a8\\u7535\\u5f71\\uff0c\\u8bbe\\u8ba1\\u8c61\\u5f81\\u4eba\\u7c7b\\u8d2a\\u5a6a\\u7684\\u6c34\\u4e0b\\u7a7a\\u95f4\\u4e0e\\u4ea4\\u4e92\\u5bfc\\u822a\\u7cfb\\u7edf\\uff0c\\u6279\\u5224\\u7eff\\u8272\\u6d17\\u6da4\\u4e0e\\u8d44\\u672c\\u4e3b\\u4e49\\u751f\\u6001\\u5265\\u524a\\uff0c\\u9762\\u5411\\u865a\\u62df\\u827a\\u672f\\u4e0e\\u65f6\\u5c1a\\u4f20\\u64ad\\u573a\\u666f\\u3002',
-  resume_proj_4_title: 'Bloomiverse - AR Planting Adventure Game\\uff08Unity\\uff09',
-  resume_proj_4_desc: '\\u8bbe\\u8ba1\\u690d\\u7269\\u52a8\\u753b\\u4e0e\\u9053\\u5177\\u4ea4\\u4e92\\u673a\\u5236\\uff0c\\u5f00\\u53d1\\u589e\\u5f3a\\u73b0\\u5b9e\\u9b54\\u6cd5\\u82b1\\u56ed\\u4f53\\u9a8c\\uff0c\\u901a\\u8fc7\\u690d\\u5165\\u5f0f\\u53cd\\u9988\\u673a\\u5236\\u52a0\\u5f3a\\u7528\\u6237\\u5728\\u751f\\u6001\\u4e3b\\u9898\\u6e38\\u620f\\u4e2d\\u7684\\u4e92\\u52a8\\u6c89\\u6d78\\u3002',
-  resume_skill_ai_label: 'AI \\u4ea4\\u4e92',
-  resume_skill_ai_value: 'LLM \\u63d0\\u793a\\u8bcd\\u8bbe\\u8ba1\\u3001\\u591a\\u667a\\u80fd\\u4f53\\u5bf9\\u8bdd\\u3001\\u60c5\\u7eea\\u81ea\\u9002\\u5e94\\u7cfb\\u7edf\\u3001\\u4f1a\\u8bdd\\u8bb0\\u5fc6',
-  resume_skill_code_label: '\\u7f16\\u7a0b\\u8bed\\u8a00',
-  resume_skill_engine_label: '\\u6e38\\u620f\\u5f15\\u64ce',
-  resume_skill_engine_value: 'Unity3D\\uff08C#\\uff09\\u3001Unreal Engine\\uff08Blueprint \\u4e0e C++\\uff09\\u3001NPC \\u903b\\u8f91\\u4e0e\\u7cfb\\u7edf\\u67b6\\u6784',
-  resume_skill_tools_label: '\\u8bbe\\u8ba1\\u5de5\\u5177',
-});
-
-const defaultHtml = new Map();
-
-function captureDefaultTexts() {
-  document.querySelectorAll('[data-i18n]').forEach((el) => {
-    const key = el.getAttribute('data-i18n');
-    if (!defaultTexts.has(key)) {
-      defaultTexts.set(key, el.textContent.trim());
-    }
-  });
-
-  document.querySelectorAll('[data-i18n-html]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-html');
-    if (!defaultHtml.has(key)) {
-      defaultHtml.set(key, el.innerHTML.trim());
-    }
-  });
-}
-
-function getHtmlForKey(lang, key) {
-  const original = defaultHtml.get(key) || '';
-  if (lang === 'zh' && zhTranslations[key] !== undefined) {
-    return zhTranslations[key];
-  }
-  return original;
-}
-
-function setLanguage(lang) {
-  document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
-
-  document.querySelectorAll('[data-i18n]').forEach((el) => {
-    const key = el.getAttribute('data-i18n');
-    const text = getTextForKey(lang, key);
-    if (text !== undefined && text !== null && text !== '') {
-      el.textContent = text;
-    }
-  });
-
-  document.querySelectorAll('[data-i18n-html]').forEach((el) => {
-    const key = el.getAttribute('data-i18n-html');
-    const html = getHtmlForKey(lang, key);
-    if (html !== undefined && html !== null && html !== '') {
-      el.innerHTML = html;
-    }
-  });
-
-  updateStaticNavLabels(lang);
-  updateLangButtonLabels();
-  translateCommonStaticText(lang);
-
-  document.querySelectorAll('.lang-btn').forEach((btn) => {
-    btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
-  });
-
-  localStorage.setItem('cv_lang', lang);
-}
