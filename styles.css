@@ -853,11 +853,26 @@ body {
   max-width: 88ch;
 }
 
+
+
 .proj-layout {
   display: grid;
   grid-template-columns: minmax(0, 1.65fr) minmax(240px, 0.85fr);
   gap: 18px;
   align-items: start;
+}
+
+.architecture-hero,
+.architecture-layout,
+.proj-gallery-plain {
+  width: 100%;
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.architecture-hero .proj-hero-inner {
+  max-width: none;
 }
 
 .proj-main {
