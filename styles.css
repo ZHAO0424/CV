@@ -1633,8 +1633,7 @@ body.has-custom-cursor .pixel-square {
 
 .cursor-aura,
 .cursor-ring,
-.cursor-trail,
-.cursor-label {
+.cursor-trail {
   position: fixed;
   left: 0;
   top: 0;
@@ -1665,21 +1664,6 @@ body.has-custom-cursor .pixel-square {
   transition: border-color 220ms ease, background 220ms ease, box-shadow 220ms ease;
 }
 
-.cursor-label {
-  min-width: 44px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.9);
-  background: rgba(10, 17, 30, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 10px 30px rgba(8, 15, 27, 0.22);
-  text-align: center;
-  opacity: 0;
-  transition: opacity 180ms ease, transform 160ms ease;
-}
 
 .cursor-trail {
   width: 10px;
@@ -1763,10 +1747,6 @@ body[data-cursor-contrast='dark'] .cursor-trail {
   opacity: 0.24;
 }
 
-body[data-cursor='link'] .cursor-label,
-body[data-cursor='video'] .cursor-label {
-  opacity: 1;
-}
 
 .cursor-magnetic {
   transform: translate3d(var(--cursor-mx, 0), var(--cursor-my, 0), 0);
@@ -1785,7 +1765,7 @@ body[data-cursor='video'] .cursor-label {
   bottom: 0;
   height: 320px;
   z-index: 0;
-  pointer-events: auto;
+  pointer-events: none;
   border-radius: 0 0 28px 28px;
   overflow: hidden;
   mask-image: linear-gradient(to top, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.84) 40%, rgba(0, 0, 0, 0) 100%);

@@ -188,8 +188,7 @@ function setupCursorEffects() {
     y: window.innerHeight / 2,
     currentX: window.innerWidth / 2,
     currentY: window.innerHeight / 2,
-    hover: 'default',
-    contrast: 'light'
+    hover: 'default'
   };
 
   const trailPoints = trails.map(() => ({ x: state.currentX, y: state.currentY }));
@@ -250,7 +249,6 @@ function setupCursorEffects() {
   }
 
   function applyContrastState(kind) {
-    state.contrast = kind;
     body.dataset.cursorContrast = kind;
   }
 
@@ -385,32 +383,21 @@ function setupLogoPixelBurst() {
       .sort((a, b) => a.top - b.top);
   }
 
-  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase, options = {}) {
+  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase) {
     const node = document.createElement('span');
     node.className = 'logo-pixel';
     const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const mode = options.mode || 'logo';
-    const width = mode === 'footer' ? 9 + Math.random() * 8 : 10 + Math.random() * 10;
+    const width = 10 + Math.random() * 10;
     const height = width * (0.82 + Math.random() * 0.38);
     const laneCount = burstBase.length;
-    let floorX = originX;
-    let floorY = window.innerHeight - 10 - height;
-    let directionRoll = 0.5;
-
-    if (mode === 'footer') {
-      const lane = Math.min(laneCount - 1, Math.max(0, Math.floor((originX - burstLeft) / Math.max(1, burstWidth / laneCount))));
-      floorY -= burstBase[lane] * (4 + Math.random() * 3);
-      burstBase[lane] += 1;
-    } else {
-      directionRoll = Math.random();
-      const lane = directionRoll < 0.18
-        ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
-        : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
-      const laneGap = burstWidth / Math.max(1, laneCount - 1);
-      floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
-      floorY -= burstBase[lane] * (5 + Math.random() * 4);
-      burstBase[lane] += 1;
-    }
+    const directionRoll = Math.random();
+    const lane = directionRoll < 0.18
+      ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
+      : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
+    const laneGap = burstWidth / Math.max(1, laneCount - 1);
+    const floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
+    const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
+    burstBase[lane] += 1;
 
     node.style.width = `${width}px`;
     node.style.height = `${height}px`;
@@ -426,15 +413,13 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: mode === 'footer' ? originX + (Math.random() - 0.5) * 2.2 : originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
-      y: originY + (mode === 'footer' ? (Math.random() - 0.5) * 2 : (Math.random() - 0.5) * 4),
-      vx: mode === 'footer'
-        ? 0
-        : directionRoll < 0.18
-          ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
-          : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
-      vy: mode === 'footer' ? 0.08 + Math.random() * 0.06 : 0.14 + Math.random() * 0.14,
-      gravity: mode === 'footer' ? 0.17 + Math.random() * 0.01 : 0.14 + Math.random() * 0.018,
+      x: originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
+      y: originY + (Math.random() - 0.5) * 4,
+      vx: directionRoll < 0.18
+        ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
+        : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
+      vy: 0.14 + Math.random() * 0.14,
+      gravity: 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
       spin: (Math.random() - 0.5) * 0.24,
       floorY,
@@ -449,8 +434,7 @@ function setupLogoPixelBurst() {
       restSlideVX: 0,
       restMaxX: 0,
       lastObstacleId: -1,
-      rightPush: mode === 'footer' ? 0 : 0.0038 + Math.random() * 0.0035,
-      verticalOnly: mode === 'footer'
+      rightPush: 0.0038 + Math.random() * 0.0035
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -473,30 +457,14 @@ function setupLogoPixelBurst() {
     }
   }
 
-  function triggerFooterDrop(ev) {
-    const field = ev.currentTarget;
-    const rect = field.getBoundingClientRect();
-    const originX = Math.max(rect.left + 10, Math.min(rect.right - 10, ev.clientX));
-    const originY = Math.min(rect.top + 42, Math.max(rect.top + 14, ev.clientY));
-    const burstWidth = 80;
-    const burstLeft = Math.max(rect.left + 8, originX - burstWidth / 2);
-    const burstBase = new Array(5).fill(0);
-    const count = 12 + Math.round(Math.random() * 4);
-
-    for (let i = 0; i < count; i += 1) {
-      const delay = i * (26 + Math.random() * 20);
-      window.setTimeout(() => spawnFragment(originX, originY, burstLeft, burstWidth, burstBase, { mode: 'footer' }), delay);
-    }
-  }
-
   function resolveFragmentCollisions(now) {
     for (let i = 0; i < fragments.length; i += 1) {
       const a = fragments[i];
-      if (a.settled || a.verticalOnly || now < a.obstacleRestUntil) continue;
+      if (a.settled || now < a.obstacleRestUntil) continue;
 
       for (let j = i + 1; j < fragments.length; j += 1) {
         const b = fragments[j];
-        if (b.settled || b.verticalOnly || now < b.obstacleRestUntil) continue;
+        if (b.settled || now < b.obstacleRestUntil) continue;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -528,7 +496,6 @@ function setupLogoPixelBurst() {
   }
 
   function handleObstacleBounce(fragment, prevBottom, now) {
-    if (fragment.verticalOnly) return false;
     const centerX = fragment.x + fragment.width / 2;
     const bottom = fragment.y + fragment.height;
 
@@ -571,13 +538,9 @@ function setupLogoPixelBurst() {
         } else {
           const prevBottom = fragment.y + fragment.height;
           fragment.vy += fragment.gravity;
-          if (!fragment.verticalOnly) {
-            fragment.vx += fragment.rightPush;
-            fragment.vx *= 0.993;
-            fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
-          } else {
-            fragment.vx = 0;
-          }
+          fragment.vx += fragment.rightPush;
+          fragment.vx *= 0.993;
+          fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
           fragment.x += fragment.vx;
           fragment.y += fragment.vy;
           fragment.rotate += fragment.spin;
@@ -623,33 +586,8 @@ function setupLogoPixelBurst() {
   }
   trigger.addEventListener('pointerdown', triggerBurst);
   trigger.addEventListener('click', triggerBurst);
-  const footerFields = Array.from(document.querySelectorAll('.page .footer-field'));
-  if (!document.body.dataset.footerPixelBound) {
-    document.body.dataset.footerPixelBound = 'true';
-    document.addEventListener('pointerdown', (ev) => {
-      if (ev.target.closest('a, button, video, .footer-link, .lang-btn')) return;
-
-      const directField = footerFields.find((candidate) => {
-        const rect = candidate.getBoundingClientRect();
-        return ev.clientX >= rect.left && ev.clientX <= rect.right && ev.clientY >= rect.top && ev.clientY <= rect.bottom;
-      });
-
-      if (directField) {
-        triggerFooterDrop({ currentTarget: directField, clientX: ev.clientX, clientY: ev.clientY });
-        return;
-      }
-
-      const page = ev.target.closest('.page');
-      if (!page) return;
-      const fallbackField = page.querySelector('.footer-field');
-      if (!fallbackField) return;
-      const pageRect = page.getBoundingClientRect();
-      const bottomThreshold = Math.min(pageRect.bottom, window.innerHeight) - 320;
-      if (ev.clientY < bottomThreshold || ev.clientX < pageRect.left || ev.clientX > pageRect.right) return;
-      triggerFooterDrop({ currentTarget: fallbackField, clientX: ev.clientX, clientY: ev.clientY });
-    }, { passive: true });
-  }
 }
+
 function setupFooterField() {
   if (!supportsFinePointer() || prefersReducedMotion()) return;
 
