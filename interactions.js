@@ -151,10 +151,8 @@ function setupManagedVideos() {
 }
 
 function setupPhotoLightbox() {
-  if (prefersReducedMotion()) return;
-
-  const photos = Array.from(document.querySelectorAll('.page-photo .photo-img'));
-  if (!photos.length || document.querySelector('.photo-lightbox')) return;
+  const images = Array.from(document.querySelectorAll('.page-photo .photo-img, .proj-gallery .shot-img'));
+  if (!images.length || document.querySelector('.photo-lightbox')) return;
 
   const overlay = document.createElement('div');
   overlay.className = 'photo-lightbox';
@@ -175,36 +173,41 @@ function setupPhotoLightbox() {
   let lastFocus = null;
 
   function closeLightbox() {
-    overlay.classList.remove('is-open');
+    overlay.classList.remove('is-open', 'is-shot', 'is-architecture');
     overlay.setAttribute('aria-hidden', 'true');
     document.body.classList.remove('photo-lightbox-open');
+    image.removeAttribute('src');
     if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
   }
 
-  function openLightbox(photo) {
-    if (!photo) return;
+  function openLightbox(targetImage) {
+    if (!targetImage) return;
+    const isShot = targetImage.classList.contains('shot-img');
+    const isArchitecture = Boolean(targetImage.closest('.gallery-grid-architecture'));
     lastFocus = document.activeElement;
-    image.src = photo.currentSrc || photo.src;
-    image.alt = photo.alt || 'Photography image';
-    caption.textContent = photo.alt || '';
+    image.src = targetImage.currentSrc || targetImage.src;
+    image.alt = targetImage.alt || 'Image preview';
+    caption.textContent = targetImage.alt || '';
+    overlay.classList.toggle('is-shot', isShot);
+    overlay.classList.toggle('is-architecture', isArchitecture);
     overlay.classList.add('is-open');
     overlay.setAttribute('aria-hidden', 'false');
     document.body.classList.add('photo-lightbox-open');
     closeBtn.focus();
   }
 
-  photos.forEach((photo) => {
+  images.forEach((targetImage) => {
     const activate = (ev) => {
       ev.preventDefault();
-      openLightbox(photo);
+      openLightbox(targetImage);
     };
-    photo.addEventListener('click', activate);
-    photo.addEventListener('keydown', (ev) => {
+    targetImage.addEventListener('click', activate);
+    targetImage.addEventListener('keydown', (ev) => {
       if (ev.key === 'Enter' || ev.key === ' ') activate(ev);
     });
-    photo.setAttribute('tabindex', '0');
-    photo.setAttribute('role', 'button');
-    photo.setAttribute('aria-label', photo.alt || 'Open image');
+    targetImage.setAttribute('tabindex', '0');
+    targetImage.setAttribute('role', 'button');
+    targetImage.setAttribute('aria-label', targetImage.alt || 'Open image');
   });
 
   closeBtn.addEventListener('click', closeLightbox);
