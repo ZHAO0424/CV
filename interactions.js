@@ -177,6 +177,7 @@ function setupCursorEffects() {
   `;
   body.appendChild(shell);
   body.classList.add('has-custom-cursor');
+  body.dataset.cursorContrast = 'light';
 
   const aura = shell.querySelector('.cursor-aura');
   const ring = shell.querySelector('.cursor-ring');
@@ -187,7 +188,8 @@ function setupCursorEffects() {
     y: window.innerHeight / 2,
     currentX: window.innerWidth / 2,
     currentY: window.innerHeight / 2,
-    hover: 'default'
+    hover: 'default',
+    contrast: 'light'
   };
 
   const trailPoints = trails.map(() => ({ x: state.currentX, y: state.currentY }));
@@ -195,6 +197,61 @@ function setupCursorEffects() {
   function applyHoverState(kind) {
     state.hover = kind;
     body.dataset.cursor = kind;
+  }
+
+  function parseColor(color) {
+    if (!color || color === 'transparent') return null;
+    const match = color.match(/rgba?\(([^)]+)\)/i);
+    if (!match) return null;
+    const parts = match[1].split(',').map((part) => Number.parseFloat(part.trim()));
+    if (parts.length < 3 || parts.some(Number.isNaN)) return null;
+    return {
+      r: parts[0],
+      g: parts[1],
+      b: parts[2],
+      a: parts.length > 3 && !Number.isNaN(parts[3]) ? parts[3] : 1
+    };
+  }
+
+  function luminanceOf(color) {
+    const toLinear = (value) => {
+      const channel = value / 255;
+      return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    };
+
+    return 0.2126 * toLinear(color.r) + 0.7152 * toLinear(color.g) + 0.0722 * toLinear(color.b);
+  }
+
+  function resolveSurfaceContrast(target) {
+    if (!target) return 'light';
+    if (target.closest('.footer, .footer-field')) return 'dark';
+    if (target.closest('video')) return 'light';
+
+    const candidates = [];
+    let node = target.nodeType === 1 ? target : target.parentElement;
+    while (node && candidates.length < 6) {
+      candidates.push(node);
+      node = node.parentElement;
+    }
+    candidates.push(document.body);
+
+    for (const candidate of candidates) {
+      const styles = window.getComputedStyle(candidate);
+      const color = parseColor(styles.backgroundColor);
+      if (!color) continue;
+      if (color.a <= 0.04) continue;
+      const luminance = luminanceOf(color);
+      if (color.a < 0.18 && luminance < 0.24) return 'dark';
+      if (luminance > 0.45 || color.a < 0.24) return 'light';
+      return 'dark';
+    }
+
+    return 'light';
+  }
+
+  function applyContrastState(kind) {
+    state.contrast = kind;
+    body.dataset.cursorContrast = kind;
   }
 
   function resolveHoverKind(target) {
@@ -210,11 +267,13 @@ function setupCursorEffects() {
     state.y = ev.clientY;
     shell.classList.add('is-visible');
     applyHoverState(resolveHoverKind(ev.target));
+    applyContrastState(resolveSurfaceContrast(ev.target));
   }
 
   function onPointerLeave() {
     shell.classList.remove('is-visible');
     applyHoverState('default');
+    applyContrastState('light');
   }
 
   function animate() {
@@ -326,21 +385,32 @@ function setupLogoPixelBurst() {
       .sort((a, b) => a.top - b.top);
   }
 
-  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase) {
+  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase, options = {}) {
     const node = document.createElement('span');
     node.className = 'logo-pixel';
     const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const width = 10 + Math.random() * 10;
+    const mode = options.mode || 'logo';
+    const width = mode === 'footer' ? 9 + Math.random() * 8 : 10 + Math.random() * 10;
     const height = width * (0.82 + Math.random() * 0.38);
     const laneCount = burstBase.length;
-    const directionRoll = Math.random();
-    const lane = directionRoll < 0.18
-      ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
-      : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
-    const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
-    const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
-    burstBase[lane] += 1;
+    let floorX = originX;
+    let floorY = window.innerHeight - 10 - height;
+    let directionRoll = 0.5;
+
+    if (mode === 'footer') {
+      const lane = Math.min(laneCount - 1, Math.max(0, Math.floor((originX - burstLeft) / Math.max(1, burstWidth / laneCount))));
+      floorY -= burstBase[lane] * (4 + Math.random() * 3);
+      burstBase[lane] += 1;
+    } else {
+      directionRoll = Math.random();
+      const lane = directionRoll < 0.18
+        ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
+        : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
+      const laneGap = burstWidth / Math.max(1, laneCount - 1);
+      floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
+      floorY -= burstBase[lane] * (5 + Math.random() * 4);
+      burstBase[lane] += 1;
+    }
 
     node.style.width = `${width}px`;
     node.style.height = `${height}px`;
@@ -356,13 +426,15 @@ function setupLogoPixelBurst() {
       el: node,
       width,
       height,
-      x: originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
-      y: originY + (Math.random() - 0.5) * 4,
-      vx: directionRoll < 0.18
-        ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
-        : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
-      vy: 0.14 + Math.random() * 0.14,
-      gravity: 0.14 + Math.random() * 0.018,
+      x: mode === 'footer' ? originX + (Math.random() - 0.5) * 2.2 : originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
+      y: originY + (mode === 'footer' ? (Math.random() - 0.5) * 2 : (Math.random() - 0.5) * 4),
+      vx: mode === 'footer'
+        ? 0
+        : directionRoll < 0.18
+          ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
+          : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
+      vy: mode === 'footer' ? 0.08 + Math.random() * 0.06 : 0.14 + Math.random() * 0.14,
+      gravity: mode === 'footer' ? 0.17 + Math.random() * 0.01 : 0.14 + Math.random() * 0.018,
       rotate: (Math.random() - 0.5) * 8,
       spin: (Math.random() - 0.5) * 0.24,
       floorY,
@@ -377,7 +449,8 @@ function setupLogoPixelBurst() {
       restSlideVX: 0,
       restMaxX: 0,
       lastObstacleId: -1,
-      rightPush: 0.0038 + Math.random() * 0.0035
+      rightPush: mode === 'footer' ? 0 : 0.0038 + Math.random() * 0.0035,
+      verticalOnly: mode === 'footer'
     });
 
     if (!raf) raf = requestAnimationFrame(tick);
@@ -400,14 +473,31 @@ function setupLogoPixelBurst() {
     }
   }
 
+  function triggerFooterDrop(ev) {
+    const field = ev.currentTarget;
+    const rect = field.getBoundingClientRect();
+    const originX = ev.clientX;
+    const originY = ev.clientY;
+    const localX = Math.max(rect.left + 10, Math.min(rect.right - 10, originX));
+    const burstWidth = 80;
+    const burstLeft = Math.max(rect.left + 8, localX - burstWidth / 2);
+    const burstBase = new Array(5).fill(0);
+    const count = 10 + Math.round(Math.random() * 4);
+
+    for (let i = 0; i < count; i += 1) {
+      const delay = i * (24 + Math.random() * 18);
+      window.setTimeout(() => spawnFragment(localX, originY, burstLeft, burstWidth, burstBase, { mode: 'footer' }), delay);
+    }
+  }
+
   function resolveFragmentCollisions(now) {
     for (let i = 0; i < fragments.length; i += 1) {
       const a = fragments[i];
-      if (a.settled || now < a.obstacleRestUntil) continue;
+      if (a.settled || a.verticalOnly || now < a.obstacleRestUntil) continue;
 
       for (let j = i + 1; j < fragments.length; j += 1) {
         const b = fragments[j];
-        if (b.settled || now < b.obstacleRestUntil) continue;
+        if (b.settled || b.verticalOnly || now < b.obstacleRestUntil) continue;
 
         const dx = b.x - a.x;
         const dy = b.y - a.y;
@@ -439,6 +529,7 @@ function setupLogoPixelBurst() {
   }
 
   function handleObstacleBounce(fragment, prevBottom, now) {
+    if (fragment.verticalOnly) return false;
     const centerX = fragment.x + fragment.width / 2;
     const bottom = fragment.y + fragment.height;
 
@@ -481,9 +572,13 @@ function setupLogoPixelBurst() {
         } else {
           const prevBottom = fragment.y + fragment.height;
           fragment.vy += fragment.gravity;
-          fragment.vx += fragment.rightPush;
-          fragment.vx *= 0.993;
-          fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
+          if (!fragment.verticalOnly) {
+            fragment.vx += fragment.rightPush;
+            fragment.vx *= 0.993;
+            fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
+          } else {
+            fragment.vx = 0;
+          }
           fragment.x += fragment.vx;
           fragment.y += fragment.vy;
           fragment.rotate += fragment.spin;
@@ -529,6 +624,11 @@ function setupLogoPixelBurst() {
   }
   trigger.addEventListener('pointerdown', triggerBurst);
   trigger.addEventListener('click', triggerBurst);
+  document.querySelectorAll('.footer-field').forEach((field) => {
+    if (field.dataset.pixelDropBound === 'true') return;
+    field.dataset.pixelDropBound = 'true';
+    field.addEventListener('click', triggerFooterDrop);
+  });
 }
 function setupFooterField() {
   if (!supportsFinePointer() || prefersReducedMotion()) return;
@@ -708,10 +808,3 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFooterField();
   setupLogoPixelBurst();
 });
-
-
-
-
-
-
-
