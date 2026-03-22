@@ -623,21 +623,21 @@ function setupLogoPixelBurst() {
   }
   trigger.addEventListener('pointerdown', triggerBurst);
   trigger.addEventListener('click', triggerBurst);
-  document.querySelectorAll('.page').forEach((page) => {
-    const field = page.querySelector('.footer-field');
-    if (!field || page.dataset.footerPixelBound === 'true') return;
-    page.dataset.footerPixelBound = 'true';
+  const footerFields = Array.from(document.querySelectorAll('.page .footer-field'));
+  if (!document.body.dataset.footerPixelBound) {
+    document.body.dataset.footerPixelBound = 'true';
+    document.addEventListener('pointerdown', (ev) => {
+      if (ev.target.closest('a, button, video, .footer-link, .lang-btn')) return;
 
-    const invokeDrop = (ev) => {
-      if (ev.target.closest('a, button, video, .footer-link, .lang-btn, .project-card, .photo-card, .shot, .glass')) return;
-      const rect = field.getBoundingClientRect();
-      if (ev.clientX < rect.left || ev.clientX > rect.right || ev.clientY < rect.top || ev.clientY > rect.bottom) return;
+      const field = footerFields.find((candidate) => {
+        const rect = candidate.getBoundingClientRect();
+        return ev.clientX >= rect.left && ev.clientX <= rect.right && ev.clientY >= rect.top && ev.clientY <= rect.bottom;
+      });
+
+      if (!field) return;
       triggerFooterDrop({ currentTarget: field, clientX: ev.clientX, clientY: ev.clientY });
-    };
-
-    field.addEventListener('click', invokeDrop);
-    page.addEventListener('click', invokeDrop);
-  });
+    }, { passive: true });
+  }
 }
 function setupFooterField() {
   if (!supportsFinePointer() || prefersReducedMotion()) return;

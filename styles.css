@@ -22,6 +22,16 @@
   box-sizing: border-box;
 }
 
+html, body {
+  -webkit-user-select: none;
+  user-select: none;
+  caret-color: transparent;
+}
+
+::selection {
+  background: transparent;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
