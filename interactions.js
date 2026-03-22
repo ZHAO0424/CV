@@ -476,17 +476,16 @@ function setupLogoPixelBurst() {
   function triggerFooterDrop(ev) {
     const field = ev.currentTarget;
     const rect = field.getBoundingClientRect();
-    const originX = ev.clientX;
-    const originY = ev.clientY;
-    const localX = Math.max(rect.left + 10, Math.min(rect.right - 10, originX));
+    const originX = Math.max(rect.left + 10, Math.min(rect.right - 10, ev.clientX));
+    const originY = Math.min(rect.top + 42, Math.max(rect.top + 14, ev.clientY));
     const burstWidth = 80;
-    const burstLeft = Math.max(rect.left + 8, localX - burstWidth / 2);
+    const burstLeft = Math.max(rect.left + 8, originX - burstWidth / 2);
     const burstBase = new Array(5).fill(0);
-    const count = 10 + Math.round(Math.random() * 4);
+    const count = 12 + Math.round(Math.random() * 4);
 
     for (let i = 0; i < count; i += 1) {
-      const delay = i * (24 + Math.random() * 18);
-      window.setTimeout(() => spawnFragment(localX, originY, burstLeft, burstWidth, burstBase, { mode: 'footer' }), delay);
+      const delay = i * (26 + Math.random() * 20);
+      window.setTimeout(() => spawnFragment(originX, originY, burstLeft, burstWidth, burstBase, { mode: 'footer' }), delay);
     }
   }
 
@@ -624,10 +623,20 @@ function setupLogoPixelBurst() {
   }
   trigger.addEventListener('pointerdown', triggerBurst);
   trigger.addEventListener('click', triggerBurst);
-  document.querySelectorAll('.footer-field').forEach((field) => {
-    if (field.dataset.pixelDropBound === 'true') return;
-    field.dataset.pixelDropBound = 'true';
-    field.addEventListener('click', triggerFooterDrop);
+  document.querySelectorAll('.page').forEach((page) => {
+    const field = page.querySelector('.footer-field');
+    if (!field || page.dataset.footerPixelBound === 'true') return;
+    page.dataset.footerPixelBound = 'true';
+
+    const invokeDrop = (ev) => {
+      if (ev.target.closest('a, button, video, .footer-link, .lang-btn, .project-card, .photo-card, .shot, .glass')) return;
+      const rect = field.getBoundingClientRect();
+      if (ev.clientX < rect.left || ev.clientX > rect.right || ev.clientY < rect.top || ev.clientY > rect.bottom) return;
+      triggerFooterDrop({ currentTarget: field, clientX: ev.clientX, clientY: ev.clientY });
+    };
+
+    field.addEventListener('click', invokeDrop);
+    page.addEventListener('click', invokeDrop);
   });
 }
 function setupFooterField() {
