@@ -1412,14 +1412,14 @@ html {
 }
 
 .photo-content {
-  gap: 22px;
+  gap: 16px;
 }
 
 .photo-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.75fr);
-  gap: 22px;
-  padding: 28px;
+  gap: 18px;
+  padding: 22px;
   align-items: end;
 }
 
@@ -1452,7 +1452,7 @@ html {
 .photo-hero-meta {
   justify-self: end;
   width: min(100%, 340px);
-  padding: 18px;
+  padding: 16px;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.44);
   background: linear-gradient(160deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18));
@@ -1484,43 +1484,49 @@ html {
 .photo-stage-grid {
   display: grid;
   grid-template-columns: 1.35fr 0.78fr;
-  grid-template-rows: minmax(320px, 0.92fr) minmax(260px, 0.72fr);
-  gap: 18px;
+  grid-template-rows: minmax(240px, 0.82fr) minmax(200px, 0.58fr);
+  gap: 14px;
 }
 
 .photo-wall-grid {
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
-  gap: 18px;
+  gap: 14px;
 }
 
 .photo-card {
   margin: 0;
   min-height: 0;
-  border-radius: 24px;
+  border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.42);
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.38), rgba(255, 255, 255, 0.16));
-  padding: 10px;
-  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  padding: 8px;
+  box-shadow: 0 20px 44px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.34);
   backdrop-filter: blur(20px) saturate(1.08);
   -webkit-backdrop-filter: blur(20px) saturate(1.08);
+  cursor: zoom-in;
+  aspect-ratio: 4 / 3;
 }
 
 .photo-card-feature {
   grid-row: 1 / span 2;
+  aspect-ratio: 16 / 10;
 }
 
 .photo-card-tall {
   grid-row: span 2;
+  aspect-ratio: 4 / 5;
 }
 
 .photo-card-wide {
   grid-column: span 6;
+  aspect-ratio: 16 / 9;
 }
 
 .photo-wall-grid .photo-card {
   grid-column: span 4;
+  aspect-ratio: 4 / 3;
 }
 
 .photo-img {
@@ -1529,7 +1535,8 @@ html {
   min-height: 100%;
   display: block;
   object-fit: cover;
-  border-radius: 16px;
+  object-position: center;
+  border-radius: 14px;
 }
 
 .photo-ribbon {
@@ -1539,14 +1546,14 @@ html {
 .photo-ribbon-text {
   display: inline-flex;
   align-items: center;
-  min-height: 62px;
-  padding: 0 20px;
+  min-height: 48px;
+  padding: 0 16px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.42);
   background: linear-gradient(90deg, rgba(255, 255, 255, 0.44), rgba(255, 255, 255, 0.16));
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.34);
-  font-size: 12px;
-  letter-spacing: 0.28em;
+  font-size: 11px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
   color: rgba(15, 23, 42, 0.58);
 }
@@ -1575,11 +1582,80 @@ html {
   }
 
   .photo-card {
-    padding: 8px;
+    padding: 7px;
   }
 }
 
-/* Performance tuning for long pages and media-heavy sections */
+
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 12, 20, 0.72);
+  backdrop-filter: blur(16px) saturate(1.08);
+  -webkit-backdrop-filter: blur(16px) saturate(1.08);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+  z-index: 1200;
+}
+
+.photo-lightbox.is-open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.photo-lightbox-frame {
+  margin: 0;
+  max-width: min(96vw, 1280px);
+  max-height: 92vh;
+  display: grid;
+  gap: 10px;
+  align-items: center;
+  justify-items: center;
+}
+
+.photo-lightbox-img {
+  max-width: 100%;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+}
+
+.photo-lightbox-caption {
+  max-width: 90vw;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.72);
+  text-align: center;
+}
+
+.photo-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 28px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+body.photo-lightbox-open {
+  overflow: hidden;
+}
+
+
 .resume-section,
 .proj-gallery,
 .project-grid,
