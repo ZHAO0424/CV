@@ -629,13 +629,24 @@ function setupLogoPixelBurst() {
     document.addEventListener('pointerdown', (ev) => {
       if (ev.target.closest('a, button, video, .footer-link, .lang-btn')) return;
 
-      const field = footerFields.find((candidate) => {
+      const directField = footerFields.find((candidate) => {
         const rect = candidate.getBoundingClientRect();
         return ev.clientX >= rect.left && ev.clientX <= rect.right && ev.clientY >= rect.top && ev.clientY <= rect.bottom;
       });
 
-      if (!field) return;
-      triggerFooterDrop({ currentTarget: field, clientX: ev.clientX, clientY: ev.clientY });
+      if (directField) {
+        triggerFooterDrop({ currentTarget: directField, clientX: ev.clientX, clientY: ev.clientY });
+        return;
+      }
+
+      const page = ev.target.closest('.page');
+      if (!page) return;
+      const fallbackField = page.querySelector('.footer-field');
+      if (!fallbackField) return;
+      const pageRect = page.getBoundingClientRect();
+      const bottomThreshold = Math.min(pageRect.bottom, window.innerHeight) - 320;
+      if (ev.clientY < bottomThreshold || ev.clientX < pageRect.left || ev.clientX > pageRect.right) return;
+      triggerFooterDrop({ currentTarget: fallbackField, clientX: ev.clientX, clientY: ev.clientY });
     }, { passive: true });
   }
 }

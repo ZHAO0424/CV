@@ -22,10 +22,10 @@
   box-sizing: border-box;
 }
 
-html, body {
-  -webkit-user-select: none;
-  user-select: none;
-  caret-color: transparent;
+html, body, body * {
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  caret-color: transparent !important;
 }
 
 ::selection {
