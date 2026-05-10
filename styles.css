@@ -311,7 +311,9 @@ body {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border-subtle);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(24px);
+  /* Backdrop-filter looks premium but is expensive. Keep it, but slightly lighter by default. */
+  backdrop-filter: blur(18px) saturate(1.06);
+  -webkit-backdrop-filter: blur(18px) saturate(1.06);
 }
 
 .glass {
@@ -328,6 +330,13 @@ body {
     radial-gradient(circle at 80% 0, rgba(236, 72, 153, 0.12), transparent 42%),
     radial-gradient(circle at 50% 110%, rgba(34, 197, 94, 0.08), transparent 45%);
   opacity: 0.9;
+}
+
+/* Performance-friendly glass fallback (no backdrop-filter). */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: rgba(255, 255, 255, 0.78);
+  }
 }
 
 .glass>* {
@@ -709,12 +718,33 @@ body {
   transform-style: preserve-3d;
   transition: transform 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out),
     border-color 0.25s var(--ease-out);
+  position: relative;
+}
+
+/* Premium, lightweight highlight sweep (driven by existing hover vars). */
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s var(--ease-out);
+  background:
+    radial-gradient(420px circle at var(--hover-x, 40%) var(--hover-y, 20%),
+      rgba(255, 255, 255, 0.55) 0%,
+      rgba(255, 255, 255, 0.18) 26%,
+      rgba(255, 255, 255, 0) 60%);
+  mix-blend-mode: soft-light;
 }
 
 .project-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 18px 40px rgba(148, 163, 184, 0.45);
   border-color: rgba(59, 130, 246, 0.8);
+}
+
+.project-card:hover::after {
+  opacity: 1;
 }
 
 .project-visual {
@@ -970,8 +1000,12 @@ body {
     0 20px 42px rgba(15, 23, 42, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.68),
     inset 0 -1px 0 rgba(255, 255, 255, 0.14);
-  backdrop-filter: blur(28px) saturate(1.08);
-  -webkit-backdrop-filter: blur(28px) saturate(1.08);
+  /* Large areas are the most expensive; keep the feel but reduce the cost. */
+  backdrop-filter: blur(18px) saturate(1.06);
+  -webkit-backdrop-filter: blur(18px) saturate(1.06);
+  /* Render heavy sections only when needed (huge win on long project pages). */
+  content-visibility: auto;
+  contain-intrinsic-size: 1200px;
 }
 
 .proj-gallery.proj-gallery-plain.glass {
@@ -1055,6 +1089,8 @@ body {
     inset 0 -1px 0 rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(18px) saturate(1.12);
   -webkit-backdrop-filter: blur(18px) saturate(1.12);
+  /* Reduce the cost of layout/paint churn for image-heavy pages. */
+  contain: content;
 }
 
 .shot-wide {
@@ -1567,6 +1603,14 @@ html {
 .photo-wall,
 .photo-ribbon {
   position: relative;
+}
+
+/* Photography pages can be long; render sections only when needed. */
+.photo-stage,
+.photo-wall,
+.photo-ribbon {
+  content-visibility: auto;
+  contain-intrinsic-size: 900px;
 }
 
 .photo-stage-grid {

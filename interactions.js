@@ -22,6 +22,10 @@ function setupReveal() {
     (entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
+          // Stagger slightly for a more deliberate, premium feel.
+          // Avoid large delays to keep the page responsive.
+          const idx = Number(e.target.dataset.revealIndex || 0);
+          e.target.style.transitionDelay = `${Math.min(260, idx * 45)}ms`;
           e.target.classList.add('is-visible');
           e.target.classList.add('visible');
           io.unobserve(e.target);
@@ -31,12 +35,20 @@ function setupReveal() {
     { threshold: 0.1, rootMargin: '0px 0px -10% 0px' }
   );
 
-  nodes.forEach((n) => io.observe(n));
+  nodes.forEach((n, idx) => {
+    n.dataset.revealIndex = String(idx);
+    io.observe(n);
+  });
 
+  // If the observer misses some nodes (edge cases), reveal only near-viewport items.
   window.setTimeout(() => {
-    nodes.forEach((n) => {
-      n.classList.add('is-visible');
-      n.classList.add('visible');
+    const near = Array.from(document.querySelectorAll('.reveal:not(.is-visible), .fade-slide-up:not(.is-visible)'));
+    near.forEach((n) => {
+      const r = n.getBoundingClientRect();
+      if (r.top < (window.innerHeight || 900) * 1.15 && r.bottom > -120) {
+        n.classList.add('is-visible');
+        n.classList.add('visible');
+      }
     });
   }, 700);
 }
@@ -51,9 +63,9 @@ function runNonCriticalSetup() {
 
 function scheduleNonCriticalSetup() {
   if ('requestIdleCallback' in window) {
-    window.requestIdleCallback(runNonCriticalSetup, { timeout: 700 });
+    window.requestIdleCallback(runNonCriticalSetup, { timeout: 1400 });
   } else {
-    window.setTimeout(runNonCriticalSetup, 120);
+    window.setTimeout(runNonCriticalSetup, 320);
   }
 }
 
@@ -66,6 +78,8 @@ function setupCardTilt() {
     const maxRotation = 5.5;
     const maxShift = 10;
     let raf = 0;
+    let lastPX = 0.5;
+    let lastPY = 0.45;
 
     function onMove(ev) {
       const rect = card.getBoundingClientRect();
@@ -76,14 +90,20 @@ function setupCardTilt() {
       const tx = (px - 0.5) * maxShift;
       const ty = (py - 0.5) * maxShift * 0.45;
 
+      lastPX = px;
+      lastPY = py;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
+        card.style.setProperty('--hover-x', `${(lastPX * 100).toFixed(2)}%`);
+        card.style.setProperty('--hover-y', `${(lastPY * 100).toFixed(2)}%`);
         card.style.transform = `translate3d(${tx.toFixed(2)}px, ${(-4 + ty).toFixed(2)}px, 0) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
       });
     }
 
     function onLeave() {
       cancelAnimationFrame(raf);
+      card.style.removeProperty('--hover-x');
+      card.style.removeProperty('--hover-y');
       card.style.transform = '';
     }
 
@@ -93,20 +113,31 @@ function setupCardTilt() {
 }
 
 function optimizeMediaLoading() {
-  const viewportHeight = window.innerHeight || 900;
+  // Avoid forcing layout on every image during first paint.
+  // We use selector-based heuristics; browsers' native lazy-loading does the rest.
   const images = Array.from(document.querySelectorAll('img'));
 
-  images.forEach((img, index) => {
-    const rect = img.getBoundingClientRect();
-    const isHero = !!img.closest('.hero, .resume-hero, .proj-hero, .side-cover-box');
-    const isNearViewport = rect.top < viewportHeight * 1.15 && rect.bottom > -120;
-    const isCoverAboveFold = !!img.closest('.project-card-media') && rect.top < viewportHeight * 0.92;
-    const isPriority = isHero || isCoverAboveFold || (index < 2 && isNearViewport);
-
-    img.decoding = isPriority ? 'sync' : 'async';
-    img.loading = isPriority ? 'eager' : 'lazy';
-    img.fetchPriority = isPriority ? 'high' : 'low';
+  images.forEach((img) => {
+    img.decoding = 'async';
+    if (!img.loading) img.loading = 'lazy';
+    if (!img.fetchPriority) img.fetchPriority = 'low';
   });
+
+  // Always prioritize true hero/cover imagery.
+  document
+    .querySelectorAll('.hero img, .resume-hero img, .proj-hero img, .side-cover-box img')
+    .forEach((img) => {
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
+    });
+
+  // Home page: prioritize the first row of project cards without measuring the layout.
+  document
+    .querySelectorAll('.project-grid-large .project-card:nth-child(-n+3) img.project-image')
+    .forEach((img) => {
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
+    });
 
   document.querySelectorAll('video').forEach((video) => {
     const isAutoplay = video.dataset.managedVideo === 'autoplay' || video.hasAttribute('autoplay');
