@@ -54,6 +54,7 @@ function setupReveal() {
 }
 
 function runNonCriticalSetup() {
+  setupBackgroundAtmosphere();
   setupCardTilt();
   setupMagneticTargets();
   setupCursorEffects();
@@ -427,6 +428,474 @@ function setupCursorEffects() {
   window.addEventListener('blur', onPointerLeave);
   window.requestAnimationFrame(animate);
 }
+let threeLibraryPromise = null;
+
+function loadThreeLibrary() {
+  if (window.THREE) return Promise.resolve(window.THREE);
+  if (threeLibraryPromise) return threeLibraryPromise;
+
+  threeLibraryPromise = new Promise((resolve, reject) => {
+    const existing = document.querySelector('script[data-three-runtime="true"]');
+    if (existing) {
+      existing.addEventListener('load', () => resolve(window.THREE), { once: true });
+      existing.addEventListener('error', reject, { once: true });
+      return;
+    }
+
+    const script = document.createElement('script');
+    const base = window.location.pathname.includes('/projects/') ? '../' : './';
+    script.src = `${base}vendor/three.min.js`;
+    script.async = true;
+    script.dataset.threeRuntime = 'true';
+    script.onload = () => resolve(window.THREE);
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+
+  return threeLibraryPromise;
+}
+
+function cubicBezier(a, b, c, d, t) {
+  const mt = 1 - t;
+  return mt * mt * mt * a + 3 * mt * mt * t * b + 3 * mt * t * t * c + t * t * t * d;
+}
+
+function smoothStep(edge0, edge1, value) {
+  const t = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
+  return t * t * (3 - 2 * t);
+}
+
+function setupBackgroundAtmosphere() {
+  if (document.querySelector('.page-atmosphere')) return;
+
+  const layer = document.createElement('div');
+  layer.className = 'page-atmosphere';
+  layer.innerHTML = '<canvas class="page-atmosphere-canvas"></canvas>';
+  document.body.appendChild(layer);
+
+  const canvas = layer.querySelector('canvas');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  if (!ctx) return;
+
+  const prefersReduced = prefersReducedMotion();
+  let width = 0;
+  let height = 0;
+  let dpr = 1;
+  let raf = 0;
+  let visible = !document.hidden;
+
+  const motes = Array.from({ length: 56 }, () => ({
+    x: 0,
+    y: 0,
+    orbit: 80 + Math.random() * 260,
+    speed: 0.00045 + Math.random() * 0.0012,
+    size: 3 + Math.random() * 5,
+    phase: Math.random() * Math.PI * 2,
+    drift: 10 + Math.random() * 36,
+    color: [
+      'rgba(76, 140, 255, 0.16)',
+      'rgba(241, 99, 149, 0.16)',
+      'rgba(255, 190, 84, 0.14)',
+      'rgba(72, 215, 189, 0.14)'
+    ][Math.floor(Math.random() * 4)]
+  }));
+
+  const vortices = [
+    { x: 0.18, y: 0.26, radius: 0.18, spin: 1 },
+    { x: 0.82, y: 0.22, radius: 0.16, spin: -1 },
+    { x: 0.72, y: 0.72, radius: 0.22, spin: 1 }
+  ];
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    width = Math.max(1, layer.clientWidth || window.innerWidth);
+    height = Math.max(1, layer.clientHeight || Math.round(window.innerHeight * 0.34));
+    canvas.width = Math.round(width * dpr);
+    canvas.height = Math.round(height * dpr);
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function drawWaveBand(now, index, opacity, thickness) {
+    const t = now * 0.001;
+    const yBase = height * (0.18 + index * 0.23);
+    ctx.beginPath();
+    ctx.moveTo(-40, yBase);
+    for (let x = -40; x <= width + 40; x += 18) {
+      const a = Math.sin((x * 0.0052) + t * (0.36 + index * 0.08));
+      const b = Math.cos((x * 0.0028) - t * (0.24 + index * 0.06));
+      const c = Math.sin((x * 0.0016) + t * 0.52 + index * 1.7);
+      const y = yBase + a * (12 + index * 4) + b * 10 + c * 8;
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = index === 0
+      ? `rgba(168, 196, 229, ${opacity})`
+      : index === 1
+        ? `rgba(208, 146, 184, ${opacity * 0.9})`
+        : `rgba(130, 188, 176, ${opacity * 0.88})`;
+    ctx.lineWidth = thickness;
+    ctx.stroke();
+  }
+
+  function draw(now) {
+    raf = 0;
+    if (!visible) return;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+
+    ctx.globalCompositeOperation = 'source-over';
+    const gradient = ctx.createLinearGradient(0, 0, width, height);
+    gradient.addColorStop(0, 'rgba(255,255,255,0)');
+    gradient.addColorStop(0.35, 'rgba(215,228,246,0.08)');
+    gradient.addColorStop(0.65, 'rgba(189,212,240,0.11)');
+    gradient.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+
+    drawWaveBand(now, 0, 0.28, 1.45);
+    drawWaveBand(now, 1, 0.2, 1.12);
+    drawWaveBand(now, 2, 0.16, 0.96);
+    drawWaveBand(now, 3, 0.11, 0.84);
+
+    ctx.globalCompositeOperation = 'lighter';
+    const t = now;
+
+    motes.forEach((mote, index) => {
+      const vortex = vortices[index % vortices.length];
+      const centerX = width * vortex.x;
+      const centerY = height * vortex.y;
+      const angle = mote.phase + t * mote.speed * vortex.spin;
+      const radial = mote.orbit + Math.sin(t * mote.speed * 0.6 + mote.phase) * mote.drift;
+      mote.x = centerX + Math.cos(angle) * radial;
+      mote.y = centerY + Math.sin(angle * 0.92) * radial * 0.52 + Math.cos(angle * 0.4) * 24;
+
+      ctx.fillStyle = mote.color;
+      ctx.fillRect(mote.x, mote.y, mote.size, mote.size);
+
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(mote.x + 1, mote.y + 1, Math.max(1, mote.size * 0.4), Math.max(1, mote.size * 0.4));
+    });
+
+    const wash = ctx.createRadialGradient(width * 0.58, height * 0.72, 10, width * 0.58, height * 0.72, width * 0.52);
+    wash.addColorStop(0, 'rgba(180, 221, 255, 0.14)');
+    wash.addColorStop(0.42, 'rgba(129, 185, 255, 0.08)');
+    wash.addColorStop(1, 'rgba(129, 185, 255, 0)');
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.restore();
+
+    if (!prefersReduced) raf = requestAnimationFrame(draw);
+  }
+
+  function schedule() {
+    if (!raf && !prefersReduced) raf = requestAnimationFrame(draw);
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    visible = !document.hidden;
+    if (visible) schedule();
+  });
+
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+  if (prefersReduced) {
+    draw(performance.now());
+  } else {
+    schedule();
+  }
+}
+
+function setupPageLoader() {
+  if (prefersReducedMotion()) return null;
+
+  let hasSeenLoader = false;
+  try {
+    hasSeenLoader = window.sessionStorage.getItem('portfolio-loader-seen') === '1';
+  } catch (error) {
+    hasSeenLoader = false;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'page-loader';
+  overlay.setAttribute('aria-hidden', 'true');
+  overlay.innerHTML = `
+    <div class="page-loader-bg"></div>
+    <div class="page-loader-inner">
+      <div class="page-loader-copy">
+        <div class="page-loader-title">Loading Zhao Zirui Portfolio</div>
+      </div>
+      <div class="page-loader-progress">
+        <div class="page-loader-progress-track">
+          <div class="page-loader-progress-fill"></div>
+          <div class="page-loader-progress-sheen"></div>
+        </div>
+        <div class="page-loader-progress-text">Loading 0%</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  document.body.classList.add('page-loader-active');
+
+  const progressFill = overlay.querySelector('.page-loader-progress-fill');
+  const progressText = overlay.querySelector('.page-loader-progress-text');
+  const minVisible = hasSeenLoader ? 1200 : 2200;
+  const maxVisible = hasSeenLoader ? 2200 : 3400;
+  const startAt = performance.now();
+  let progress = 0;
+  let targetProgress = 0.08;
+  let closed = false;
+  let tornDown = false;
+  let raf = 0;
+
+  function teardown() {
+    if (tornDown) return;
+    tornDown = true;
+
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = 0;
+    }
+
+    window.setTimeout(() => {
+      overlay.remove();
+    }, 460);
+  }
+
+  function closeLoader(force) {
+    if (closed) return;
+    const elapsed = performance.now() - startAt;
+    if (!force && elapsed < minVisible) {
+      window.setTimeout(() => closeLoader(true), Math.max(0, minVisible - elapsed));
+      return;
+    }
+
+    targetProgress = 1;
+    closed = true;
+    window.setTimeout(() => {
+      overlay.classList.add('is-leaving');
+      document.body.classList.remove('page-loader-active');
+      try {
+        window.sessionStorage.setItem('portfolio-loader-seen', '1');
+      } catch (error) {
+        // Ignore storage issues.
+      }
+      teardown();
+    }, 280);
+  }
+
+  function animate(now) {
+    const elapsed = now - startAt;
+    const timedTarget = hasSeenLoader
+      ? Math.min(0.84, 0.1 + elapsed / 1500)
+      : Math.min(0.88, 0.08 + elapsed / 2100);
+    targetProgress = Math.max(targetProgress, timedTarget);
+    progress += (targetProgress - progress) * 0.08;
+    progressFill.style.transform = `scaleX(${Math.min(1, progress).toFixed(4)})`;
+    progressText.textContent = `Loading ${Math.round(Math.min(100, progress * 100))}%`;
+
+    if (!closed || progress < 0.999) raf = requestAnimationFrame(animate);
+  }
+
+  raf = requestAnimationFrame(animate);
+
+  if (document.readyState === 'complete') {
+    targetProgress = 0.96;
+    closeLoader();
+  } else {
+    window.addEventListener('load', () => {
+      targetProgress = 0.96;
+      closeLoader();
+    }, { once: true });
+  }
+  window.setTimeout(() => closeLoader(true), maxVisible);
+
+  return {
+    close: closeLoader
+  };
+}
+
+function createLogoThreeBurstSystem(trigger, THREE) {
+  let layer = document.querySelector('.logo-three-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.className = 'logo-three-layer';
+    layer.innerHTML = '<canvas class="logo-three-canvas"></canvas>';
+    document.body.appendChild(layer);
+  }
+
+  const canvas = layer.querySelector('.logo-three-canvas');
+  const renderer = new THREE.WebGLRenderer({
+    canvas,
+    alpha: true,
+    antialias: true,
+    powerPreference: 'high-performance'
+  });
+
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+  renderer.setClearColor(0x000000, 0);
+  if (renderer.outputEncoding !== undefined && THREE.sRGBEncoding !== undefined) {
+    renderer.outputEncoding = THREE.sRGBEncoding;
+  }
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2000);
+  camera.position.z = 480;
+
+  const ambient = new THREE.AmbientLight(0xffffff, 0.95);
+  const key = new THREE.DirectionalLight(0xffffff, 1.45);
+  const rim = new THREE.PointLight(0xc7e5ff, 1.7, 980);
+  const blush = new THREE.PointLight(0xffd1a5, 0.95, 760);
+  key.position.set(0, 0, 320);
+  rim.position.set(160, 80, 260);
+  blush.position.set(70, -40, 210);
+  scene.add(ambient, key, rim, blush);
+
+  const geometry = new THREE.BoxGeometry(1, 1, 0.22);
+  const palette = [0x2667ff, 0xd63f73, 0xf6b73c, 0x10b384, 0x7dd8ff, 0x8e72ff];
+  const active = [];
+  let raf = 0;
+  let viewportWidth = 0;
+  let viewportHeight = 0;
+
+  function resize() {
+    viewportWidth = window.innerWidth;
+    viewportHeight = window.innerHeight;
+    renderer.setSize(viewportWidth, viewportHeight, false);
+    camera.left = -viewportWidth / 2;
+    camera.right = viewportWidth / 2;
+    camera.top = viewportHeight / 2;
+    camera.bottom = -viewportHeight / 2;
+    camera.updateProjectionMatrix();
+  }
+
+  function buildMaterial(colorValue) {
+    return new THREE.MeshPhongMaterial({
+      color: colorValue,
+      emissive: colorValue,
+      emissiveIntensity: 0.34,
+      specular: 0xffffff,
+      shininess: 135,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false
+    });
+  }
+
+  function createParticle(originX, originY, index) {
+    const color = palette[Math.floor(Math.random() * palette.length)];
+    const material = buildMaterial(color);
+    const mesh = new THREE.Mesh(geometry, material);
+    const size = 9 + Math.random() * 8;
+    const biasRight = Math.random() < 0.9 ? 1 : -1;
+    const baseSide = size * (0.92 + Math.random() * 0.24);
+    const depth = 2.2 + Math.random() * 1.6;
+    const endX = originX + biasRight * (biasRight > 0 ? 180 + Math.random() * 220 : 42 + Math.random() * 70);
+    const endY = originY - (74 + Math.random() * 160);
+
+    mesh.scale.set(baseSide, baseSide, depth);
+    mesh.position.set(originX, originY, 0);
+    scene.add(mesh);
+
+    return {
+      mesh,
+      material,
+      startedAt: performance.now() + index * (8 + Math.random() * 8),
+      duration: 2600 + Math.random() * 980,
+      originX,
+      originY,
+      cp1X: originX + biasRight * (36 + Math.random() * 72),
+      cp1Y: originY - (8 + Math.random() * 28),
+      cp2X: originX + biasRight * (114 + Math.random() * 148),
+      cp2Y: originY - (42 + Math.random() * 88),
+      endX,
+      endY,
+      swirlRadius: 18 + Math.random() * 30,
+      swirlTurns: 0.82 + Math.random() * 0.76,
+      baseAngle: Math.random() * Math.PI * 2,
+      tiltX: (Math.random() - 0.5) * 0.56,
+      tiltY: (Math.random() - 0.5) * 0.56,
+      spin: (Math.random() - 0.5) * 0.18,
+      driftDown: 64 + Math.random() * 90,
+      baseSide,
+      depth
+    };
+  }
+
+  function destroyParticle(particle) {
+    scene.remove(particle.mesh);
+    particle.material.dispose();
+  }
+
+  function tick(now) {
+    for (let i = active.length - 1; i >= 0; i -= 1) {
+      const particle = active[i];
+      if (now < particle.startedAt) continue;
+
+      const t = Math.max(0, Math.min(1, (now - particle.startedAt) / particle.duration));
+      const eased = 1 - Math.pow(1 - t, 3);
+      const x = cubicBezier(particle.originX, particle.cp1X, particle.cp2X, particle.endX, eased);
+      const yCurve = cubicBezier(particle.originY, particle.cp1Y, particle.cp2Y, particle.endY, eased);
+      const swirlDecay = Math.pow(1 - t, 1.08);
+      const swirlAngle = particle.baseAngle + particle.swirlTurns * Math.PI * 2 * eased;
+      const swirlX = Math.cos(swirlAngle) * particle.swirlRadius * swirlDecay;
+      const swirlY = Math.sin(swirlAngle) * particle.swirlRadius * swirlDecay * 0.48;
+      const y = yCurve - swirlY - Math.pow(t, 1.16) * particle.driftDown;
+      const opacity = smoothStep(0, 0.07, t) * (1 - smoothStep(0.82, 1, t)) * 1.04;
+      const scalePulse = 0.96 + Math.sin(t * Math.PI) * 0.12;
+
+      particle.mesh.position.set(x + swirlX, y, Math.sin(swirlAngle * 0.85) * 28);
+      particle.mesh.rotation.set(
+        particle.tiltX + swirlAngle * 0.28,
+        particle.tiltY + swirlAngle * 0.34,
+        swirlAngle * 0.22 + particle.spin * (now * 0.01)
+      );
+      particle.mesh.scale.set(
+        particle.baseSide * scalePulse,
+        particle.baseSide * scalePulse,
+        particle.depth
+      );
+      particle.material.opacity = opacity;
+      particle.material.emissiveIntensity = 0.26 + opacity * 0.64;
+
+      if (t >= 1) {
+        destroyParticle(particle);
+        active.splice(i, 1);
+      }
+    }
+
+    renderer.render(scene, camera);
+
+    if (active.length > 0) {
+      raf = requestAnimationFrame(tick);
+      layer.classList.add('is-visible');
+    } else {
+      raf = 0;
+      layer.classList.remove('is-visible');
+    }
+  }
+
+  function burst() {
+    const rect = trigger.getBoundingClientRect();
+    const originX = rect.left + rect.width / 2 - viewportWidth / 2;
+    const originY = viewportHeight / 2 - (rect.top + rect.height / 2);
+    const count = 96;
+
+    for (let i = 0; i < count; i += 1) {
+      active.push(createParticle(originX, originY, i));
+    }
+
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+
+  window.addEventListener('resize', resize, { passive: true });
+  resize();
+
+  return { burst };
+}
+
 function setupLogoPixelBurst() {
   if (prefersReducedMotion()) return;
 
@@ -434,282 +903,45 @@ function setupLogoPixelBurst() {
   if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
   trigger.dataset.pixelBurstBound = 'true';
 
-  let layer = document.querySelector('.logo-pixel-layer');
-  if (!layer) {
-    layer = document.createElement('div');
-    layer.className = 'logo-pixel-layer';
-    document.body.appendChild(layer);
-  }
+  let system = null;
+  let warmup = null;
+  let queued = 0;
 
-  const palettes = [
-    {
-      fill: 'linear-gradient(135deg, rgba(32, 86, 196, 0.97), rgba(118, 193, 255, 0.9))',
-      glow: 'rgba(106, 175, 255, 0.34)',
-      border: 'rgba(210, 232, 255, 0.54)',
-      top: 'linear-gradient(135deg, rgba(164, 214, 255, 0.94), rgba(79, 144, 235, 0.76))',
-      side: 'linear-gradient(180deg, rgba(15, 53, 124, 0.94), rgba(62, 120, 214, 0.82))'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(162, 28, 74, 0.96), rgba(255, 129, 171, 0.9))',
-      glow: 'rgba(255, 118, 168, 0.32)',
-      border: 'rgba(255, 218, 233, 0.52)',
-      top: 'linear-gradient(135deg, rgba(255, 194, 215, 0.94), rgba(227, 90, 142, 0.74))',
-      side: 'linear-gradient(180deg, rgba(116, 14, 49, 0.94), rgba(193, 54, 105, 0.82))'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(170, 92, 16, 0.96), rgba(255, 196, 88, 0.92))',
-      glow: 'rgba(255, 188, 92, 0.3)',
-      border: 'rgba(255, 229, 184, 0.5)',
-      top: 'linear-gradient(135deg, rgba(255, 223, 157, 0.94), rgba(237, 160, 56, 0.76))',
-      side: 'linear-gradient(180deg, rgba(121, 63, 10, 0.94), rgba(205, 126, 36, 0.84))'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(18, 128, 104, 0.96), rgba(110, 233, 201, 0.9))',
-      glow: 'rgba(109, 232, 202, 0.28)',
-      border: 'rgba(208, 255, 244, 0.5)',
-      top: 'linear-gradient(135deg, rgba(174, 246, 229, 0.94), rgba(64, 186, 155, 0.76))',
-      side: 'linear-gradient(180deg, rgba(12, 88, 71, 0.94), rgba(42, 154, 128, 0.82))'
-    },
-    {
-      fill: 'linear-gradient(135deg, rgba(96, 46, 164, 0.96), rgba(189, 133, 255, 0.9))',
-      glow: 'rgba(185, 132, 255, 0.28)',
-      border: 'rgba(230, 215, 255, 0.5)',
-      top: 'linear-gradient(135deg, rgba(220, 188, 255, 0.94), rgba(145, 91, 225, 0.76))',
-      side: 'linear-gradient(180deg, rgba(63, 25, 117, 0.94), rgba(118, 70, 191, 0.82))'
-    }
-  ];
+  function ensureSystem() {
+    if (system) return Promise.resolve(system);
+    if (warmup) return warmup;
 
-  const fragments = [];
-  let raf = 0;
-  let obstacleMap = [];
-  const maxHorizontalSpeed = 2.25;
-  const maxRestSlideSpeed = 0.78;
-
-  function collectObstacles(originY) {
-    const selector = '.glass, .resume-section, .photo-card, .project-card, .shot';
-    const nodes = Array.from(new Set(Array.from(document.querySelectorAll(selector))));
-
-    return nodes
-      .filter((node) => node !== trigger && !node.contains(trigger) && !node.classList.contains('footer-field'))
-      .map((node, index) => {
-        const rect = node.getBoundingClientRect();
-        return {
-          id: index,
-          left: rect.left,
-          right: rect.right,
-          top: rect.top,
-          bottom: rect.bottom,
-          width: rect.width,
-          height: rect.height
-        };
+    warmup = loadThreeLibrary()
+      .then((THREE) => {
+        system = createLogoThreeBurstSystem(trigger, THREE);
+        const replay = Math.min(queued, 2);
+        queued = 0;
+        for (let i = 0; i < replay; i += 1) system.burst();
+        return system;
       })
-      .filter((rect) => rect.width > 160 && rect.height > 48 && rect.bottom > originY + 20 && rect.top < window.innerHeight - 36)
-      .sort((a, b) => a.top - b.top);
+      .catch((error) => {
+        warmup = null;
+        console.error('Unable to initialize logo burst effect.', error);
+        throw error;
+      });
+
+    return warmup;
   }
 
-  function spawnFragment(originX, originY, burstLeft, burstWidth, burstBase) {
-    const node = document.createElement('span');
-    node.className = 'logo-pixel';
-    const palette = palettes[Math.floor(Math.random() * palettes.length)];
-    const width = 10 + Math.random() * 10;
-    const height = width * (0.82 + Math.random() * 0.38);
-    const laneCount = burstBase.length;
-    const directionRoll = Math.random();
-    const lane = directionRoll < 0.18
-      ? Math.floor(Math.random() * Math.max(2, Math.floor(laneCount * 0.32)))
-      : Math.min(laneCount - 1, Math.floor((0.28 + Math.pow(Math.random(), 0.62) * 0.72) * laneCount));
-    const laneGap = burstWidth / Math.max(1, laneCount - 1);
-    const floorX = burstLeft + lane * laneGap + (directionRoll < 0.18 ? (Math.random() - 0.82) * 14 : (Math.random() - 0.02) * 12);
-    const floorY = window.innerHeight - 10 - height - burstBase[lane] * (5 + Math.random() * 4);
-    burstBase[lane] += 1;
+  trigger.addEventListener('click', (event) => {
+    event.preventDefault();
+    if (system) {
+      system.burst();
+      return;
+    }
 
-    node.style.width = `${width}px`;
-    node.style.height = `${height}px`;
-    node.style.background = palette.fill;
-    node.style.borderColor = palette.border;
-    node.style.boxShadow = `0 0 14px ${palette.glow}, inset 0 1px 0 rgba(255,255,255,0.28)`;
-    node.style.opacity = `${0.8 + Math.random() * 0.16}`;
-    node.style.setProperty('--pixel-top', palette.top);
-    node.style.setProperty('--pixel-side', palette.side);
-    layer.appendChild(node);
-
-    fragments.push({
-      el: node,
-      width,
-      height,
-      x: originX + (directionRoll < 0.18 ? (Math.random() - 0.65) * 8 : (Math.random() - 0.08) * 6),
-      y: originY + (Math.random() - 0.5) * 4,
-      vx: directionRoll < 0.18
-        ? (-0.35 - Math.random() * 0.35) + (floorX - originX) / (230 + Math.random() * 36)
-        : 0.72 + Math.random() * 0.62 + (floorX - originX) / (205 + Math.random() * 32),
-      vy: 0.14 + Math.random() * 0.14,
-      gravity: 0.14 + Math.random() * 0.018,
-      rotate: (Math.random() - 0.5) * 8,
-      spin: (Math.random() - 0.5) * 0.24,
-      floorY,
-      floorX,
-      settled: false,
-      settledAt: 0,
-      bounceCount: 0,
-      obstacleCooldownUntil: 0,
-      obstacleRestUntil: 0,
-      restX: 0,
-      restY: 0,
-      restSlideVX: 0,
-      restMaxX: 0,
-      lastObstacleId: -1,
-      rightPush: 0.0038 + Math.random() * 0.0035
+    queued += 1;
+    ensureSystem().catch(() => {
+      queued = 0;
     });
+  });
 
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-
-  function triggerBurst() {
-    const rect = trigger.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2;
-    const originY = rect.top + rect.height / 2;
-    const burstWidth = 138;
-    const burstLeft = Math.max(60, originX + 18);
-    const burstBase = new Array(7).fill(0);
-    const count = 15 + Math.round(Math.random() * 4);
-
-    obstacleMap = collectObstacles(originY);
-
-    for (let i = 0; i < count; i += 1) {
-      const delay = i * (34 + Math.random() * 22);
-      window.setTimeout(() => spawnFragment(originX, originY, burstLeft, burstWidth, burstBase), delay);
-    }
-  }
-
-  function resolveFragmentCollisions(now) {
-    for (let i = 0; i < fragments.length; i += 1) {
-      const a = fragments[i];
-      if (a.settled || now < a.obstacleRestUntil) continue;
-
-      for (let j = i + 1; j < fragments.length; j += 1) {
-        const b = fragments[j];
-        if (b.settled || now < b.obstacleRestUntil) continue;
-
-        const dx = b.x - a.x;
-        const dy = b.y - a.y;
-        const minX = (a.width + b.width) * 0.42;
-        const minY = (a.height + b.height) * 0.4;
-
-        if (Math.abs(dx) >= minX || Math.abs(dy) >= minY) continue;
-
-        const overlapX = minX - Math.abs(dx);
-        const overlapY = minY - Math.abs(dy);
-        const dirX = dx === 0 ? (Math.random() > 0.5 ? 1 : -1) : Math.sign(dx);
-        const dirY = dy === 0 ? 1 : Math.sign(dy);
-
-        if (overlapX <= overlapY) {
-          const shift = overlapX * 0.22;
-          a.x -= dirX * shift;
-          b.x += dirX * shift;
-          a.vx = Math.max(a.vx - dirX * 0.04, a.rightPush * 8);
-          b.vx = Math.max(b.vx + dirX * 0.04, b.rightPush * 8);
-        } else {
-          const shift = overlapY * 0.16;
-          a.y -= dirY * shift;
-          b.y += dirY * shift;
-          a.vy *= 0.9;
-          b.vy *= 0.9;
-        }
-      }
-    }
-  }
-
-  function handleObstacleBounce(fragment, prevBottom, now) {
-    const centerX = fragment.x + fragment.width / 2;
-    const bottom = fragment.y + fragment.height;
-
-    for (let i = 0; i < obstacleMap.length; i += 1) {
-      const obstacle = obstacleMap[i];
-      if (now < fragment.obstacleCooldownUntil && fragment.lastObstacleId === obstacle.id) continue;
-      if (centerX < obstacle.left + 10 || centerX > obstacle.right - 10) continue;
-      if (prevBottom > obstacle.top || bottom < obstacle.top) continue;
-
-      fragment.y = obstacle.top - fragment.height;
-      fragment.vy = 0;
-      fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx * 0.4, fragment.rightPush * 6));
-      fragment.restX = fragment.x;
-      fragment.restY = fragment.y;
-      fragment.restSlideVX = Math.min(maxRestSlideSpeed, Math.max(fragment.vx * 0.32, 0.22 + fragment.rightPush * 8));
-      fragment.restMaxX = obstacle.right - fragment.width - 14;
-      fragment.obstacleRestUntil = now + 1000 + Math.random() * 250;
-      fragment.obstacleCooldownUntil = fragment.obstacleRestUntil + 120;
-      fragment.lastObstacleId = obstacle.id;
-      return true;
-    }
-
-    return false;
-  }
-
-  function tick(now) {
-    for (let i = fragments.length - 1; i >= 0; i -= 1) {
-      const fragment = fragments[i];
-
-      if (!fragment.settled) {
-        if (now < fragment.obstacleRestUntil) {
-          fragment.restX = Math.max(fragment.x, Math.min(fragment.restMaxX, fragment.restX + fragment.restSlideVX));
-          fragment.x = fragment.restX;
-          fragment.y = fragment.restY;
-          fragment.rotate += fragment.spin * 0.08;
-
-          if (fragment.restX >= fragment.restMaxX - 0.5) {
-            fragment.restSlideVX = 0;
-          }
-        } else {
-          const prevBottom = fragment.y + fragment.height;
-          fragment.vy += fragment.gravity;
-          fragment.vx += fragment.rightPush;
-          fragment.vx *= 0.993;
-          fragment.vx = Math.min(maxHorizontalSpeed, Math.max(fragment.vx, fragment.rightPush * 8));
-          fragment.x += fragment.vx;
-          fragment.y += fragment.vy;
-          fragment.rotate += fragment.spin;
-
-          if (!handleObstacleBounce(fragment, prevBottom, now) && fragment.y >= fragment.floorY) {
-            fragment.y = fragment.floorY;
-            if (fragment.bounceCount < 1 && Math.abs(fragment.vy) > 0.68) {
-              fragment.vy *= -0.16;
-              fragment.vx = Math.min(maxHorizontalSpeed, fragment.vx * 0.72);
-              fragment.bounceCount += 1;
-            } else {
-              fragment.vy = 0;
-              fragment.vx *= 0.4;
-              fragment.settled = true;
-              fragment.settledAt = now;
-              fragment.el.classList.add('is-settled');
-            }
-          }
-        }
-      } else {
-        const age = now - fragment.settledAt;
-        if (age > 3000) {
-          const fade = Math.max(0, 1 - (age - 3000) / 1800);
-          fragment.el.style.opacity = `${fade * 0.9}`;
-          if (fade <= 0) {
-            fragment.el.remove();
-            fragments.splice(i, 1);
-            continue;
-          }
-        }
-      }
-
-      fragment.el.style.transform = `translate3d(${fragment.x.toFixed(2)}px, ${fragment.y.toFixed(2)}px, 0) rotate(${fragment.rotate.toFixed(2)}deg)`;
-    }
-
-    resolveFragmentCollisions(now);
-
-    if (fragments.length > 0) {
-      raf = requestAnimationFrame(tick);
-    } else {
-      raf = 0;
-    }
-  }
-  trigger.addEventListener('pointerdown', triggerBurst);
-  trigger.addEventListener('click', triggerBurst);
+  ensureSystem().catch(() => {});
 }
 
 function setupFooterField() {
@@ -885,6 +1117,8 @@ function setupFooterField() {
     if (visible) scheduleDraw();
   });
 }
+
+setupPageLoader();
 
 document.addEventListener('DOMContentLoaded', () => {
   setupReveal();
