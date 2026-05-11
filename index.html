@@ -34,16 +34,33 @@
     </header>
 
     <main class="content">
-      <section class="hero glass hero-light reveal">
-        <div class="hero-main">
-          <div class="hero-text">
-            <p class="hero-kicker" data-i18n="hero_kicker">HCI / XR / Multi-Agent Systems</p>
-            <h1 class="hero-title" data-i18n="hero_title">
-              Zhao Zirui</h1>
-            <p class="hero-subtitle" data-i18n="hero_subtitle">
-              Research-driven designer and developer working across HCI, XR, multi-agent interaction, multimodal affective systems, and spatial computing. Currently seeking potential PhD opportunities related to immersive interaction, AI-mediated social systems, virtual environments, and experimental digital experiences.
+      <section class="hero hero-home hero-light reveal">
+        <div class="hero-squares" aria-hidden="true"></div>
+        <div class="hero-orbit hero-orbit-a" aria-hidden="true"></div>
+        <div class="hero-orbit hero-orbit-b" aria-hidden="true"></div>
+        <div class="hero-main hero-main-centered">
+          <div class="hero-text hero-text-centered">
+            <p class="hero-kicker" data-i18n="hero_kicker">HCI / XR / Multi-Agent Systems / Affective Computing / Multimodal Interaction</p>
+            <h1 class="hero-title hero-title-typed" aria-live="polite">
+              <span class="hero-typing" data-typing-en="Hi, I'm Zhao Zirui." data-typing-zh="你好，我是赵子锐。">Hi, I'm Zhao Zirui.</span>
+              <span class="hero-caret" aria-hidden="true"></span>
+            </h1>
+            <p class="hero-focus-line" aria-live="polite">
+              <span
+                class="hero-focus-typing"
+                data-rotate-en="XR for wellbeing and spatial storytelling.|Emotion-aware interaction in immersive systems.|AI agents and social influence in virtual communities."
+                data-rotate-zh="面向福祉与空间叙事的 XR。|沉浸式系统中的情绪感知交互。|虚拟社区中的 AI 智能体与社会影响。"
+              >XR for wellbeing and spatial storytelling.</span>
+              <span class="hero-caret hero-caret-soft" aria-hidden="true"></span>
             </p>
-            <div class="hero-actions">
+            <div class="hero-about glass">
+              <p class="hero-about-label" data-i18n="hero_about_label">About Me</p>
+              <p class="hero-about-text" data-i18n="hero_about_text">
+                I work across HCI, XR, AI interaction, and spatial storytelling, with a research focus on how immersive environments can support emotion-aware interaction, social influence, and new forms of data-driven experience. My background in architecture shapes how I think about atmosphere, structure, and human presence in virtual space, and I am currently seeking PhD opportunities related to immersive systems, wellbeing, and experimental digital environments.
+              </p>
+            </div>
+            <div class="hero-action-stack">
+              <div class="hero-actions">
               <a href="resume.html" class="btn-primary" data-i18n="hero_btn_resume">
                 View Resume
               </a>
@@ -51,12 +68,22 @@
                 data-i18n="hero_btn_portfolio">
                 Legacy Portfolio (Wix)
               </a>
+              </div>
+              <div class="hero-links" aria-label="Personal links">
+                <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="hero-link-pill" data-i18n="hero_link_email">Email</a>
+                <a href="https://github.com/ZHAO0424" class="hero-link-pill" target="_blank" rel="noreferrer" data-i18n="hero_link_github">GitHub</a>
+                <a href="https://www.linkedin.com/in/zhao000424" class="hero-link-pill" target="_blank" rel="noreferrer" data-i18n="hero_link_linkedin">LinkedIn</a>
+                <a href="resume.html" class="hero-link-pill" data-i18n="hero_link_resume">Resume</a>
+              </div>
             </div>
+            <a href="#projects" class="hero-scroll-link" data-i18n="hero_scroll">
+              Scroll to selected works
+            </a>
           </div>
         </div>
       </section>
 
-      <section class="panel glass portfolio-panel reveal">
+      <section id="projects" class="panel glass portfolio-panel reveal">
         <div class="portfolio-header">
           <h2 class="section-title" data-i18n="section_projects">Projects Overview</h2>
           <p class="portfolio-subtitle" data-i18n="section_projects_desc">

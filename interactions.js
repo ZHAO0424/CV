@@ -53,6 +53,148 @@ function setupReveal() {
   }, 700);
 }
 
+function setupHomeHeroIntro() {
+  const hero = document.querySelector('.hero-home');
+  if (!hero || hero.dataset.heroIntroBound === 'true') return;
+  hero.dataset.heroIntroBound = 'true';
+
+  const squaresLayer = hero.querySelector('.hero-squares');
+  const typingEl = hero.querySelector('.hero-typing');
+  const focusTypingEl = hero.querySelector('.hero-focus-typing');
+  const reduced = prefersReducedMotion();
+
+  if (squaresLayer && !squaresLayer.hasChildNodes()) {
+    const palette = [
+      'rgba(96, 165, 250, 0.28)',
+      'rgba(244, 208, 255, 0.24)',
+      'rgba(134, 239, 172, 0.22)',
+      'rgba(125, 211, 252, 0.24)',
+      'rgba(191, 219, 254, 0.3)',
+      'rgba(251, 191, 183, 0.22)'
+    ];
+    const count = reduced ? 16 : 34;
+
+    for (let i = 0; i < count; i += 1) {
+      const node = document.createElement('span');
+      const size = Math.round(16 + Math.random() * 42);
+      const duration = 16 + Math.random() * 18;
+      const delay = -Math.random() * duration;
+      const drift = `${Math.round((Math.random() - 0.5) * 140)}px`;
+      const rotate = `${Math.round((Math.random() - 0.5) * 240)}deg`;
+      node.className = 'hero-square';
+      node.style.left = `${Math.random() * 100}%`;
+      node.style.width = `${size}px`;
+      node.style.height = `${size}px`;
+      node.style.opacity = `${0.52 + Math.random() * 0.36}`;
+      node.style.animationDuration = `${duration}s`;
+      node.style.animationDelay = `${delay}s`;
+      node.style.setProperty('--drift', drift);
+      node.style.setProperty('--rotate', rotate);
+      node.style.setProperty('--square-fill', palette[i % palette.length]);
+      squaresLayer.appendChild(node);
+    }
+  }
+
+  if (!typingEl) return;
+
+  let typingTimer = 0;
+  let focusTimer = 0;
+  let runId = 0;
+
+  function getCurrentLang() {
+    return document.documentElement.lang && document.documentElement.lang.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+  }
+
+  function playTyping() {
+    window.clearTimeout(typingTimer);
+    window.clearTimeout(focusTimer);
+    runId += 1;
+    const currentRun = runId;
+    const lang = getCurrentLang();
+    const target = typingEl.getAttribute(`data-typing-${lang}`) || typingEl.textContent.trim();
+
+    if (reduced) {
+      typingEl.textContent = target;
+      if (focusTypingEl) {
+        const reducedPhrases = (focusTypingEl.getAttribute(`data-rotate-${lang}`) || '')
+          .split('|')
+          .filter(Boolean);
+        focusTypingEl.textContent = reducedPhrases[0] || '';
+      }
+      return;
+    }
+
+    typingEl.textContent = '';
+    let index = 0;
+    const speed = lang === 'zh' ? 95 : 62;
+
+    function tick() {
+      if (currentRun !== runId) return;
+      typingEl.textContent = target.slice(0, index);
+      index += 1;
+      if (index <= target.length) {
+        typingTimer = window.setTimeout(tick, speed);
+      } else if (focusTypingEl) {
+        focusTimer = window.setTimeout(() => {
+          playFocusTyping(currentRun);
+        }, 420);
+      }
+    }
+
+    typingTimer = window.setTimeout(tick, 180);
+  }
+
+  function playFocusTyping(currentRun) {
+    if (!focusTypingEl || currentRun !== runId) return;
+    const lang = getCurrentLang();
+    const phrases = (focusTypingEl.getAttribute(`data-rotate-${lang}`) || '')
+      .split('|')
+      .map((item) => item.trim())
+      .filter(Boolean);
+    if (!phrases.length) return;
+
+    let phraseIndex = 0;
+    let charIndex = 0;
+    let deleting = false;
+
+    function cycle() {
+      if (currentRun !== runId) return;
+      const phrase = phrases[phraseIndex];
+      focusTypingEl.textContent = deleting
+        ? phrase.slice(0, charIndex)
+        : phrase.slice(0, charIndex);
+
+      if (!deleting && charIndex < phrase.length) {
+        charIndex += 1;
+        focusTimer = window.setTimeout(cycle, lang === 'zh' ? 68 : 40);
+        return;
+      }
+
+      if (!deleting && charIndex >= phrase.length) {
+        deleting = true;
+        focusTimer = window.setTimeout(cycle, 1450);
+        return;
+      }
+
+      if (deleting && charIndex > 0) {
+        charIndex -= 1;
+        focusTimer = window.setTimeout(cycle, 22);
+        return;
+      }
+
+      deleting = false;
+      phraseIndex = (phraseIndex + 1) % phrases.length;
+      charIndex = 0;
+      focusTimer = window.setTimeout(cycle, 220);
+    }
+
+    cycle();
+  }
+
+  playTyping();
+  document.addEventListener('cv:languagechange', playTyping);
+}
+
 function runNonCriticalSetup() {
   setupBackgroundAtmosphere();
   setupCardTilt();
@@ -1121,6 +1263,7 @@ function setupFooterField() {
 setupPageLoader();
 
 document.addEventListener('DOMContentLoaded', () => {
+  setupHomeHeroIntro();
   setupReveal();
   optimizeMediaLoading();
   setupManagedVideos();
