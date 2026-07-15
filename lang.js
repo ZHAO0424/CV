@@ -53,6 +53,8 @@
   proj_tag_ai_narrative: 'AI / \u53d9\u4e8b\u7cfb\u7edf',
   proj_tag_xr_ecology: 'XR / \u751f\u6001',
   proj_tag_xr_wellbeing: 'XR / \u5065\u5eb7\u798f\u7949',
+  proj_tag_vr_art: 'VR / \u4ea4\u4e92\u827a\u672f',
+  proj_tag_ai_learning: 'AI / MR \u5b66\u4e60',
   tag_xr: 'XR / VR',
 
   proj_emotion_title: 'VR \u5bf9\u8bdd\u4e2d\u7684\u591a\u6a21\u6001\u60c5\u7eea\u611f\u77e5',
@@ -115,6 +117,10 @@
   proj_auckland_desc: '\u57fa\u4e8e Unreal \u7684\u751f\u6001 XR \u7cfb\u7edf\uff0c\u5c06\u9e1f\u7c7b\u6570\u636e\u8f6c\u5316\u4e3a\u7a7a\u95f4\u5316\u89c6\u542c\u53d9\u4e8b\u3002',
   proj_cure_title: 'CureLandscape VR',
   proj_cure_desc: '\u4e00\u4e2a\u9762\u5411\u7559\u5b66\u751f\u601d\u4e61\u60c5\u7eea\u4e0e\u7597\u6108\u666f\u89c2\u8bbe\u8ba1\u7684\u5728\u7814 VR \u5b9e\u9a8c\u3002',
+  proj_respire_title: 'Respire 2.0',
+  proj_respire_desc: '\u5c06\u5b9e\u65f6\u547c\u5438\u6570\u636e\u6620\u5c04\u4e3a\u5149\u6548\u3001\u8fd0\u52a8\u4e0e\u6709\u673a\u6570\u5b57\u96d5\u5851\u53cd\u9988\u7684\u6c89\u6d78\u5f0f VR \u4ea4\u4e92\u827a\u672f\u4f5c\u54c1\u3002',
+  proj_mr_english_title: 'MR \u82f1\u8bed\u5b66\u4e60\u52a9\u624b',
+  proj_mr_english_desc: '\u57fa\u4e8e Unity 6 \u4e0e Meta Quest 3 \u7684\u6df7\u5408\u73b0\u5b9e AI Tutor\uff0c\u7ed3\u5408\u5496\u5561\u5e97\u53e3\u8bed\u7ec3\u4e60\u4e0e\u6f14\u8bb2\u5385 presentation \u8bad\u7ec3\u3002',
   coastal_overview_title: '\u9879\u76ee\u6982\u8ff0',
   coastal_overview_text:
     '\u300aCoastal FPS\u300b\u662f\u4e00\u4e2a\u4ee5\u8fd1\u672a\u6765\u6d77\u5cb8\u6c61\u67d3\u73af\u5883\u4e3a\u80cc\u666f\u7684\u7b2c\u4e00\u4eba\u79f0\u52a8\u4f5c\u539f\u578b\u3002\u53d7\u6c61\u67d3\u5f71\u54cd\u7684\u6d77\u6d0b\u751f\u7269\u53d8\u5f02\u4e3a\u51f6\u731b\u654c\u4eba\uff0c\u73a9\u5bb6\u5219\u62e5\u6709\u201cCleaner\u201d \u7684\u89d2\u8272\uff0c\u5728\u7834\u8d25\u7684\u6d77\u8fb9\u9898\u573a\u4e2d\u6e05\u7406\u53d8\u5f02\u751f\u7269\uff0c\u91cd\u65b0\u56de\u6536\u53d7\u635f\u7684\u751f\u6001\u7cfb\u7edf\u3002',
@@ -217,6 +223,67 @@
   auckland_side_lab_title: '\u5b9e\u9a8c\u5ba4',
   auckland_side_lab_text: '\u5965\u514b\u5170\u5927\u5b66 Augmented Human Lab',
   auckland_side_keywords_title: '\u5173\u952e\u8bcd',
+
+  respire_overview_title: '\u9879\u76ee\u6982\u8ff0',
+  respire_overview_text:
+    'Respire 2.0 \u662f\u6211\u5728\u9999\u6e2f\u79d1\u6280\u5927\u5b66\uff08\u5e7f\u5dde\uff09\u62c5\u4efb\u7814\u7a76\u52a9\u7406\u671f\u95f4\u53c2\u4e0e\u7684\u6c89\u6d78\u5f0f\u4ea4\u4e92 VR \u827a\u672f\u4f5c\u54c1\u3002\u4f5c\u54c1\u5c06\u6570\u5b57\u96d5\u5851\u4e0e\u8eab\u4f53\u8282\u5f8b\u76f8\u8fde\uff1a\u547c\u5438\u5e26\u5b9e\u65f6\u6355\u6349\u89c2\u4f17\u7684\u547c\u5438\uff0c3D \u6709\u673a\u7ed3\u6784\u5219\u901a\u8fc7\u540c\u6b65\u7684\u5149\u6548\u3001\u8fd0\u52a8\u4e0e\u7a7a\u95f4\u6c1b\u56f4\u8fdb\u884c\u56de\u5e94\u3002',
+  respire_interaction_title: '\u5177\u8eab\u4ea4\u4e92',
+  respire_interaction_text:
+    '\u4f5c\u54c1\u5c06\u65e0\u5f62\u7684\u751f\u7406\u8fc7\u7a0b\u8f6c\u5316\u4e3a\u53ef\u89c6\u7684\u53cd\u9988\u5faa\u73af\u3002\u5f53\u4f7f\u7528\u8005\u5438\u6c14\u4e0e\u547c\u6c14\u65f6\uff0c\u96d5\u5851\u4eff\u4f5b\u88ab\u5524\u9192\uff0c\u4f7f\u547c\u5438\u5728\u8eab\u4f53\u4e0e\u865a\u62df\u73af\u5883\u4e4b\u95f4\u53d8\u6210\u4e00\u79cd\u88ab\u5171\u4eab\u7684\u611f\u77e5\u3002',
+  respire_system_title: '\u6280\u672f\u7cfb\u7edf',
+  respire_system_text:
+    '\u9879\u76ee\u7ed3\u5408 Unity 6000.0.43f1\u3001URP\u3001Python 3.10\u3001Vernier Go Direct Respiratory Belt \u4ee5\u53ca Unity/Python \u4f20\u611f\u5668\u63a5\u53e3\u5305\u3002\u6211\u53c2\u4e0e Unity VR \u4f53\u9a8c\u3001\u4f20\u611f\u5668\u9a71\u52a8\u4ea4\u4e92\u6620\u5c04\u3001\u573a\u666f\u6574\u5408\u3001\u5149\u6548\u884c\u4e3a\u4e0e\u5b9e\u65f6\u53cd\u9988\u903b\u8f91\u5b9e\u73b0\u3002',
+  respire_value_title: '\u7814\u7a76\u4e0e\u5c55\u793a\u4ef7\u503c',
+  respire_value_text:
+    'Respire 2.0 \u901a\u8fc7\u5c06\u547c\u5438\u8f6c\u5316\u4e3a\u89c6\u542c\u96d5\u5851\uff0c\u63a2\u7d22\u5185\u5728\u81ea\u6211\u3001\u6570\u5b57\u8eab\u4f53\u4e0e\u51a5\u60f3\u5f0f\u8fde\u63a5\u7684\u8fb9\u754c\u3002\u9879\u76ee\u4f4d\u4e8e\u4ea4\u4e92\u827a\u672f\u3001\u751f\u7406\u4fe1\u53f7\u611f\u77e5\u4e0e\u6c89\u6d78\u5f0f\u88c5\u7f6e\u8bbe\u8ba1\u7684\u4ea4\u53c9\u5904\u3002',
+  respire_side_role_title: '\u89d2\u8272',
+  respire_side_role_text: '\u7814\u7a76\u52a9\u7406 / Unity VR \u5f00\u53d1 / \u4f20\u611f\u5668\u4ea4\u4e92 / \u5b9e\u65f6\u53cd\u9988',
+  respire_side_lab_title: '\u673a\u6784',
+  respire_side_lab_text: '\u9999\u6e2f\u79d1\u6280\u5927\u5b66\uff08\u5e7f\u5dde\uff09',
+  respire_side_period_title: '\u65f6\u95f4',
+  respire_side_keywords_title: '\u5173\u952e\u8bcd',
+  respire_gallery_note: 'Respire 2.0 \u7684\u89c6\u89c9\u7814\u7a76\u3001Unity \u622a\u56fe\u3001\u7ebf\u4e0b\u5c55\u793a\u6587\u6863\u4e0e\u4ea4\u4e92\u8bbe\u8ba1\u6750\u6599\u3002',
+  respire_cap_2: '\u6b63\u89c6\u89d2\u89c6\u89c9\u7814\u7a76',
+  respire_cap_3: '\u8f74\u6d4b\u89d2\u89c6\u89c9\u7814\u7a76',
+  respire_cap_4: '\u7ebf\u4e0b VR \u5b9e\u673a\u6f14\u793a',
+  respire_cap_5: '\u7ebf\u4e0b\u5c55\u793a\u73b0\u573a',
+  respire_cap_6: '\u5c40\u90e8\u7ec6\u8282\u4e0e\u8868\u9762\u7814\u7a76',
+  respire_cap_7: '\u6982\u5ff5\u751f\u6210\u8fc7\u7a0b',
+  respire_cap_8: '\u58f0\u97f3\u4e0e\u58f0\u4e50\u8bbe\u8ba1\u65b9\u5411',
+  respire_cap_9: 'Unity URP \u573a\u666f\u622a\u56fe',
+  respire_cap_10: 'VR \u53ef\u89c6\u5316\u6d4b\u8bd5',
+
+  mr_english_overview_title: '\u9879\u76ee\u6982\u8ff0',
+  mr_english_overview_text:
+    '\u8be5\u9879\u76ee\u662f\u6211\u5728\u9999\u6e2f\u79d1\u6280\u5927\u5b66\uff08\u5e7f\u5dde\uff09\u62c5\u4efb\u7814\u7a76\u52a9\u7406\u671f\u95f4\u57fa\u4e8e Unity 6 \u4e0e Meta Quest 3 \u5f00\u53d1\u7684\u6df7\u5408\u73b0\u5b9e\u82f1\u8bed\u5b66\u4e60\u52a9\u624b\u3002\u5b83\u5c06\u8bed\u97f3\u4ea4\u4e92\u3001AI \u53cd\u9988\u751f\u6210\u3001TTS \u8bed\u97f3\u64ad\u653e\u4e0e\u57fa\u4e8e\u573a\u666f\u7684\u5b66\u4e60\u4efb\u52a1\u8fde\u63a5\u4e3a\u5b8c\u6574\u7684\u8bed\u8a00\u7ec3\u4e60\u95ed\u73af\u3002',
+  mr_english_cafe_title: '\u5496\u5561\u5e97\u53e3\u8bed\u7ec3\u4e60\u573a\u666f',
+  mr_english_cafe_text:
+    '\u5496\u5561\u5e97\u573a\u666f\u6a21\u62df\u65e5\u5e38\u82f1\u8bed\u4ea4\u6d41\u4e2d\u7684\u70b9\u5355\u3001\u7269\u4f53\u63cf\u8ff0\u3001\u504f\u597d\u8868\u8fbe\u4e0e\u5496\u5561\u5236\u4f5c\u6d41\u7a0b\u3002grinder\u3001coffee machine\u3001tamper\u3001ice\u3001handle \u7b49\u53ef\u8bc6\u522b\u7269\u4f53\u88ab\u52a0\u5165\u4e16\u754c\u7a7a\u95f4\u82f1\u6587\u6807\u7b7e\uff0c\u5e2e\u52a9\u5b66\u4e60\u8005\u628a\u8bcd\u6c47\u4e0e\u771f\u5b9e\u8bed\u5883\u4efb\u52a1\u8fde\u63a5\u8d77\u6765\u3002',
+  mr_english_presentation_title: '\u6f14\u8bb2\u5385 Presentation \u8bad\u7ec3',
+  mr_english_presentation_text:
+    '\u6f14\u8bb2\u5385\u573a\u666f\u7528\u4e8e\u82f1\u6587\u81ea\u6211\u4ecb\u7ecd\u4e0e public speaking \u7ec3\u4e60\u3002\u7528\u6237\u9762\u5bf9 Coach \u548c\u89c2\u4f17\u8fdb\u884c\u6f14\u8bb2\uff0c\u7cfb\u7edf\u8f6c\u5199\u8bed\u97f3\u3001\u751f\u6210\u89c2\u4f17\u8ffd\u95ee\uff0c\u5e76\u5728\u7ed3\u675f\u540e\u7531 Coach \u7ed9\u51fa\u8868\u8fbe\u4f18\u70b9\u3001\u6539\u8fdb\u5efa\u8bae\u4e0e\u4e0b\u4e00\u6b65\u7ec3\u4e60\u76ee\u6807\u3002',
+  mr_english_system_title: 'AI \u8bed\u97f3\u4ea4\u4e92\u7cfb\u7edf',
+  mr_english_system_text:
+    '\u4ea4\u4e92\u7ba1\u7ebf\u96c6\u6210\u817e\u8baf\u4e91 STT/TTS \u4e0e\u963f\u91cc\u4e91 Qwen Flash\u3002\u7528\u6237\u8bed\u97f3\u88ab\u8bc6\u522b\u540e\u7531 AI Tutor \u7406\u89e3\u548c\u751f\u6210\u4e0a\u4e0b\u6587\u56de\u590d\uff0c\u518d\u8f6c\u6362\u4e3a\u8bed\u97f3\u5728 MR \u573a\u666f\u4e2d\u64ad\u653e\uff0c\u8ba9\u5b66\u4e60\u8005\u901a\u8fc7\u81ea\u7136\u5bf9\u8bdd\u800c\u4e0d\u662f\u56fa\u5b9a\u95ee\u7b54\u6765\u7ec3\u4e60\u82f1\u8bed\u3002',
+  mr_english_contribution_title: '\u6211\u7684\u8d21\u732e',
+  mr_english_contribution_text:
+    '\u6211\u8d1f\u8d23\u68b3\u7406\u573a\u666f\u7ea7\u8fd0\u884c\u914d\u7f6e\u3001\u6a21\u5757\u5316\u5bf9\u8bdd\u63a7\u5236\u5668\u3001\u7269\u4f53\u6807\u7b7e\u3001presentation \u6d41\u7a0b\u903b\u8f91\u3001\u89c2\u4f17\u53cd\u9988\u884c\u4e3a\u4e0e\u53ef\u7ef4\u62a4\u7684\u90e8\u7f72\u6587\u6863\uff0c\u4f7f\u9879\u76ee\u4fbf\u4e8e\u6d4b\u8bd5\u3001\u6269\u5c55\u4e0e\u56e2\u961f\u534f\u4f5c\u6f14\u793a\u3002',
+  mr_english_side_role_title: '\u89d2\u8272',
+  mr_english_side_role_text: '\u7814\u7a76\u52a9\u7406 / Unity MR \u5f00\u53d1 / AI \u8bed\u97f3\u4ea4\u4e92 / \u573a\u666f\u6d41\u7a0b\u8bbe\u8ba1',
+  mr_english_side_platform_title: '\u5e73\u53f0',
+  mr_english_side_stack_title: '\u6280\u672f\u6808',
+  mr_english_side_keywords_title: '\u5173\u952e\u8bcd',
+  mr_english_gallery_note: '\u5496\u5561\u5e97\u53e3\u8bed\u7ec3\u4e60\u3001\u6f14\u8bb2\u5385\u8bad\u7ec3\u3001\u7269\u4f53\u6807\u7b7e\u3001AI \u5de5\u4f5c\u6d41\u4e0e\u89d2\u8272\u52a8\u4f5c\u7814\u7a76\u3002',
+  mr_english_cap_1: '\u4e0e AI Tutor \u8fdb\u884c\u5496\u5561\u5e97\u5bf9\u8bdd',
+  mr_english_cap_2: '\u53e3\u8bed\u5bf9\u8bdd\u7ec3\u4e60\u89c6\u89d2',
+  mr_english_cap_3: '\u67dc\u53f0\u4ea4\u4e92\u4e0e\u8bcd\u6c47\u6807\u7b7e',
+  mr_english_cap_4: '\u5496\u5561\u5e97\u5b66\u4e60\u73af\u5883',
+  mr_english_cap_5: '\u6f14\u8bb2\u5385\u8bad\u7ec3\u573a\u666f',
+  mr_english_cap_6: 'Coach \u4e0e\u89c2\u4f17\u7ec3\u4e60\u89c6\u89d2',
+  mr_english_cap_7: 'AI-first \u5f00\u53d1\u5de5\u4f5c\u6d41',
+  mr_english_cap_8: 'Coach \u4e0e\u89c2\u4f17\u52a8\u4f5c\u5236\u4f5c',
+  mr_english_cap_9: 'Presentation \u4e3b\u89c6\u89d2',
+  mr_english_cap_10: '\u6f14\u8bb2\u5385\u9e1f\u77b0\u89c6\u89d2',
 
   cure_overview_title: '\u9879\u76ee\u6982\u8ff0',
   cure_overview_text:
@@ -398,13 +465,21 @@ Object.assign(zhTranslations, {
   resume_page_title: '赵子锐 | 简历',
   resume_name_main: '赵子锐',
   resume_contact_mobile: '电话',
+  resume_contact_mobile_value: '(+86) 18154920373',
   resume_contact_email: '邮箱',
+  resume_contact_email_value: 'zzhao010@campus.goldsmiths.ac.uk',
   resume_contact_portfolio: '作品集',
   resume_side_focus_title: '研究方向',
-  resume_side_focus_text: 'HCI、XR、多智能体交互、情绪感知系统、沉浸式叙事、虚拟社会环境与空间计算。',
+  resume_side_focus_text: 'XR 交互设计、空间计算、VR/MR 多模态感知、AI 驱动虚拟角色、情绪自适应对话系统、语音型人机交互、具身化 AI Tutor、VR 暴露疗法、数字遗产保护、沉浸式叙事、生理信号感知与虚拟社会环境。',
   resume_side_keywords_title: '核心关键词',
   resume_edu_1_body: '核心课程：增强现实、建模与动画、虚拟现实、游戏机制与玩法、游戏编程、游戏引擎编程、AI 驱动虚拟角色构建、沉浸式交互系统设计。',
   resume_edu_2_body: '核心课程：未来空间结构、新型工业化绿色节能建筑系统设计与研究、增强现实、虚拟现实创意图像设计、3D 打印技术及应用。',
+  resume_place_guangzhou: '广州，中国',
+  resume_place_beijing: '北京，中国',
+  resume_res_hkust_title: '研究助理，香港科技大学（广州）',
+  resume_res_hkust_detail_1: '基于 Unity 6 与 Meta Quest 3 参与沉浸式 VR 艺术装置与混合现实英语学习系统开发，负责传感器交互、语音 AI、场景流程、实时反馈机制与跨设备运行调试，将艺术装置体验和语言学习场景转化为可测试、可迭代的 XR 原型。',
+  resume_res_hkust_detail_2: '参与 Respire 2.0 沉浸式交互 VR 艺术作品开发，接入 Vernier 呼吸带数据，将观众呼吸节律实时映射为 3D 有机数字雕塑的光效与运动反馈，强化身体感知与数字环境之间的冥想式连接。',
+  resume_res_hkust_detail_3: '开发 MR 英语学习助手，构建咖啡店口语练习与演讲厅 presentation 训练场景，集成腾讯云 STT/TTS 与 Qwen Flash，实现语音识别、AI 回复生成、语音播放、Coach 总结反馈与观众追问生成，覆盖从语音输入、LLM 理解、场景反馈到 TTS 输出的完整交互闭环。',
   resume_res_1_title: '研究助理，奥克兰大学 Augmented Human Lab',
   resume_res_1_detail_1: '基于 Unreal Engine 开发沉浸式虚拟现实系统，将实时鸟类三维位置与物种数据转化为动态视觉标记与空间化鸟鸣声，实现生态数据的可视化与声化表达。',
   resume_res_1_detail_2: '整合 LiDAR 点云森林环境、数据驱动事件触发机制与 Ambisonic 空间音频系统，构建数据驱动的沉浸式生态叙事体验，作品计划于新西兰 Len Lye Centre 艺术博物馆展出。',
@@ -425,10 +500,16 @@ Object.assign(zhTranslations, {
   resume_res_6_detail_2: '采用简版修订恢复量表（SRRS）评估恢复效益，为创建健康宜居的校园环境设计提供数据支持。',
   resume_pub_1: '[1]. Zhao, Z. (2026). <span class="pub-title">Designing Constrained Generative NPCs with a Dynamic Evidence Graph for Investigative Narrative Worlds</span>. 收录于 <span class="pub-venue">2026 CHI Conference on Human Factors in Computing Systems 扩展摘要（CHI EA \'26）</span>. ACM. <a href="https://doi.org/10.1145/3772363.3798387" target="_blank" rel="noreferrer">https://doi.org/10.1145/3772363.3798387</a>',
   resume_pub_2: '[2]. Zhao, Z. (2026). <span class="pub-title">Multimodal Emotion Perception for VR Dialogue: Towards Improved User Experience</span>. 收录于 <span class="pub-venue">IEEE VR 2026 Conference on Virtual Reality and 3D User Interfaces</span>. IEEE.',
-  resume_pub_3: '[3]. Zhao, Z., &amp; Yin, C. (2025, July). <span class="pub-title">Leveraging AI-driven VR environments to reshape urban planning and community engagement</span>. 会议论文，发表于第 19 届 <span class="pub-venue">Computational Urban Planning and Urban Management (CUPUM 2025)</span>，伦敦。',
+  resume_pub_3: '[3]. Zhao, Z., &amp; Yin, C. (2025, July). <span class="pub-title">Leveraging AI-driven VR environments to reshape urban planning and community engagement</span>. 会议论文，发表于第 19 届 <span class="pub-venue">Computational Urban Planning and Urban Management (CUPUM 2025)</span>，伦敦。<a href="https://doi.org/10.17605/OSF.IO/ABYQH" target="_blank" rel="noreferrer">https://doi.org/10.17605/OSF.IO/ABYQH</a>',
   resume_pub_4: '[4]. Yin, C., Li, T., Xue, B., &amp; Zhao, Z. (2025). <span class="pub-title">Influence of virtual reality restorative environments on psychological well-being in university students: An evidence-based experimental study</span>. <span class="pub-venue">Exploration of Digital Health Technologies</span>, 3, 101155. <a href="https://doi.org/10.37349/edht.2025.101155" target="_blank" rel="noreferrer">https://doi.org/10.37349/edht.2025.101155</a>',
+  resume_work_viture_title: 'VITURE 北京行者无疆科技有限公司｜Unity 交互工程师',
+  resume_work_viture_detail_1: '负责基于 Unity 的 XR 交互原型与产品向 Demo 开发，聚焦手势、注视、拖拽、面板组织、hover 反馈、空间 UI 与交互手感等细节，将空间计算场景中的交互概念转化为可演示、可测试的产品原型。',
+  resume_work_viture_detail_2: '参与 SpaceWalker OS3.0 交互迭代与 VITURE Unity SDK 探索，跑通 SDK 示例工程，体验 SpaceWalker / GhostParty 等产品，并沉淀交互问题、体验亮点与 Demo 复盘，为后续 Unity XR Demo、SDK 使用文档和产品交互优化提供依据。',
+  resume_work_viture_detail_3: '采用 AI-first 工作流，结合 Claude Code / Codex 完成 research、plan、implement、review 与文档沉淀，同时保留人工判断交互体验、模块边界、测试验证与后续重构方向，形成更高效的 XR 原型开发流程。',
+  resume_work_1_time: '2025.11 - 2026.02',
   resume_work_1_title: '上海云梧智能科技 Feeling AI｜AI 产品设计实习生',
   resume_work_1_detail_1: '主导落地一款 AI 驱动的多角色叙事调查 Demo，构建西部小镇世界观与剧情闭环，规划 NPC 关系网络与信息流转机制，定义语义标签与数据结构标准，推动对话、信任与记忆系统实现，验证 LLM 赋能互动叙事产品的结构化与可推理性。',
+  resume_work_1_detail_2: '参与产品功能拆解、AI 角色设定、交互流程梳理与原型文档撰写，将叙事体验拆分为可实现的模块，并协助团队评估多角色对话系统在游戏、教育和陪伴类产品中的落地可能性。',
   resume_work_2_title: 'UCL 多媒体人类学实验室｜3D / VR 设计师',
   resume_work_2_detail_1: '参与基于 Unreal 的沉浸式 VR 博物馆建设，数字化复原 200 余组巴西原住民文化遗产，强调“地方知识”与文化空间的可视化叙事表达，并探索数字遗产在全球化背景下的表达策略。',
   resume_work_3_title: '新疆建筑设计研究院有限公司｜参数化设计实习生',
@@ -436,15 +517,21 @@ Object.assign(zhTranslations, {
   resume_work_4_title: '上海 PTA 建筑设计咨询有限公司｜建筑设计实习生',
   resume_work_4_detail_1: '参与城市规划与综合体前期方案设计，重点负责场地现状分析、功能分区、空间组织研究以及法规与控制指标调研。',
   resume_proj_1_title: 'Digital Heritage Project – Nanjing Da Bao En Temple',
-  resume_proj_1_desc: '负责开发联合国教科文组织遗址语境下的大报恩寺数字体验，重建历史场景并利用 AR/VR 讲述文物故事，设计 AI 对话与互动系统，统筹技术与美术整合并参与全球竞赛提案提交。',
+  resume_proj_1_desc: '负责开发联合国教科文组织遗址的大报恩寺数字体验，重建历史场景并利用 AR/VR 讲述文物故事。设计 AI 对话与互动系统，统筹 3D 资产、空间叙事、交互流程与竞赛文本整合，并参与“永不消失的遗产”全球竞赛提案提交。',
   resume_proj_2_title: 'FireEscapeVR - 基于 3D 空间音频定位的 VR 逃生模拟器（Unity）',
-  resume_proj_2_desc: '构建基于 3D 空间音频的 VR 逃生模拟系统，探索空间听觉在紧急逃生中的引导作用，开发沉浸式交互界面与路径系统，具有消防演练与安全培训的教育应用价值。',
+  resume_proj_2_desc: '构建基于 3D 空间音频的 VR 逃生模拟系统，探索空间听觉在低能见度紧急逃生中的方向引导作用。负责 Unity 场景交互、路径提示、沉浸式界面与训练流程设计，使项目具备消防演练、安全教育与应急反应训练的应用价值。',
   resume_proj_3_title: 'Carbonis: Siren\'s Elegia - VR 互动电影（Unreal）',
-  resume_proj_3_desc: '主导神话与生态叙事交融的 VR 互动电影，设计象征人类贪婪的水下空间与交互导航系统，批判绿色洗涤与资本主义生态剥削，面向虚拟艺术与时尚传播场景。',
+  resume_proj_3_desc: '主导神话与生态叙事交融的 VR 互动电影，设计象征人类贪婪的水下空间、交互导航与情绪化观看节奏，批判绿色洗涤与资本主义生态剥削。项目面向虚拟艺术与时尚传播场景，并曾参与 Shanghai Three Days 展示及后续展览筹备。',
   resume_proj_4_title: 'Bloomiverse - AR Planting Adventure Game（Unity）',
-  resume_proj_4_desc: '设计植物动画与道具交互机制，开发增强现实魔法花园体验，通过植入式反馈机制加强用户在生态主题游戏中的互动沉浸。',
+  resume_proj_4_desc: '设计植物动画、道具交互机制与 AR 反馈循环，开发增强现实魔法花园体验。通过植物成长状态、物体触发与即时视觉反馈，加强用户在生态主题游戏中的互动沉浸与环境意识。',
+  resume_skill_xr_label: 'XR / 空间交互',
+  resume_skill_xr_value: '手势输入、注视选择、拖拽状态、hover 反馈、空间 UI、面板组织、Meta Quest 3、OpenXR',
   resume_skill_ai_label: 'AI 交互',
-  resume_skill_ai_value: 'LLM 提示词设计、多智能体对话、情绪自适应系统、会话记忆',
+  resume_skill_ai_value: 'LLM 提示词设计、多智能体对话、情绪自适应系统、会话记忆、Agentic Coding',
+  resume_skill_cloud_label: '语音与云端 AI',
+  resume_skill_cloud_value: '腾讯云 STT/TTS、阿里云 Qwen Flash、语音交互管线、AI Tutor 对话流程',
+  resume_skill_research_label: '研究与评估',
+  resume_skill_research_value: 'HR/BVP 生理数据采集、GAD-7、STAI-S、SPSS、定性研究、用户体验原型验证',
   resume_skill_code_label: '编程语言',
   resume_skill_engine_label: '游戏引擎',
   resume_skill_engine_value: 'Unity3D（C#）、Unreal Engine（Blueprint 与 C++）、NPC 逻辑与系统架构',
@@ -574,6 +661,11 @@ function getHtmlForKey(lang, key) {
 
 function setLanguage(lang) {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+
+  document.querySelectorAll('[data-i18n-href-en]').forEach((el) => {
+    const href = el.getAttribute(lang === 'zh' ? 'data-i18n-href-zh' : 'data-i18n-href-en');
+    if (href) el.setAttribute('href', href);
+  });
 
   document.querySelectorAll('[data-i18n]').forEach((el) => {
     const key = el.getAttribute('data-i18n');

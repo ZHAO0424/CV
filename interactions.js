@@ -72,7 +72,7 @@ function setupHomeHeroIntro() {
       'rgba(191, 219, 254, 0.3)',
       'rgba(251, 191, 183, 0.22)'
     ];
-    const count = reduced ? 16 : 34;
+    const count = reduced ? 8 : window.innerWidth < 700 ? 8 : 16;
 
     for (let i = 0; i < count; i += 1) {
       const node = document.createElement('span');
@@ -93,6 +93,13 @@ function setupHomeHeroIntro() {
       node.style.setProperty('--square-fill', palette[i % palette.length]);
       squaresLayer.appendChild(node);
     }
+  }
+
+  if (!reduced && 'IntersectionObserver' in window) {
+    const heroObserver = new IntersectionObserver((entries) => {
+      hero.classList.toggle('is-motion-paused', !entries[0].isIntersecting);
+    }, { threshold: 0.02 });
+    heroObserver.observe(hero);
   }
 
   if (!typingEl) return;
@@ -197,7 +204,6 @@ function setupHomeHeroIntro() {
 
 function runNonCriticalSetup() {
   setupBackgroundAtmosphere();
-  setupCardTilt();
   setupMagneticTargets();
   setupCursorEffects();
   setupFooterField();
@@ -394,36 +400,55 @@ function setupPhotoLightbox() {
   });
 }
 function setupMagneticTargets() {
-  if (prefersReducedMotion()) return;
+  if (!supportsFinePointer() || prefersReducedMotion()) return;
 
   const targets = Array.from(
     document.querySelectorAll(
-      '.nav-link, .lang-btn, .proj-back, .footer-link, .project-card, .photo-card, .shot, .side-cover-box, .tag'
+      '.nav-link, .lang-btn, .proj-back, .footer-link, .tag'
     )
   );
 
   targets.forEach((target) => {
-    const strength = target.matches('.nav-link, .lang-btn, .proj-back, .footer-link, .tag') ? 7 : 10;
+    const strength = 5;
+    let rect = null;
+    let raf = 0;
+    let pointerX = 0;
+    let pointerY = 0;
+
+    function onEnter() {
+      rect = target.getBoundingClientRect();
+    }
 
     function onMove(ev) {
-      const rect = target.getBoundingClientRect();
-      const offsetX = ev.clientX - (rect.left + rect.width / 2);
-      const offsetY = ev.clientY - (rect.top + rect.height / 2);
-      const moveX = (offsetX / rect.width) * strength;
-      const moveY = (offsetY / rect.height) * strength;
-      target.style.setProperty('--cursor-mx', `${moveX.toFixed(2)}px`);
-      target.style.setProperty('--cursor-my', `${moveY.toFixed(2)}px`);
-      target.classList.add('cursor-magnetic');
+      pointerX = ev.clientX;
+      pointerY = ev.clientY;
+      if (raf) return;
+
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        if (!rect) rect = target.getBoundingClientRect();
+        const offsetX = pointerX - (rect.left + rect.width / 2);
+        const offsetY = pointerY - (rect.top + rect.height / 2);
+        const moveX = (offsetX / rect.width) * strength;
+        const moveY = (offsetY / rect.height) * strength;
+        target.style.setProperty('--cursor-mx', `${moveX.toFixed(2)}px`);
+        target.style.setProperty('--cursor-my', `${moveY.toFixed(2)}px`);
+        target.classList.add('cursor-magnetic');
+      });
     }
 
     function onLeave() {
+      cancelAnimationFrame(raf);
+      raf = 0;
+      rect = null;
       target.style.removeProperty('--cursor-mx');
       target.style.removeProperty('--cursor-my');
       target.classList.remove('cursor-magnetic');
     }
 
-    target.addEventListener('mousemove', onMove);
-    target.addEventListener('mouseleave', onLeave);
+    target.addEventListener('pointerenter', onEnter, { passive: true });
+    target.addEventListener('pointermove', onMove, { passive: true });
+    target.addEventListener('pointerleave', onLeave);
   });
 }
 
@@ -437,8 +462,6 @@ function setupCursorEffects() {
   shell.className = 'cursor-shell';
   shell.innerHTML = `
     <div class="cursor-trail cursor-trail-1"></div>
-    <div class="cursor-trail cursor-trail-2"></div>
-    <div class="cursor-trail cursor-trail-3"></div>
     <div class="cursor-aura"></div>
     <div class="cursor-ring"></div>
   `;
@@ -448,17 +471,20 @@ function setupCursorEffects() {
 
   const aura = shell.querySelector('.cursor-aura');
   const ring = shell.querySelector('.cursor-ring');
-  const trails = Array.from(shell.querySelectorAll('.cursor-trail'));
+  const trail = shell.querySelector('.cursor-trail');
 
   const state = {
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
     currentX: window.innerWidth / 2,
     currentY: window.innerHeight / 2,
-    hover: 'default'
+    trailX: window.innerWidth / 2,
+    trailY: window.innerHeight / 2,
+    hover: 'default',
+    target: null,
+    visible: false,
+    raf: 0
   };
-
-  const trailPoints = trails.map(() => ({ x: state.currentX, y: state.currentY }));
 
   function applyHoverState(kind) {
     state.hover = kind;
@@ -530,45 +556,51 @@ function setupCursorEffects() {
   function onPointerMove(ev) {
     state.x = ev.clientX;
     state.y = ev.clientY;
+    state.visible = true;
     shell.classList.add('is-visible');
+    scheduleFrame();
+  }
+
+  function onPointerOver(ev) {
+    if (ev.target === state.target) return;
+    state.target = ev.target;
     applyHoverState(resolveHoverKind(ev.target));
     applyContrastState(resolveSurfaceContrast(ev.target));
   }
 
   function onPointerLeave() {
+    state.visible = false;
+    state.target = null;
     shell.classList.remove('is-visible');
     applyHoverState('default');
     applyContrastState('light');
   }
 
   function animate() {
-    state.currentX += (state.x - state.currentX) * 0.18;
-    state.currentY += (state.y - state.currentY) * 0.18;
+    state.raf = 0;
+    state.currentX += (state.x - state.currentX) * 0.34;
+    state.currentY += (state.y - state.currentY) * 0.34;
+    state.trailX += (state.currentX - state.trailX) * 0.2;
+    state.trailY += (state.currentY - state.trailY) * 0.2;
 
-    const auraSize = state.hover === 'video' ? 58 : state.hover === 'link' ? 52 : state.hover === 'card' ? 46 : 36;
-    const ringSize = state.hover === 'video' ? 42 : state.hover === 'link' ? 38 : state.hover === 'card' ? 32 : 24;
+    const cursorTransform = `translate3d(${state.currentX.toFixed(2)}px, ${state.currentY.toFixed(2)}px, 0) translate(-50%, -50%)`;
+    aura.style.transform = cursorTransform;
+    ring.style.transform = cursorTransform;
+    trail.style.transform = `translate3d(${state.trailX.toFixed(2)}px, ${state.trailY.toFixed(2)}px, 0) translate(-50%, -50%)`;
 
-    aura.style.transform = `translate3d(${(state.currentX - auraSize / 2).toFixed(2)}px, ${(state.currentY - auraSize / 2).toFixed(2)}px, 0)`;
-    ring.style.transform = `translate3d(${(state.currentX - ringSize / 2).toFixed(2)}px, ${(state.currentY - ringSize / 2).toFixed(2)}px, 0)`;
+    const cursorDistance = Math.abs(state.x - state.currentX) + Math.abs(state.y - state.currentY);
+    const trailDistance = Math.abs(state.currentX - state.trailX) + Math.abs(state.currentY - state.trailY);
+    if (state.visible && (cursorDistance > 0.08 || trailDistance > 0.08)) scheduleFrame();
+  }
 
-    let leaderX = state.currentX;
-    let leaderY = state.currentY;
-    trails.forEach((trail, index) => {
-      const point = trailPoints[index];
-      point.x += (leaderX - point.x) * (0.22 - index * 0.03);
-      point.y += (leaderY - point.y) * (0.22 - index * 0.03);
-      trail.style.transform = `translate3d(${(point.x - 5).toFixed(2)}px, ${(point.y - 5).toFixed(2)}px, 0)`;
-      leaderX = point.x;
-      leaderY = point.y;
-    });
-
-    window.requestAnimationFrame(animate);
+  function scheduleFrame() {
+    if (!state.raf) state.raf = window.requestAnimationFrame(animate);
   }
 
   document.addEventListener('pointermove', onPointerMove, { passive: true });
+  document.addEventListener('pointerover', onPointerOver, { passive: true });
   document.addEventListener('pointerleave', onPointerLeave);
   window.addEventListener('blur', onPointerLeave);
-  window.requestAnimationFrame(animate);
 }
 let threeLibraryPromise = null;
 
@@ -608,6 +640,7 @@ function smoothStep(edge0, edge1, value) {
 }
 
 function setupBackgroundAtmosphere() {
+  if (!document.querySelector('.hero-home')) return;
   if (document.querySelector('.page-atmosphere')) return;
 
   const layer = document.createElement('div');
@@ -626,7 +659,7 @@ function setupBackgroundAtmosphere() {
   let raf = 0;
   let visible = !document.hidden;
 
-  const motes = Array.from({ length: 56 }, () => ({
+  const motes = Array.from({ length: window.innerWidth < 700 ? 14 : 28 }, () => ({
     x: 0,
     y: 0,
     orbit: 80 + Math.random() * 260,
@@ -649,7 +682,7 @@ function setupBackgroundAtmosphere() {
   ];
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = Math.min(window.devicePixelRatio || 1, 1.25);
     width = Math.max(1, layer.clientWidth || window.innerWidth);
     height = Math.max(1, layer.clientHeight || Math.round(window.innerHeight * 0.34));
     canvas.width = Math.round(width * dpr);
@@ -699,8 +732,6 @@ function setupBackgroundAtmosphere() {
     drawWaveBand(now, 0, 0.28, 1.45);
     drawWaveBand(now, 1, 0.2, 1.12);
     drawWaveBand(now, 2, 0.16, 0.96);
-    drawWaveBand(now, 3, 0.11, 0.84);
-
     ctx.globalCompositeOperation = 'lighter';
     const t = now;
 
@@ -766,96 +797,83 @@ function setupPageLoader() {
   overlay.innerHTML = `
     <div class="page-loader-bg"></div>
     <div class="page-loader-inner">
+      <div class="page-loader-pixel-mark" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+      </div>
       <div class="page-loader-copy">
-        <div class="page-loader-title">Loading Zhao Zirui Portfolio</div>
+        <div class="page-loader-title">Zhao Zirui</div>
+        <div class="page-loader-subtitle">XR / AI / Spatial Systems</div>
       </div>
-      <div class="page-loader-progress">
-        <div class="page-loader-progress-track">
-          <div class="page-loader-progress-fill"></div>
-          <div class="page-loader-progress-sheen"></div>
-        </div>
-        <div class="page-loader-progress-text">Loading 0%</div>
-      </div>
+      <div class="page-loader-scan"><span></span></div>
+      <div class="page-loader-status">Calibrating interface</div>
     </div>
   `;
   document.body.appendChild(overlay);
-  document.body.classList.add('page-loader-active');
 
-  const progressFill = overlay.querySelector('.page-loader-progress-fill');
-  const progressText = overlay.querySelector('.page-loader-progress-text');
-  const minVisible = hasSeenLoader ? 1200 : 2200;
-  const maxVisible = hasSeenLoader ? 2200 : 3400;
-  const startAt = performance.now();
-  let progress = 0;
-  let targetProgress = 0.08;
+  const showDelay = hasSeenLoader ? 220 : 140;
+  const minVisible = hasSeenLoader ? 180 : 680;
+  const maxVisible = hasSeenLoader ? 900 : 1600;
+  let shownAt = 0;
+  let shown = false;
+  let ready = document.readyState === 'complete';
   let closed = false;
-  let tornDown = false;
-  let raf = 0;
+  let showTimer = 0;
+  let maxTimer = 0;
 
-  function teardown() {
-    if (tornDown) return;
-    tornDown = true;
-
-    if (raf) {
-      cancelAnimationFrame(raf);
-      raf = 0;
+  function rememberVisit() {
+    try {
+      window.sessionStorage.setItem('portfolio-loader-seen', '1');
+    } catch (error) {
+      // Storage may be unavailable in private browsing contexts.
     }
-
-    window.setTimeout(() => {
-      overlay.remove();
-    }, 460);
   }
 
-  function closeLoader(force) {
+  function removeLoader() {
     if (closed) return;
-    const elapsed = performance.now() - startAt;
-    if (!force && elapsed < minVisible) {
-      window.setTimeout(() => closeLoader(true), Math.max(0, minVisible - elapsed));
+    closed = true;
+    window.clearTimeout(showTimer);
+    window.clearTimeout(maxTimer);
+    rememberVisit();
+    overlay.classList.add('is-leaving');
+    document.body.classList.remove('page-loader-active');
+    window.setTimeout(() => overlay.remove(), shown ? 420 : 0);
+  }
+
+  function showLoader() {
+    if (ready || closed || shown) return;
+    shown = true;
+    shownAt = performance.now();
+    document.body.classList.add('page-loader-active');
+    overlay.classList.add('is-visible');
+  }
+
+  function finishLoading() {
+    if (closed) return;
+    ready = true;
+    window.clearTimeout(showTimer);
+    if (!shown) {
+      removeLoader();
       return;
     }
 
-    targetProgress = 1;
-    closed = true;
-    window.setTimeout(() => {
-      overlay.classList.add('is-leaving');
-      document.body.classList.remove('page-loader-active');
-      try {
-        window.sessionStorage.setItem('portfolio-loader-seen', '1');
-      } catch (error) {
-        // Ignore storage issues.
-      }
-      teardown();
-    }, 280);
+    const remaining = Math.max(0, minVisible - (performance.now() - shownAt));
+    window.setTimeout(removeLoader, remaining);
   }
 
-  function animate(now) {
-    const elapsed = now - startAt;
-    const timedTarget = hasSeenLoader
-      ? Math.min(0.84, 0.1 + elapsed / 1500)
-      : Math.min(0.88, 0.08 + elapsed / 2100);
-    targetProgress = Math.max(targetProgress, timedTarget);
-    progress += (targetProgress - progress) * 0.08;
-    progressFill.style.transform = `scaleX(${Math.min(1, progress).toFixed(4)})`;
-    progressText.textContent = `Loading ${Math.round(Math.min(100, progress * 100))}%`;
+  showTimer = window.setTimeout(showLoader, showDelay);
+  maxTimer = window.setTimeout(() => {
+    if (!shown && !ready) showLoader();
+    removeLoader();
+  }, maxVisible);
 
-    if (!closed || progress < 0.999) raf = requestAnimationFrame(animate);
-  }
-
-  raf = requestAnimationFrame(animate);
-
-  if (document.readyState === 'complete') {
-    targetProgress = 0.96;
-    closeLoader();
+  if (ready) {
+    window.setTimeout(finishLoading, 0);
   } else {
-    window.addEventListener('load', () => {
-      targetProgress = 0.96;
-      closeLoader();
-    }, { once: true });
+    window.addEventListener('load', finishLoading, { once: true });
   }
-  window.setTimeout(() => closeLoader(true), maxVisible);
 
   return {
-    close: closeLoader
+    close: removeLoader
   };
 }
 
@@ -1045,45 +1063,48 @@ function setupLogoPixelBurst() {
   if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
   trigger.dataset.pixelBurstBound = 'true';
 
-  let system = null;
-  let warmup = null;
-  let queued = 0;
-
-  function ensureSystem() {
-    if (system) return Promise.resolve(system);
-    if (warmup) return warmup;
-
-    warmup = loadThreeLibrary()
-      .then((THREE) => {
-        system = createLogoThreeBurstSystem(trigger, THREE);
-        const replay = Math.min(queued, 2);
-        queued = 0;
-        for (let i = 0; i < replay; i += 1) system.burst();
-        return system;
-      })
-      .catch((error) => {
-        warmup = null;
-        console.error('Unable to initialize logo burst effect.', error);
-        throw error;
-      });
-
-    return warmup;
+  let layer = document.querySelector('.logo-pixel-burst-layer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.className = 'logo-pixel-burst-layer';
+    document.body.appendChild(layer);
   }
 
-  trigger.addEventListener('click', (event) => {
-    event.preventDefault();
-    if (system) {
-      system.burst();
-      return;
-    }
+  trigger.addEventListener('click', () => {
+    const rect = trigger.getBoundingClientRect();
+    const colors = ['#60a5fa', '#f0abfc', '#86efac', '#fca5a5', '#ffffff'];
 
-    queued += 1;
-    ensureSystem().catch(() => {
-      queued = 0;
+    for (let i = 0; i < 16; i += 1) {
+      const pixel = document.createElement('span');
+      const angle = (Math.PI * 2 * i) / 16 + (Math.random() - 0.5) * 0.34;
+      const distance = 34 + Math.random() * 64;
+      pixel.className = 'logo-burst-pixel';
+      pixel.style.left = `${rect.left + rect.width / 2}px`;
+      pixel.style.top = `${rect.top + rect.height / 2}px`;
+      pixel.style.setProperty('--burst-x', `${Math.cos(angle) * distance}px`);
+      pixel.style.setProperty('--burst-y', `${Math.sin(angle) * distance}px`);
+      pixel.style.setProperty('--burst-r', `${Math.round((Math.random() - 0.5) * 220)}deg`);
+      pixel.style.setProperty('--burst-delay', `${i * 5}ms`);
+      pixel.style.setProperty('--burst-color', colors[i % colors.length]);
+      layer.appendChild(pixel);
+      window.setTimeout(() => pixel.remove(), 850);
+    }
+  });
+}
+
+function setupProjectViewTransitions() {
+  const cards = Array.from(document.querySelectorAll('.project-card'));
+  if (!cards.length) return;
+
+  cards.forEach((card) => {
+    card.addEventListener('pointerdown', () => {
+      document.querySelectorAll('.project-image').forEach((image) => {
+        image.style.viewTransitionName = 'none';
+      });
+      const cover = card.querySelector('.project-image');
+      if (cover) cover.style.viewTransitionName = 'project-cover';
     });
   });
-
-  ensureSystem().catch(() => {});
 }
 
 function setupFooterField() {
@@ -1107,6 +1128,7 @@ function setupFooterField() {
     let height = 0;
     let visible = false;
     let rafId = 0;
+    let activeUntil = 0;
 
     function buildPairs() {
       pairs.length = 0;
@@ -1149,6 +1171,8 @@ function setupFooterField() {
       mouse.x = ev.clientX - rect.left;
       mouse.y = ev.clientY - rect.top;
       mouse.active = true;
+      activeUntil = performance.now() + 650;
+      scheduleDraw();
     }
 
     function scheduleDraw() {
@@ -1235,7 +1259,11 @@ function setupFooterField() {
         }
       }
 
-      scheduleDraw();
+      if (mouse.active && performance.now() < activeUntil) {
+        scheduleDraw();
+      } else {
+        mouse.active = false;
+      }
     }
 
     if ('IntersectionObserver' in window) {
@@ -1268,5 +1296,6 @@ document.addEventListener('DOMContentLoaded', () => {
   optimizeMediaLoading();
   setupManagedVideos();
   setupPhotoLightbox();
+  setupProjectViewTransitions();
   scheduleNonCriticalSetup();
 });

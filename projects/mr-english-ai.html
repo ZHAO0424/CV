@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MR English Learning Assistant</title>
+  <link rel="stylesheet" href="../styles.css?v=20260715-motion" />
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">Mixed Reality</span>
+            <span class="proj-pill">AI Tutor</span>
+            <span class="proj-pill">Meta Quest 3</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_mr_english_title">MR English Learning Assistant</h1>
+          <p class="proj-subtitle" data-i18n="proj_mr_english_desc">
+            Unity 6 mixed-reality AI tutor combining cafe conversation practice and presentation training on Meta Quest 3.
+          </p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="mr_english_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="mr_english_overview_text">
+              This project is a Unity 6 mixed-reality English learning assistant built for Meta Quest 3 during my Research Assistant work at HKUST(GZ). It connects voice interaction, AI-generated feedback, text-to-speech playback, and scene-based learning tasks into a complete language practice loop.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="mr_english_cafe_title">Cafe Conversation Scenario</h2>
+            <p class="proj-p" data-i18n="mr_english_cafe_text">
+              The cafe scene simulates daily English conversations around ordering, object description, preference expression, and coffee-making procedures. Recognizable objects such as the grinder, coffee machine, tamper, ice, and handle are labeled in world space so learners can connect vocabulary with real contextual tasks.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="mr_english_presentation_title">Presentation Training Scenario</h2>
+            <p class="proj-p" data-i18n="mr_english_presentation_text">
+              The presentation hall supports self-introduction and public speaking practice. Users speak to a coach and audience, the system transcribes their speech, generates follow-up questions, and provides a final AI summary with strengths, improvement suggestions, and next-step learning goals.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="mr_english_system_title">AI Voice Interaction System</h2>
+            <p class="proj-p" data-i18n="mr_english_system_text">
+              The interaction pipeline integrates Tencent Cloud STT/TTS and Aliyun Qwen Flash. Speech input is recognized, interpreted by the AI tutor, converted into contextual response text, and played back as voice inside the MR scene, allowing learners to practice through natural conversation instead of fixed quiz prompts.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="mr_english_contribution_title">My Contribution</h2>
+            <p class="proj-p" data-i18n="mr_english_contribution_text">
+              I structured scene-specific runtime configs, modular conversation controllers, object labels, presentation flow logic, audience feedback behavior, and maintainable deployment documentation so the project could be tested, extended, and demonstrated collaboratively.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="mr_english_side_role_title">Role</div>
+            <div class="side-text" data-i18n="mr_english_side_role_text">Research Assistant / Unity MR Development / AI Voice Interaction / Scene Flow Design</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="mr_english_side_platform_title">Platform</div>
+            <div class="side-text">Unity 6 / Meta Quest 3 / OpenXR</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="mr_english_side_stack_title">Stack</div>
+            <div class="side-text">Tencent Cloud STT/TTS / Aliyun Qwen Flash / New Input System</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="mr_english_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">AI Tutor</span>
+              <span class="tag">Voice Interaction</span>
+              <span class="tag">MR Learning</span>
+              <span class="tag">World-Space UI</span>
+              <span class="tag">Presentation Training</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/mr-english-ai-cover.webp" alt="MR English Learning Assistant cover" />
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+          <p class="portfolio-subtitle" data-i18n="mr_english_gallery_note">
+            Cafe conversation practice, presentation training, object labels, AI workflow, and character behavior studies.
+          </p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/mr-english-ai/cafe-npc-dialogue.webp" alt="Cafe AI tutor dialogue" />
+            <figcaption class="shot-cap" data-i18n="mr_english_cap_1">Cafe conversation with AI tutor</figcaption>
+          </figure>
+          <div class="gallery-grid gallery-grid-two mr-english-cafe-pair">
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/cafe-dialogue-view.webp" alt="Cafe dialogue view" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_2">Dialogue practice view</figcaption>
+            </figure>
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/cafe-counter-interaction.webp" alt="Cafe counter object labels" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_3">Counter interaction and vocabulary labels</figcaption>
+            </figure>
+          </div>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/mr-english-ai/cafe-environment.webp" alt="Cafe learning environment" />
+            <figcaption class="shot-cap" data-i18n="mr_english_cap_4">Cafe learning environment</figcaption>
+          </figure>
+          <div class="gallery-grid gallery-grid-two mr-english-presentation-pair">
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/presentation-environment.webp" alt="Presentation hall environment" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_5">Presentation hall training scene</figcaption>
+            </figure>
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/presentation-view.webp" alt="Presentation practice view" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_6">Coach and audience practice view</figcaption>
+            </figure>
+          </div>
+          <div class="gallery-grid gallery-grid-two mr-english-presentation-pair">
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/presentation-main-view.webp" alt="Presentation main view" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_9">Presentation main view</figcaption>
+            </figure>
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/mr-english-ai/presentation-birdseye.webp" alt="Presentation hall bird's-eye view" />
+              <figcaption class="shot-cap" data-i18n="mr_english_cap_10">Presentation hall bird's-eye view</figcaption>
+            </figure>
+          </div>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/mr-english-ai/presentation-character-motion.webp" alt="Presentation character motion production" />
+            <figcaption class="shot-cap" data-i18n="mr_english_cap_8">Coach and audience motion production</figcaption>
+          </figure>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/mr-english-ai/ai-workflow.webp" alt="AI workflow diagram" />
+            <figcaption class="shot-cap" data-i18n="mr_english_cap_7">AI-first development workflow</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20260715-motion"></script>
+</body>
+</html>
