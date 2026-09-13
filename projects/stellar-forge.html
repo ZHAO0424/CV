@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stellar Forge</title>
+  <link rel="stylesheet" href="../styles.css?v=20260913-projects" />
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">Unity 6</span>
+            <span class="proj-pill">Tabletop AR</span>
+            <span class="proj-pill">Deckbuilder</span>
+            <span class="proj-pill">Hand Tracking</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_forge_title">Stellar Forge</h1>
+          <p class="proj-subtitle" data-i18n="proj_forge_desc">
+            A deckbuilding roguelike where half of the build lives in your room. Star spirits stand on your real desk, their neighbours form a resonance chain, and the score travels down that chain as a path you can watch.
+          </p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="forge_overview_text">
+              A late-night star workshop: you throw star cards into the forge, match recipes to brew a score, and hit a target every night. Spirits move in and help. Balatro proved the skeleton — classic card patterns, multiplicative scoring, passive build slots — and the proposition here is to move half of the build out of the card pool and into physical space. Every system is held to one review line: could a flat version do this? If yes, it is not the selling point. Currently in on-device iteration, targeting a store release.
+            </p>
+            <div class="proj-stats">
+              <div class="proj-stat"><div class="proj-stat-num">6</div><div class="proj-stat-label" data-i18n="forge_stat_pedestals">spirit pedestals on your desk</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">14</div><div class="proj-stat-label" data-i18n="forge_stat_spirits">launch spirits in five families</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">9</div><div class="proj-stat-label" data-i18n="forge_stat_recipes">scoring recipes</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">226</div><div class="proj-stat-label" data-i18n="forge_stat_tests">automated tests, green</div></div>
+            </div>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_resonance_title">Resonance: Building in Space</h2>
+            <p class="proj-p" data-i18n="forge_resonance_text">
+              Six pedestals sit on the desk, and you pick the spirits up and rearrange them by hand. A spirit with the resonance trait links to its neighbours into a chain; at scoring time particles travel along that chain and every extra link raises the total. Some spirits carry directional traits instead — look at it while scoring, keep it behind you, catch it as it orbits past the forge — which turns placement from a UI sort order into a real spatial decision. The chain is the part a flat version cannot copy: it is a visible path through your room, and no two players' desks look alike.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_spirits_title">Spirits Are Characters, Not Cards</h2>
+            <p class="proj-p" data-i18n="forge_spirits_text">
+              Each spirit is a small creature standing on its base with its own idle animation. Rarity reads as volume and position: a common one is a desk trinket, a rare one floats, a legendary one occupies a corner of the room. A spirit whose condition is unmet dozes; when it is met it stands up and glows, so the board state is legible without reading a single line of text. On a trigger, particles fly from the cards to the spirit, the spirit performs, and the number is thrown to the total — with its sound coming from the direction it actually stands in.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_scoring_title">Scoring, and Why Overscoring Pays</h2>
+            <p class="proj-p" data-i18n="forge_scoring_text">
+              Score is stardust times multiplier, then multiplied again by the resonance bonus the chain earned. Clearing the target is not where it stops: anything over the target converts either into coins or into banked stardust that starts the next round, so a blowout always means something — that is the numeric outlet for the whole performance layer. Playing the same recipe repeatedly decays within a round, which pushes variety without banning anything, and one spirit exempts you from the decay at the cost of a fifty-percent shop markup, folding the anti-repetition rule back into the build itself.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_language_title">Plain Language Instead of Poker</h2>
+            <p class="proj-p" data-i18n="forge_language_text">
+              No J/Q/K/A, no flushes or straights. Four elements — metal, wood, water, fire; face cards become meteor, moon and sun, with the pole star as the single highest card; recipes are named for what they look like and every one carries a one-line explanation in the interface. The rule is that the replacement has to be understandable at a glance: the goal is lower cognitive load than the poker original, not a private vocabulary.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_gesture_title">Gestures, Tuned on the Device</h2>
+            <p class="proj-p" data-i18n="forge_gesture_text">
+              The gesture set went through several rounds on hardware. Playing a card started as palms-forward and misfired constantly, so it now requires a push past a distance threshold; discarding takes two fists at equal height and parallel, with the orientation requirement relaxed. The right hand takes priority and the left is used only when the right cannot be detected. There is also a one-handed mode — snap to play, closed fist at centre to discard — plus a dial to shuffle and a two-hand pinch to push the whole scene nearer or further.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="forge_tooling_title">A Desktop Mode That Runs the Real Code Path</h2>
+            <p class="proj-p" data-i18n="forge_tooling_text">
+              Device round-trips are the real cost of XR iteration: a single-port neckband can eat an hour between a finished build and an installed one. So the build splits one flag into two ideas — is there hardware, and should the XR layout be used — which lets the same code path run in the editor with a mouse and keyboard. Layout, flow and interaction logic are now verified at the desk; gesture stability, real visual quality and performance still have to go on the headset.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="forge_side_role_title">Role</div>
+            <div class="side-text" data-i18n="forge_side_role_text">Solo developer — game and systems design, gameplay programming, AI-assisted art pipeline, on-device iteration</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="forge_side_platform_title">Platform</div>
+            <div class="side-text">Unity 6 / VITURE AR glasses / desktop simulation mode</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="forge_side_status_title">Status</div>
+            <div class="side-text" data-i18n="forge_side_status_text">In development. Mouse-playable build first, then XR; gesture set and presentation layer settled, numbers being calibrated. "Stellar Forge" is a working title.</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="forge_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">Spatial Deckbuilding</span>
+              <span class="tag">Roguelike</span>
+              <span class="tag">Tabletop AR</span>
+              <span class="tag">Gesture Design</span>
+              <span class="tag">Game Feel</span>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+          <p class="portfolio-subtitle" data-i18n="forge_gallery_note">
+            Captures pending — the build and its footage live on the work machine.
+          </p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <div class="shot-placeholder shot-placeholder-warm"><span data-i18n="forge_ph_1">Spirits on the desk &middot; wide capture</span></div>
+            <figcaption class="shot-cap" data-i18n="forge_cap_1">Six pedestals across a real desk, with the forge at the centre</figcaption>
+          </figure>
+          <div class="gallery-grid gallery-grid-two">
+            <figure class="shot">
+              <div class="shot-placeholder shot-placeholder-warm"><span data-i18n="forge_ph_2">Resonance chain</span></div>
+              <figcaption class="shot-cap" data-i18n="forge_cap_2">Score travelling along the chain as a particle path</figcaption>
+            </figure>
+            <figure class="shot">
+              <div class="shot-placeholder"><span data-i18n="forge_ph_3">Card art</span></div>
+              <figcaption class="shot-cap" data-i18n="forge_cap_3">Card faces and spirit art, generated and refined in-pipeline</figcaption>
+            </figure>
+          </div>
+          <div class="gallery-grid gallery-grid-two">
+            <figure class="shot">
+              <div class="shot-placeholder"><span data-i18n="forge_ph_4">Play gesture</span></div>
+              <figcaption class="shot-cap" data-i18n="forge_cap_4">Playing a hand: cards spiral up around a shared axis</figcaption>
+            </figure>
+            <figure class="shot">
+              <div class="shot-placeholder"><span data-i18n="forge_ph_5">Desktop mode</span></div>
+              <figcaption class="shot-cap" data-i18n="forge_cap_5">Desktop simulation mode running the same code path with mouse and keyboard</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20260913-projects"></script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Town</title>
+  <link rel="stylesheet" href="../styles.css?v=20260913-projects" />
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">Unity 6</span>
+            <span class="proj-pill">Multi-Agent Simulation</span>
+            <span class="proj-pill">Local LLM</span>
+            <span class="proj-pill">Qualitative HCI Study</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_aitown_title">AI Town</h1>
+          <p class="proj-subtitle" data-i18n="proj_aitown_desc">
+            A player authors one resident, then never controls it again. A Unity 6 town simulation, and a 24-participant study of how people explain a life they started but cannot steer.
+          </p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="aitown_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="aitown_overview_text">
+              AI Town is a single-player 2.5D low-poly town built in Unity 6, and the research probe built around it. Thirteen established residents and one player-created resident navigate, work, use facilities, transact, find housing, and shift their social relationships over nine simulated days. The player authors the resident once — appearance, attributes, background, life goal, behaviour, social style, likes and dislikes — and from then on can only watch, follow, and inspect. Occupation, housing, routes and decisions are never assigned by the player.
+            </p>
+            <div class="proj-stats">
+              <div class="proj-stat"><div class="proj-stat-num">24</div><div class="proj-stat-label" data-i18n="aitown_stat_participants">participants</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">9</div><div class="proj-stat-label" data-i18n="aitown_stat_interviews">trace-elicitation interviews</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">9</div><div class="proj-stat-label" data-i18n="aitown_stat_days">simulated days per case</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">13+1</div><div class="proj-stat-label" data-i18n="aitown_stat_residents">residents per town</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">120</div><div class="proj-stat-label" data-i18n="aitown_stat_logs">recorded event logs</div></div>
+            </div>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="aitown_authority_title">Two Authorities, Deliberately Separated</h2>
+            <p class="proj-p" data-i18n="aitown_authority_text">
+              Unity rules are the only thing that settles world state and writes the research log. A local language model — Qwen3-4B served by llama-server, fully offline — expresses that state as dialogue and summaries, but cannot award money, create a friendship, or decide whether an event occurred; a bounded parser may make capped profile adjustments and nothing more. That separation is what makes the town auditable: every claim in the study traces back to a rule-written event rather than to generated text. When the model is unavailable the interface falls back to templates and says so on screen.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="aitown_study_title">Study Design</h2>
+            <p class="proj-p" data-i18n="aitown_study_text">
+              Each participant authored one resident and observed it across three sessions on consecutive real-world days, covering simulated Days 1, 4 and 7. The town ran unattended in between, and again on Days 8–9 after the participant locked a written prediction and left. Everyone then read a complete nine-day report: housing, employment, savings, relationships, places visited, work and income, purchases, health events, and a day-by-day trajectory. Nine participants joined a later trace-elicitation interview in which a backend disclosure layer was introduced only after their own account had been recorded.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="aitown_findings_title">What the Study Found</h2>
+            <p class="proj-p" data-i18n="aitown_findings_text">
+              Free-text profiles often diverged from the resulting trajectories. Ownership persisted through having initiated a life, worried about it, and remained answerable for it — not through control; boundary cases instead framed the resident as an employee, a projected story, or a program. Participants accepted autonomous action, but questioned consequential relationship changes that arrived without a visible cause. Participant-facing reports restored evidence of unseen effort, while later backend disclosure supplied structural explanations. In two trajectories blocked by the same software defect, participants drew a clear line between a one-time repair and ongoing control.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="aitown_contribution_title">My Contribution</h2>
+            <p class="proj-p" data-i18n="aitown_contribution_text">
+              I built both halves. On the system side: the rule engine and its versioned ruleset, resident authoring, the needs / work / housing / relationship systems, the observation interface, the nine-day report, the offline language-model service with its template fallback, and the research logging that makes every trajectory auditable. On the study side: protocol and instruments, the operator deployment package used to run sessions on other people's machines, session operation, the analysis pipeline, and the manuscript prepared for CHI 2027. The twenty-four cases ran across eight build and ruleset groups, and the manuscript reports that version spread rather than flattening it.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="aitown_side_role_title">Role</div>
+            <div class="side-text" data-i18n="aitown_side_role_text">System design and Unity development / Study design and operation / Qualitative analysis / Manuscript</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="aitown_side_platform_title">Platform</div>
+            <div class="side-text">Unity 6 / Windows / Fully offline</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="aitown_side_stack_title">Stack</div>
+            <div class="side-text">C# rule engine / Qwen3-4B via llama-server / Deterministic event log / Python analysis</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="aitown_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">Authored Autonomy</span>
+              <span class="tag">Psychological Ownership</span>
+              <span class="tag">Legibility</span>
+              <span class="tag">Trace Elicitation</span>
+              <span class="tag">Generative Agents</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/ai-town-cover.webp" alt="AI Town observation interface" />
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+          <p class="portfolio-subtitle" data-i18n="aitown_gallery_note">
+            Authoring, observation, the nine-day report, and the diagrams describing the system boundary and the study procedure. Screenshots are post-study demonstration captures; the names visible in them are synthetic interface data and identify no participant.
+          </p>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/ai-town/resident-creation.webp" alt="Resident authoring interface" />
+            <figcaption class="shot-cap" data-i18n="aitown_cap_1">Authoring: attributes and free-text profile, written once before the simulation starts</figcaption>
+          </figure>
+          <div class="gallery-grid gallery-grid-two">
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/ai-town/runtime-conversation.webp" alt="Observation interface during a resident conversation" />
+              <figcaption class="shot-cap" data-i18n="aitown_cap_2">Observation: state, plan, funds, needs and relationship map stay visible — but no action commands</figcaption>
+            </figure>
+            <figure class="shot">
+              <img class="shot-img" src="../images/projects/ai-town/nine-day-report.webp" alt="Nine-day resident report" />
+              <figcaption class="shot-cap" data-i18n="aitown_cap_3">The nine-day report: the whole trajectory, including everything the participant never saw</figcaption>
+            </figure>
+          </div>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/ai-town/fig-two-authorities.webp" alt="System boundary diagram" />
+            <figcaption class="shot-cap" data-i18n="aitown_cap_4">System boundary: rules settle state and write the log, the language model only expresses it</figcaption>
+          </figure>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/ai-town/fig-procedure.webp" alt="Study procedure diagram" />
+            <figcaption class="shot-cap" data-i18n="aitown_cap_5">Procedure as executed: three sessions, unattended days, a locked prediction, then the report</figcaption>
+          </figure>
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/ai-town/fig-visibility-model.webp" alt="Findings relationship diagram" />
+            <figcaption class="shot-cap" data-i18n="aitown_cap_6">How the three findings connect: ownership, causal storytelling, and layered evidence</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20260913-projects"></script>
+</body>
+</html>

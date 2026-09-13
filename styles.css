@@ -3392,3 +3392,70 @@ body[data-cursor-contrast='dark'] .cursor-trail {
     transform: none;
   }
 }
+
+/* ---- 2026 project pages: stat rows and pending-capture placeholders ---- */
+
+.proj-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.proj-stat {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.72);
+  padding: 10px 12px;
+}
+
+.proj-stat-num {
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--text);
+}
+
+.proj-stat-label {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--text-soft);
+  margin-top: 3px;
+}
+
+.shot-placeholder {
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.34), transparent 36%),
+    linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(30, 64, 175, 0.9), rgba(59, 130, 246, 0.72));
+}
+
+.shot-placeholder-warm {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.34), transparent 36%),
+    linear-gradient(135deg, rgba(30, 27, 75, 0.96), rgba(124, 45, 18, 0.9), rgba(251, 191, 36, 0.62));
+}
+
+.shot-placeholder-cool {
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255, 255, 255, 0.34), transparent 36%),
+    linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 118, 110, 0.9), rgba(94, 234, 212, 0.6));
+}
+
+.shot-placeholder span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.94);
+  text-shadow: 0 8px 20px rgba(15, 23, 42, 0.3);
+}
