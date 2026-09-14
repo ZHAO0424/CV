@@ -1288,11 +1288,58 @@ function setupFooterField() {
   });
 }
 
+function setupProjectFilter() {
+  const bar = document.querySelector('.project-filters');
+  const grid = document.querySelector('.project-grid-large');
+  if (!bar || !grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.project-card[data-category]'));
+  if (cards.length === 0) return;
+
+  const buttons = Array.from(bar.querySelectorAll('.filter-btn'));
+
+  // Counts are derived from the DOM, so adding a card never leaves a stale number.
+  buttons.forEach((btn) => {
+    const key = btn.dataset.filter;
+    const n = key === 'all' ? cards.length : cards.filter((c) => c.dataset.category === key).length;
+    const slot = btn.querySelector('.filter-count');
+    if (slot) slot.textContent = String(n);
+    if (n === 0 && key !== 'all') btn.hidden = true;
+  });
+
+  function apply(key) {
+    cards.forEach((card) => {
+      const show = key === 'all' || card.dataset.category === key;
+      card.classList.toggle('is-filtered-out', !show);
+      // setupReveal() unobserves a card once it has animated in. A card revealed
+      // for the first time by a filter change would otherwise stay at opacity 0,
+      // so mark anything we show as already revealed.
+      if (show) {
+        card.classList.add('is-visible');
+        card.classList.add('visible');
+        card.style.transitionDelay = '0ms';
+      }
+    });
+    buttons.forEach((btn) => {
+      const on = btn.dataset.filter === key;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  bar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filter-btn');
+    if (!btn || !bar.contains(btn)) return;
+    apply(btn.dataset.filter);
+  });
+}
+
 setupPageLoader();
 
 document.addEventListener('DOMContentLoaded', () => {
   setupHomeHeroIntro();
   setupReveal();
+  setupProjectFilter();
   optimizeMediaLoading();
   setupManagedVideos();
   setupPhotoLightbox();

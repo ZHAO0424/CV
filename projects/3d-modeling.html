@@ -3,8 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Character & Environment Modeling</title>
-  <link rel="stylesheet" href="../styles.css?v=20260913-projects" />
+  <title>Character & Environment Modeling | Zhao Zirui</title>
+  <link rel="stylesheet" href="../styles.css?v=20260914-filters" />
+  <meta name="description" content="A collection of hard-surface models, character designs, and rendering experiments." />
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Character &amp; Environment Modeling | Zhao Zirui" />
+  <meta property="og:description" content="A collection of hard-surface models, character designs, and rendering experiments." />
+  <meta property="og:image" content="../images/projects/covers/modeling-cover.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Character &amp; Environment Modeling | Zhao Zirui" />
+  <meta name="twitter:description" content="A collection of hard-surface models, character designs, and rendering experiments." />
+  <meta name="twitter:image" content="../images/projects/covers/modeling-cover.webp" />
+  <!-- /social preview -->
 </head>
 <body>
   <div class="page">
@@ -32,7 +47,7 @@
         <div class="proj-hero-inner">
           <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
           <div class="proj-kicker">
-            <span class="proj-pill" data-i18n="proj_tag_3d">3D Art</span>
+            <span class="proj-pill" data-i18n="proj_tag_3d">3D Art / Modeling</span>
           </div>
           <h1 class="proj-title" data-i18n="proj_3d_title">
             Character & Environment Modeling
@@ -46,9 +61,23 @@
       <section class="proj-layout">
         <section class="proj-main glass reveal">
           <div class="proj-section">
-            <h2 class="proj-h2">Coming Soon</h2>
-            <p class="proj-p">
-              Detailed project breakdown, methodology, and findings will be updated shortly.
+            <h2 class="proj-h2">Overview</h2>
+            <p class="proj-p" data-i18n="proj_3d_overview">
+              A set of 3D art studies grouped by pipeline rather than by project: hard-surface props, one stylised character carried from topology through to a lit render, and an environment scene assembled out of the modular props. Most of the work was built in Maya. The individual pieces are presented on a plain turntable stage on purpose &mdash; with no set dressing to lean on, the silhouette and the material have to carry the read.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="proj_3d_h_character">Character, End to End</h2>
+            <p class="proj-p" data-i18n="proj_3d_character">
+              The horned character is the one asset taken through every stage, and the gallery shows the stages side by side instead of only the finished frame. The wireframe view exposes where the polygon budget went: density is concentrated at the shoulders, elbows, knees and face, and kept low across flat armour plates. The UV layout doubles as the texture sheet &mdash; face, fur, belt, plates and hands are unwrapped and hand-painted as one atlas, so a single material covers the whole body. Laying it out this way makes the trade-off visible: where geometry pays for the form, and where painted detail stands in for it.
+            </p>
+          </div>
+
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="proj_3d_h_props">Hard-Surface Props and the Scene</h2>
+            <p class="proj-p" data-i18n="proj_3d_props">
+              Three hard-surface pieces &mdash; a scrap-built container tower, a single-wheel vehicle, and a heavy weapon &mdash; each modelled as a self-contained asset. The container tower is the one that pays off twice: the same stacked-unit, scaffold and walkway vocabulary is reused at scale to build the abandoned yard in the final sequence, which is why it is modelled as modules rather than as a single mesh.
             </p>
           </div>
         </section>
@@ -56,7 +85,20 @@
         <aside class="proj-side glass reveal">
           <div class="side-block">
             <div class="side-title">Role</div>
-            <div class="side-text">TBD</div>
+            <div class="side-text" data-i18n="proj_3d_side_role">Modelling / UV unwrapping / texture painting / lookdev and rendering</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title">Tools</div>
+            <div class="side-text">Maya &middot; ZBrush &middot; Blender</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">Hard Surface</span>
+              <span class="tag">Character Pipeline</span>
+              <span class="tag">UV &amp; Texturing</span>
+              <span class="tag">Environment Art</span>
+            </div>
           </div>
           <div class="side-cover-box">
             <img src="../images/projects/covers/modeling-cover.webp" alt="Project Cover">
@@ -71,33 +113,39 @@
         <div class="gallery-grid">
           <figure class="shot shot-wide">
             <img class="shot-img" src="../images/projects/3d-modeling/container.webp" alt="Container Model" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_container">The container tower &mdash; modelled as stackable modules, not one mesh</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/character-render.webp" alt="Character Rendered" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_render">The character, textured and lit</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/character-texture.webp" alt="Character Texture View" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_uv">UV layout and the hand-painted texture atlas &mdash; one sheet for the whole body</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/character-white.webp" alt="Character White Model" />
-          </figure>
-          <figure class="shot">
-            <img class="shot-img" src="../images/projects/3d-modeling/character-uv.webp" alt="Character UV Map" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_wire">Wireframe: density at shoulders, elbows, knees and face; flat plates kept cheap</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/portfolio5.webp" alt="Maya View 1" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_maya">Work in progress in the Maya viewport</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/bike.webp" alt="Bike Model" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_bike">Single-wheel vehicle</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/gun-color.webp" alt="Gun Model" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_gun">Heavy weapon, colour pass</figcaption>
           </figure>
           <figure class="shot">
             <img class="shot-img" src="../images/projects/3d-modeling/abstract-render.webp" alt="Abstract render" />
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_creature">A second character, test render</figcaption>
           </figure>
           <figure class="shot shot-wide">
             <video class="shot-img" src="../images/projects/3d-modeling/scene-abandon.mp4" autoplay loop muted playsinline aria-label="Abandoned Scene Simulation" poster="../images/projects/3d-modeling/scene-abandon.poster.webp" preload="metadata" data-managed-video="autoplay"></video>
+            <figcaption class="shot-cap" data-i18n="proj_3d_cap_scene">The abandoned yard: the container modules reused at scene scale</figcaption>
           </figure>
         </div>
       </section>
@@ -106,12 +154,12 @@
     <footer class="footer">
       <div class="footer-left">
         <span data-i18n="footer_contact_label">Contact</span>
-        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">zzrsnow@outlook.com</a>
       </div>
     </footer>
   </div>
   <script src="../lang.js"></script>
-  <script src="../interactions.js?v=20260913-projects"></script>
+  <script src="../interactions.js?v=20260914-filters"></script>
 </body>
 </html>
 

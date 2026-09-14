@@ -5,14 +5,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Portfolio of Zirui Zhao, an XR & Architectural Experience Designer based in London. Exploring immersive spatial narratives and AI interaction." />
+    content="Portfolio of Zhao Zirui — Unity Interaction Engineer at VITURE. Bare-hand interaction on AR glasses, XR research, and AI agent systems." />
   <meta name="keywords"
-    content="Zirui Zhao, XR, VR, Architecture, AI Interaction, Portfolio, Goldsmiths, Harbin Institute of Technology" />
+    content="Zhao Zirui, Zirui Zhao, XR, AR glasses, Unity, hand tracking, spatial UI, HCI, AI agents, VITURE, portfolio" />
   <title>Zirui Zhao | Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css?v=20260913-projects" />
+  <link rel="stylesheet" href="styles.css?v=20260914-filters" />
+  <link rel="icon" type="image/svg+xml" href="images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32.png" />
+  <link rel="apple-touch-icon" href="images/apple-touch-icon.png" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Zirui Zhao | Portfolio" />
+  <meta property="og:description" content="Portfolio of Zhao Zirui — Unity Interaction Engineer at VITURE. Bare-hand interaction on AR glasses, XR research, and AI agent systems." />
+  <meta property="og:image" content="images/og-home.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Zirui Zhao | Portfolio" />
+  <meta name="twitter:description" content="Portfolio of Zhao Zirui — Unity Interaction Engineer at VITURE. Bare-hand interaction on AR glasses, XR research, and AI agent systems." />
+  <meta name="twitter:image" content="images/og-home.jpg" />
+  <!-- /social preview -->
 </head>
 
 <body>
@@ -51,15 +65,15 @@
             <p class="hero-focus-line" aria-live="polite">
               <span
                 class="hero-focus-typing"
-                data-rotate-en="XR for wellbeing and spatial storytelling.|Emotion-aware interaction in immersive systems.|AI agents and social influence in virtual communities."
-                data-rotate-zh="面向福祉与空间叙事的 XR。|沉浸式系统中的情绪感知交互。|虚拟社区中的 AI 智能体与社会影响。"
-              >XR for wellbeing and spatial storytelling.</span>
+                data-rotate-en="Bare-hand interaction on AR glasses.|Emotion-aware interaction in immersive systems.|AI agents and social influence in virtual communities."
+                data-rotate-zh="AR 眼镜上的裸手交互。|沉浸式系统中的情绪感知交互。|虚拟社区中的 AI 智能体与社会影响。"
+              >Bare-hand interaction on AR glasses.</span>
               <span class="hero-caret hero-caret-soft" aria-hidden="true"></span>
             </p>
             <div class="hero-about glass">
               <p class="hero-about-label" data-i18n="hero_about_label">About Me</p>
               <p class="hero-about-text" data-i18n="hero_about_text">
-                I work across HCI, XR, AI interaction, and spatial storytelling, with a research focus on how immersive environments can support emotion-aware interaction, social influence, and new forms of data-driven experience. My background in architecture shapes how I think about atmosphere, structure, and human presence in virtual space, and I am currently seeking PhD opportunities related to immersive systems, wellbeing, and experimental digital environments.
+                I design and build XR interaction. I am currently a Unity Interaction Engineer at VITURE, working on gesture, gaze and spatial UI for AR glasses — from SDK-level prototypes to product-facing demos. Alongside that I keep a research line in HCI: emotion-aware interaction, and how AI agents shape what people believe about the systems they are inside, with work at CHI EA 2026 and IEEE VR 2026. An architecture background is still how I think about atmosphere, structure, and human presence in virtual space.
               </p>
             </div>
             <div class="hero-action-stack">
@@ -73,7 +87,7 @@
               </a>
               </div>
               <div class="hero-links" aria-label="Personal links">
-                <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="hero-link-pill" data-i18n="hero_link_email">Email</a>
+                <a href="mailto:zzrsnow@outlook.com" class="hero-link-pill" data-i18n="hero_link_email">Email</a>
                 <a href="https://github.com/ZHAO0424" class="hero-link-pill" target="_blank" rel="noreferrer" data-i18n="hero_link_github">GitHub</a>
                 <a href="https://www.linkedin.com/in/zhao000424" class="hero-link-pill" target="_blank" rel="noreferrer" data-i18n="hero_link_linkedin">LinkedIn</a>
               </div>
@@ -89,13 +103,21 @@
         <div class="portfolio-header">
           <h2 class="section-title" data-i18n="section_projects">Projects Overview</h2>
           <p class="portfolio-subtitle" data-i18n="section_projects_desc">
-            A quick map of my XR, VR, AI interaction and architectural works. Click a project category to dive into
-            details.
+            A map of my AR glasses, XR research, AI agent and architectural work. Filter by category, or open a card for the full write-up.
           </p>
         </div>
 
+          <div class="project-filters" role="group" aria-label="Filter projects by category">
+            <button type="button" class="filter-btn is-active" data-filter="all" aria-pressed="true"><span data-i18n="filter_all">All</span><span class="filter-count" aria-hidden="true"></span></button>
+            <button type="button" class="filter-btn" data-filter="ar" aria-pressed="false"><span data-i18n="filter_ar">AR Glasses</span><span class="filter-count" aria-hidden="true"></span></button>
+            <button type="button" class="filter-btn" data-filter="agents" aria-pressed="false"><span data-i18n="filter_agents">AI Agents</span><span class="filter-count" aria-hidden="true"></span></button>
+            <button type="button" class="filter-btn" data-filter="research" aria-pressed="false"><span data-i18n="filter_research">XR Research</span><span class="filter-count" aria-hidden="true"></span></button>
+            <button type="button" class="filter-btn" data-filter="game" aria-pressed="false"><span data-i18n="filter_game">Games & Experiences</span><span class="filter-count" aria-hidden="true"></span></button>
+            <button type="button" class="filter-btn" data-filter="arch" aria-pressed="false"><span data-i18n="filter_arch">Architecture & 3D</span><span class="filter-count" aria-hidden="true"></span></button>
+          </div>
+
         <div class="project-grid project-grid-large">
-          <a href="projects/ai-town.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/ai-town.html" class="project-card reveal" data-category="agents" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/ai-town-home.webp" alt="AI Town simulation and study" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -106,9 +128,9 @@
             </div>
           </a>
 
-          <a href="projects/skyvine.html" class="project-card reveal" data-tilt="true">
-            <div class="project-visual project-visual-placeholder">
-              <span class="project-placeholder-text">Skyvine</span>
+          <a href="projects/skyvine.html" class="project-card reveal" data-category="ar" data-tilt="true">
+            <div class="project-visual">
+              <img src="images/projects/covers/home/skyvine-home.webp" alt="Skyvine key art" class="project-image" loading="lazy" decoding="async" />
             </div>
             <div class="project-body">
               <div class="project-tag" data-i18n="proj_tag_ar_game">AR / Game</div>
@@ -117,18 +139,18 @@
             </div>
           </a>
 
-          <a href="projects/stellar-forge.html" class="project-card reveal" data-tilt="true">
-            <div class="project-visual project-visual-placeholder">
-              <span class="project-placeholder-text">Stellar Forge</span>
+          <a href="projects/stellar-forge.html" class="project-card reveal" data-category="ar" data-tilt="true">
+            <div class="project-visual">
+              <img src="images/projects/covers/home/stellar-forge-home.webp" alt="Stellar Forge card and spirit art" class="project-image" loading="lazy" decoding="async" />
             </div>
             <div class="project-body">
               <div class="project-tag" data-i18n="proj_tag_ar_game">AR / Game</div>
               <h3 class="project-title" data-i18n="proj_forge_title">Stellar Forge</h3>
-              <p class="project-text" data-i18n="proj_forge_card_desc">A deckbuilder where half the build lives on your desk: spirits placed side by side form a visible resonance chain.</p>
+              <p class="project-text" data-i18n="proj_forge_card_desc">A deckbuilder where half the build lives on a disc floating in front of you: spirits placed side by side form a resonance chain.</p>
             </div>
           </a>
 
-          <a href="projects/tabletop.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/tabletop.html" class="project-card reveal" data-category="ar" data-tilt="true">
             <div class="project-visual project-visual-placeholder project-visual-eco">
               <span class="project-placeholder-text">Tabletop</span>
             </div>
@@ -139,7 +161,7 @@
             </div>
           </a>
 
-          <a href="projects/respire-2.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/respire-2.html" class="project-card reveal" data-category="research" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/respire-2-home.webp" alt="Respire 2.0 immersive interactive VR artwork" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -150,7 +172,7 @@
             </div>
           </a>
 
-          <a href="projects/mr-english-ai.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/mr-english-ai.html" class="project-card reveal" data-category="research" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/mr-english-ai-home.webp" alt="MR English Learning Assistant on Meta Quest 3" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -161,7 +183,7 @@
             </div>
           </a>
 
-          <a href="projects/feeling-ai-narrative-systems.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/feeling-ai-narrative-systems.html" class="project-card reveal" data-category="agents" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/feelingai-home.webp" alt="Feeling AI Narrative Demo" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -172,7 +194,7 @@
             </div>
           </a>
 
-          <a href="projects/auckland-bird-xr.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/auckland-bird-xr.html" class="project-card reveal" data-category="research" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/bird-data-home.webp" alt="Bird Data Immersive XR System" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -183,7 +205,7 @@
             </div>
           </a>
 
-          <a href="projects/curelandscape-vr.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/curelandscape-vr.html" class="project-card reveal" data-category="research" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/curelandscape-home.webp" alt="CureLandscape VR" class="project-image" loading="eager" fetchpriority="high" decoding="async" />
             </div>
@@ -194,74 +216,74 @@
             </div>
           </a>
 
-          <a href="projects/multimodal-emotion-vr-dialogue.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/multimodal-emotion-vr-dialogue.html" class="project-card reveal" data-category="research" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/emotion-dialogue-home.webp" alt="Emotion Dialogue XR installation" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_xr">XR / VR</div>
+              <div class="project-tag" data-i18n="proj_tag_vr_affective">VR / Affective Computing</div>
               <h3 class="project-title" data-i18n="proj_emotion_title">Emotion Dialogue</h3>
               <p class="project-text" data-i18n="proj_emotion_desc">Affect-aware VR dialogue system.</p>
             </div>
           </a>
 
-          <a href="projects/multi-agent-influence.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/multi-agent-influence.html" class="project-card reveal" data-category="agents" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/multi-agent-home.webp" alt="Multi-Agent Influence VR city"
                 class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_xr">XR / VR</div>
+              <div class="project-tag" data-i18n="proj_tag_agents_game">AI Agents / Serious Game</div>
               <h3 class="project-title" data-i18n="proj_agents_title">Multi-Agent Influence</h3>
               <p class="project-text" data-i18n="proj_agents_desc">Multi-agent social dynamics experiment.</p>
             </div>
           </a>
 
-          <a href="projects/vr-siren.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/vr-siren.html" class="project-card reveal" data-category="game" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/vr-siren-home.webp" alt="VR SIREN Interactive Experience" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_xr">XR / VR</div>
+              <div class="project-tag" data-i18n="proj_tag_vr_narrative">VR / Narrative Art</div>
               <h3 class="project-title" data-i18n="proj_siren_title">VR SIREN</h3>
               <p class="project-text" data-i18n="proj_siren_desc">Cinematic VR experience.</p>
             </div>
           </a>
 
-          <a href="projects/mr-planting.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/mr-planting.html" class="project-card reveal" data-category="game" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/mr-planting-home.webp" alt="MR Planting Mixed Reality Game" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_xr">XR / VR</div>
-              <h3 class="project-title" data-i18n="proj_mr_title">MR Planting</h3>
-              <p class="project-text" data-i18n="proj_mr_desc">Mixed reality gardening interaction.</p>
+              <div class="project-tag" data-i18n="proj_tag_ar_game">AR / Game</div>
+              <h3 class="project-title" data-i18n="proj_mr_card_title">MR Planting</h3>
+              <p class="project-text" data-i18n="proj_mr_card_desc">Mixed reality gardening interaction.</p>
             </div>
           </a>
 
-          <a href="projects/architecture-portfolio.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/architecture-portfolio.html" class="project-card reveal" data-category="arch" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/architecture-home.webp" alt="Architecture Portfolio" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
               <div class="project-tag" data-i18n="proj_tag_arch">Architecture</div>
               <h3 class="project-title" data-i18n="proj_arch_title">Architecture Portfolio</h3>
-              <p class="project-text" data-i18n="proj_arch_desc">Selected architectural design works.</p>
+              <p class="project-text" data-i18n="proj_arch_card_desc">Selected architectural design works.</p>
             </div>
           </a>
 
-          <a href="projects/3d-modeling.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/3d-modeling.html" class="project-card reveal" data-category="arch" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/modeling-home.webp" alt="3D Modeling Portfolio" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_3d">3D Modeling</div>
-              <h3 class="project-title" data-i18n="proj_3d_title">3D Modeling</h3>
-              <p class="project-text" data-i18n="proj_3d_desc">Character and environment assets.</p>
+              <div class="project-tag" data-i18n="proj_tag_3d">3D Art / Modeling</div>
+              <h3 class="project-title" data-i18n="proj_3d_card_title">3D Modeling</h3>
+              <p class="project-text" data-i18n="proj_3d_card_desc">Character and environment assets.</p>
             </div>
           </a>
 
-          <a href="projects/fire-escape-vr.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/fire-escape-vr.html" class="project-card reveal" data-category="game" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/fire-escape-home.webp" alt="FireEscapeVR Prototype" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
@@ -272,23 +294,23 @@
             </div>
           </a>
 
-          <a href="projects/coastal-fps.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/coastal-fps.html" class="project-card reveal" data-category="game" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/coastal-fps-home.webp" alt="Coastal FPS Scenario" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_unity">Unity</div>
+              <div class="project-tag" data-i18n="proj_tag_unity_fps">Unity / FPS Prototype</div>
               <h3 class="project-title" data-i18n="proj_fps_title">Coastal FPS</h3>
               <p class="project-text" data-i18n="proj_fps_desc">Coastal exploration and shooting.</p>
             </div>
           </a>
 
-          <a href="projects/gravity-experiment.html" class="project-card reveal" data-tilt="true">
+          <a href="projects/gravity-experiment.html" class="project-card reveal" data-category="game" data-tilt="true">
             <div class="project-visual">
               <img src="images/projects/covers/home/gravity-home.webp" alt="Unreal Experiments" class="project-image" loading="lazy" fetchpriority="low" decoding="async" />
             </div>
             <div class="project-body">
-              <div class="project-tag" data-i18n="proj_tag_unity">Unreal</div>
+              <div class="project-tag" data-i18n="proj_tag_unreal_physics">Unreal / Physics Systems</div>
               <h3 class="project-title" data-i18n="proj_gravity_title">Unreal Experiments</h3>
               <p class="project-text" data-i18n="proj_gravity_desc">Physical force exploration.</p>
             </div>
@@ -300,8 +322,8 @@
     <footer class="footer">
       <div class="footer-left">
         <span data-i18n="footer_contact_label">Contact</span>
-        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">
-          zzhao010@campus.goldsmiths.ac.uk
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">
+          zzrsnow@outlook.com
         </a>
       </div>
       <div class="footer-right">
@@ -313,7 +335,7 @@
   </div>
 
   <script src="lang.js"></script>
-  <script src="interactions.js?v=20260913-projects"></script>
+  <script src="interactions.js?v=20260914-filters"></script>
 </body>
 
 </html>

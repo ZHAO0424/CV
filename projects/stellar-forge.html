@@ -3,8 +3,23 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stellar Forge</title>
-  <link rel="stylesheet" href="../styles.css?v=20260913-projects" />
+  <title>Stellar Forge | Zhao Zirui</title>
+  <link rel="stylesheet" href="../styles.css?v=20260914-filters" />
+  <meta name="description" content="A deckbuilding roguelike where half of the build lives in the space in front of you. Star spirits stand on a disc that floats at arm's length, neighbouring spirits form a resonance chain, and where..." />
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Stellar Forge | Zhao Zirui" />
+  <meta property="og:description" content="A deckbuilding roguelike where half of the build lives in the space in front of you. Star spirits stand on a disc that floats at arm's length, neighbouring spirits form a resonance chain, and where..." />
+  <meta property="og:image" content="../images/projects/covers/stellar-forge-cover.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Stellar Forge | Zhao Zirui" />
+  <meta name="twitter:description" content="A deckbuilding roguelike where half of the build lives in the space in front of you. Star spirits stand on a disc that floats at arm's length, neighbouring spirits form a resonance chain, and where..." />
+  <meta name="twitter:image" content="../images/projects/covers/stellar-forge-cover.webp" />
+  <!-- /social preview -->
 </head>
 <body>
   <div class="page">
@@ -39,7 +54,7 @@
           </div>
           <h1 class="proj-title" data-i18n="proj_forge_title">Stellar Forge</h1>
           <p class="proj-subtitle" data-i18n="proj_forge_desc">
-            A deckbuilding roguelike where half of the build lives in your room. Star spirits stand on your real desk, their neighbours form a resonance chain, and the score travels down that chain as a path you can watch.
+            A deckbuilding roguelike where half of the build lives in the space in front of you. Star spirits stand on a disc that floats at arm's length, neighbouring spirits form a resonance chain, and where you put them decides what the chain is worth.
           </p>
         </div>
       </section>
@@ -52,24 +67,24 @@
               A late-night star workshop: you throw star cards into the forge, match recipes to brew a score, and hit a target every night. Spirits move in and help. Balatro proved the skeleton — classic card patterns, multiplicative scoring, passive build slots — and the proposition here is to move half of the build out of the card pool and into physical space. Every system is held to one review line: could a flat version do this? If yes, it is not the selling point. Currently in on-device iteration, targeting a store release.
             </p>
             <div class="proj-stats">
-              <div class="proj-stat"><div class="proj-stat-num">6</div><div class="proj-stat-label" data-i18n="forge_stat_pedestals">spirit pedestals on your desk</div></div>
-              <div class="proj-stat"><div class="proj-stat-num">14</div><div class="proj-stat-label" data-i18n="forge_stat_spirits">launch spirits in five families</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">4</div><div class="proj-stat-label" data-i18n="forge_stat_pedestals">spirit slots on the disc</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">23</div><div class="proj-stat-label" data-i18n="forge_stat_spirits">launch spirits in four families</div></div>
               <div class="proj-stat"><div class="proj-stat-num">9</div><div class="proj-stat-label" data-i18n="forge_stat_recipes">scoring recipes</div></div>
-              <div class="proj-stat"><div class="proj-stat-num">226</div><div class="proj-stat-label" data-i18n="forge_stat_tests">automated tests, green</div></div>
+              <div class="proj-stat"><div class="proj-stat-num">101</div><div class="proj-stat-label" data-i18n="forge_stat_tests">automated tests, green</div></div>
             </div>
           </div>
 
           <div class="proj-section">
             <h2 class="proj-h2" data-i18n="forge_resonance_title">Resonance: Building in Space</h2>
             <p class="proj-p" data-i18n="forge_resonance_text">
-              Six pedestals sit on the desk, and you pick the spirits up and rearrange them by hand. A spirit with the resonance trait links to its neighbours into a chain; at scoring time particles travel along that chain and every extra link raises the total. Some spirits carry directional traits instead — look at it while scoring, keep it behind you, catch it as it orbits past the forge — which turns placement from a UI sort order into a real spatial decision. The chain is the part a flat version cannot copy: it is a visible path through your room, and no two players' desks look alike.
+              Four slots sit on the upper arc of the disc, and you pick the spirits up and rearrange them by hand. A spirit with the resonance trait links to the ones beside it into a chain — two adjacent at minimum, four at most — and the chain pays as a multiplicative tier, not a linear bonus, so one more link is worth more than one more spirit. A few spirits carry conditions that the presentation layer judges in real space instead: the satellite has to have orbited overhead when you score, the meteor fist has to be held clenched for two seconds before you play. Those conditions are deliberately kept inside the forward view cone — an early version asked players to turn and look around, which on a neckband is a comfort problem, not a feature. What is left is a build decision made by arrangement and timing rather than by a UI sort order.
             </p>
           </div>
 
           <div class="proj-section">
             <h2 class="proj-h2" data-i18n="forge_spirits_title">Spirits Are Characters, Not Cards</h2>
             <p class="proj-p" data-i18n="forge_spirits_text">
-              Each spirit is a small creature standing on its base with its own idle animation. Rarity reads as volume and position: a common one is a desk trinket, a rare one floats, a legendary one occupies a corner of the room. A spirit whose condition is unmet dozes; when it is met it stands up and glows, so the board state is legible without reading a single line of text. On a trigger, particles fly from the cards to the spirit, the spirit performs, and the number is thrown to the total — with its sound coming from the direction it actually stands in.
+              Each spirit is a modelled creature standing on its own base — a bell, a brazier, an owl, a star cat — drifting slightly where it stands rather than sitting still as an icon would. When one triggers during scoring it pops in place and its sound comes from the direction it actually stands in, so you can tell which of the four fired without reading the log. That is the argument for making them objects instead of card slots: a spatial board can report itself through position and sound, and a flat one has to spend text on it.
             </p>
           </div>
 
@@ -125,6 +140,9 @@
               <span class="tag">Game Feel</span>
             </div>
           </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/stellar-forge-cover.webp" alt="Stellar Forge card and spirit art" />
+          </div>
         </aside>
       </section>
 
@@ -132,21 +150,21 @@
         <div class="gallery-head">
           <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
           <p class="portfolio-subtitle" data-i18n="forge_gallery_note">
-            Captures pending — the build and its footage live on the work machine.
+            Card and spirit art below. UI captures are held back while the interface is being reworked.
           </p>
         </div>
         <div class="gallery-grid">
           <figure class="shot shot-wide">
-            <div class="shot-placeholder shot-placeholder-warm"><span data-i18n="forge_ph_1">Spirits on the desk &middot; wide capture</span></div>
-            <figcaption class="shot-cap" data-i18n="forge_cap_1">Six pedestals across a real desk, with the forge at the centre</figcaption>
+            <div class="shot-placeholder shot-placeholder-warm"><span data-i18n="forge_ph_1">The star disc &middot; wide capture</span></div>
+            <figcaption class="shot-cap" data-i18n="forge_cap_1">The disc as you see it: hand cards on the lower arc, spirit slots on the upper, the forge behind the centre</figcaption>
           </figure>
           <div class="gallery-grid gallery-grid-two">
             <figure class="shot">
               <div class="shot-placeholder shot-placeholder-warm"><span data-i18n="forge_ph_2">Resonance chain</span></div>
-              <figcaption class="shot-cap" data-i18n="forge_cap_2">Score travelling along the chain as a particle path</figcaption>
+              <figcaption class="shot-cap" data-i18n="forge_cap_2">Resonant spirits placed side by side, and the chain multiplier they earn at scoring</figcaption>
             </figure>
             <figure class="shot">
-              <div class="shot-placeholder"><span data-i18n="forge_ph_3">Card art</span></div>
+              <img class="shot-img" src="../images/projects/stellar-forge/card-art.webp" alt="Card faces and spirit art" loading="lazy" decoding="async" />
               <figcaption class="shot-cap" data-i18n="forge_cap_3">Card faces and spirit art, generated and refined in-pipeline</figcaption>
             </figure>
           </div>
@@ -156,7 +174,7 @@
               <figcaption class="shot-cap" data-i18n="forge_cap_4">Playing a hand: cards spiral up around a shared axis</figcaption>
             </figure>
             <figure class="shot">
-              <div class="shot-placeholder"><span data-i18n="forge_ph_5">Desktop mode</span></div>
+              <div class="shot-placeholder"><span data-i18n="forge_ph_5">Desktop simulation mode</span></div>
               <figcaption class="shot-cap" data-i18n="forge_cap_5">Desktop simulation mode running the same code path with mouse and keyboard</figcaption>
             </figure>
           </div>
@@ -167,11 +185,11 @@
     <footer class="footer">
       <div class="footer-left">
         <span data-i18n="footer_contact_label">Contact</span>
-        <a href="mailto:zzhao010@campus.goldsmiths.ac.uk" class="footer-link">zzhao010@campus.goldsmiths.ac.uk</a>
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">zzrsnow@outlook.com</a>
       </div>
     </footer>
   </div>
   <script src="../lang.js"></script>
-  <script src="../interactions.js?v=20260913-projects"></script>
+  <script src="../interactions.js?v=20260914-filters"></script>
 </body>
 </html>
