@@ -1,0 +1,24 @@
+# 简历解析的中间产物（.docx 解包目录、抽取出的纯文本）。
+# 这些是一次性转换的脚手架，不是站点的一部分；而且解析结果里带联系方式。
+# 只挡仓库根目录：以后要放可下载的简历 PDF（放 images/ 或 files/ 下）不受影响。
+temp_docx/
+parsed_cv.txt
+/*.docx
+/*.pdf
+
+# 图片/视频转码的中间产物
+*.tmp
+*.orig
+
+# 操作系统与编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Python（scripts/ 下的维护脚本）
+__pycache__/
+*.pyc
+.venv/
+venv/
