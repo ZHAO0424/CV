@@ -505,7 +505,7 @@
   filter_ar: 'AR 眼镜',
   filter_agents: 'AI 智能体',
   filter_research: 'XR 研究',
-  filter_game: '游戏与体验',
+  filter_game: 'Goldsmiths',
   filter_arch: '建筑与 3D',
 
   proj_aitown_title: 'AI 小镇',
