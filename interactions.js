@@ -72,7 +72,7 @@ function setupHomeHeroIntro() {
       'rgba(191, 219, 254, 0.3)',
       'rgba(251, 191, 183, 0.22)'
     ];
-    const count = reduced ? 8 : window.innerWidth < 700 ? 8 : 16;
+    const count = reduced ? 8 : window.innerWidth < 700 ? 4 : 16;
 
     for (let i = 0; i < count; i += 1) {
       const node = document.createElement('span');
@@ -331,7 +331,16 @@ function setupManagedVideos() {
 }
 
 function setupPhotoLightbox() {
-  const images = Array.from(document.querySelectorAll('.page-photo .photo-img, .proj-gallery .shot-img'));
+  // Keep this image-only. Project videos share the .shot-img class, but their
+  // native controls must never be routed through the image preview.
+  const images = Array.from(document.querySelectorAll(
+    '.page-photo img.photo-img, .proj-gallery img.shot-img'
+  ));
+  document.querySelectorAll('.proj-gallery video.shot-img').forEach((video) => {
+    video.addEventListener('click', (ev) => ev.stopPropagation());
+    video.addEventListener('pointerdown', (ev) => ev.stopPropagation());
+  });
+
   if (!images.length || document.querySelector('.photo-lightbox')) return;
 
   const overlay = document.createElement('div');
@@ -378,6 +387,7 @@ function setupPhotoLightbox() {
 
   images.forEach((targetImage) => {
     const activate = (ev) => {
+      if (targetImage.tagName !== 'IMG') return;
       ev.preventDefault();
       openLightbox(targetImage);
     };
@@ -653,13 +663,14 @@ function setupBackgroundAtmosphere() {
   if (!ctx) return;
 
   const prefersReduced = prefersReducedMotion();
+  const compactViewport = window.innerWidth < 700;
   let width = 0;
   let height = 0;
   let dpr = 1;
   let raf = 0;
   let visible = !document.hidden;
 
-  const motes = Array.from({ length: window.innerWidth < 700 ? 14 : 28 }, () => ({
+  const motes = Array.from({ length: compactViewport ? 2 : 28 }, () => ({
     x: 0,
     y: 0,
     orbit: 80 + Math.random() * 260,
@@ -729,9 +740,11 @@ function setupBackgroundAtmosphere() {
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
 
-    drawWaveBand(now, 0, 0.28, 1.45);
-    drawWaveBand(now, 1, 0.2, 1.12);
-    drawWaveBand(now, 2, 0.16, 0.96);
+    drawWaveBand(now, 0, compactViewport ? 0.16 : 0.28, compactViewport ? 1.1 : 1.45);
+    if (!compactViewport) {
+      drawWaveBand(now, 1, 0.2, 1.12);
+      drawWaveBand(now, 2, 0.16, 0.96);
+    }
     ctx.globalCompositeOperation = 'lighter';
     const t = now;
 
@@ -760,11 +773,11 @@ function setupBackgroundAtmosphere() {
 
     ctx.restore();
 
-    if (!prefersReduced) raf = requestAnimationFrame(draw);
+    if (!prefersReduced && !compactViewport) raf = requestAnimationFrame(draw);
   }
 
   function schedule() {
-    if (!raf && !prefersReduced) raf = requestAnimationFrame(draw);
+    if (!raf && !prefersReduced && !compactViewport) raf = requestAnimationFrame(draw);
   }
 
   document.addEventListener('visibilitychange', () => {
@@ -774,7 +787,7 @@ function setupBackgroundAtmosphere() {
 
   window.addEventListener('resize', resize, { passive: true });
   resize();
-  if (prefersReduced) {
+  if (prefersReduced || compactViewport) {
     draw(performance.now());
   } else {
     schedule();
@@ -1334,12 +1347,29 @@ function setupProjectFilter() {
   });
 }
 
+function setupProjectCoverLabels() {
+  document.querySelectorAll('.project-card[data-cover-type]').forEach((card) => {
+    const visual = card.querySelector('.project-visual');
+    if (!visual || visual.querySelector('.project-cover-meta')) return;
+
+    const meta = document.createElement('div');
+    meta.className = 'project-cover-meta';
+    meta.setAttribute('aria-hidden', 'true');
+    meta.innerHTML = `
+      <span class="project-cover-type">${card.dataset.coverType}</span>
+      <span class="project-cover-stack">${card.dataset.coverStack || ''}</span>
+    `;
+    visual.appendChild(meta);
+  });
+}
+
 setupPageLoader();
 
 document.addEventListener('DOMContentLoaded', () => {
   setupHomeHeroIntro();
   setupReveal();
   setupProjectFilter();
+  setupProjectCoverLabels();
   optimizeMediaLoading();
   setupManagedVideos();
   setupPhotoLightbox();

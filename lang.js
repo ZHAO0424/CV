@@ -127,6 +127,7 @@
   proj_tag_xr_wellbeing: 'XR / \u5065\u5eb7\u798f\u7949',
   proj_tag_vr_art: 'VR / \u4ea4\u4e92\u827a\u672f',
   proj_tag_ai_learning: 'AI / MR \u5b66\u4e60',
+  proj_tag_webxr: 'WebXR / \u521b\u610f\u7f16\u7a0b',
   tag_xr: 'XR / VR',
 
   proj_emotion_title: 'VR \u5bf9\u8bdd\u4e2d\u7684\u591a\u6a21\u6001\u60c5\u7eea\u611f\u77e5',
@@ -641,6 +642,10 @@
   forge_cap_4: '出牌：所有牌绕同一轴螺旋上升',
   forge_cap_5: '桌面模拟模式，用鼠标键盘跑真机同一条代码路径',
 
+  proj_webxr_title: 'WebXR Flux',
+  proj_webxr_card_desc: '\u4e00\u4e2a\u96f6\u4f9d\u8d56 WebGL2 \u7c92\u5b50\u573a\uff0c\u652f\u6301\u9f20\u6807\u4ea4\u4e92\u548c VR \u624b\u90e8\u8ffd\u8e2a\u3002',
+  proj_webxr_demo: '\u5728\u7ebf\u4f53\u9a8c',
+  proj_webxr_code: 'GitHub \u6e90\u7801',
   proj_tabletop_title: 'Tabletop',
   proj_tabletop_card_desc: '空间第二屏：你的 Rhino 或 Blender 模型实时立在真实桌面上，而你继续建模。',
   proj_tabletop_desc:
@@ -928,6 +933,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
-
 
 
