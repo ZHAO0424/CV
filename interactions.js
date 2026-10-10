@@ -1347,6 +1347,34 @@ function setupProjectFilter() {
   });
 }
 
+function setupProjectViewMode() {
+  const grid = document.querySelector('.project-grid-large');
+  const bar = document.querySelector('.project-view-switch');
+  if (!grid || !bar) return;
+
+  const buttons = Array.from(bar.querySelectorAll('.view-btn'));
+  const storageKey = 'cv-project-view-mode';
+
+  function apply(mode) {
+    const value = mode === 'studio' ? 'studio' : 'grid';
+    grid.classList.toggle('is-studio-view', value === 'studio');
+    buttons.forEach((button) => {
+      const active = button.dataset.view === value;
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+    try { window.localStorage.setItem(storageKey, value); } catch (_) { /* private browsing */ }
+  }
+
+  let initial = 'grid';
+  try { initial = window.localStorage.getItem(storageKey) || initial; } catch (_) { /* private browsing */ }
+  apply(initial);
+  bar.addEventListener('click', (event) => {
+    const button = event.target.closest('.view-btn');
+    if (button && bar.contains(button)) apply(button.dataset.view);
+  });
+}
+
 function setupProjectCoverLabels() {
   document.querySelectorAll('.project-card[data-cover-type]').forEach((card) => {
     const visual = card.querySelector('.project-visual');
@@ -1369,6 +1397,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupHomeHeroIntro();
   setupReveal();
   setupProjectFilter();
+  setupProjectViewMode();
   setupProjectCoverLabels();
   optimizeMediaLoading();
   setupManagedVideos();

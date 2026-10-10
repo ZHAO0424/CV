@@ -114,6 +114,10 @@
             <button type="button" class="filter-btn" data-filter="research" aria-pressed="false"><span data-i18n="filter_research">XR Research</span><span class="filter-count" aria-hidden="true"></span></button>
             <button type="button" class="filter-btn" data-filter="game" aria-pressed="false"><span data-i18n="filter_game">Goldsmiths</span><span class="filter-count" aria-hidden="true"></span></button>
             <button type="button" class="filter-btn" data-filter="arch" aria-pressed="false"><span data-i18n="filter_arch">Architecture & 3D</span><span class="filter-count" aria-hidden="true"></span></button>
+            <div class="project-view-switch" role="group" aria-label="Choose project display mode">
+              <button type="button" class="view-btn is-active" data-view="grid" aria-pressed="true" data-i18n="view_grid">Grid</button>
+              <button type="button" class="view-btn" data-view="studio" aria-pressed="false" data-i18n="view_studio">Studio</button>
+            </div>
           </div>
 
         <div class="project-grid project-grid-large">
@@ -151,10 +155,10 @@
           </a>
 
           <article class="project-card reveal" data-category="ar" data-tilt="true" data-cover-type="WebXR / Creative Coding" data-cover-stack="WebGL2 · WebXR">
-            <div class="project-visual project-visual-placeholder project-visual-webxr">
+            <a class="project-visual project-visual-placeholder project-visual-webxr" href="https://zhao0424.github.io/webxr-todo/" target="_blank" rel="noreferrer" aria-label="Open WebXR Flux live demo">
               <span class="project-placeholder-kicker">WebXR / WebGL2</span>
               <span class="project-placeholder-text">Flux</span>
-            </div>
+            </a>
             <div class="project-body">
               <div class="project-tag" data-i18n="proj_tag_webxr">WebXR / Creative Coding</div>
               <h3 class="project-title" data-i18n="proj_webxr_title">WebXR Flux</h3>
@@ -168,11 +172,11 @@
 
           <a href="projects/tabletop.html" class="project-card reveal" data-category="ar" data-tilt="true" data-cover-type="XR / Design Tool" data-cover-stack="Unity 6 · OpenXR">
             <div class="project-visual">
-              <img src="images/projects/tabletop/tabletop-cover.webp" alt="Tabletop desktop model viewer showing nine colored spheres" class="project-image" loading="lazy" decoding="async" width="1280" height="800" />
+              <img src="images/projects/tabletop/vitrine-desktop.webp" alt="Vitrine desktop model viewer showing a model on the desk" class="project-image" loading="lazy" decoding="async" width="1280" height="800" />
             </div>
             <div class="project-body">
               <div class="project-tag" data-i18n="proj_tag_xr_tool">XR / Design Tool</div>
-              <h3 class="project-title" data-i18n="proj_tabletop_title">Tabletop</h3>
+              <h3 class="project-title" data-i18n="proj_tabletop_title">Vitrine</h3>
               <p class="project-text" data-i18n="proj_tabletop_card_desc">A spatial second screen: your Rhino or Blender model live on the real desk while you keep modelling.</p>
             </div>
           </a>
