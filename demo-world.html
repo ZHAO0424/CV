@@ -49,7 +49,16 @@
               background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.25) 80%, rgba(0,0,0,.55) 100%); }
   .loader { position: fixed; inset: 0; display: grid; place-items: center; background: #07060d; z-index: 10; transition: opacity .6s; }
   .loader.done { opacity: 0; pointer-events: none; }
-  .loader span { font-size: 12px; letter-spacing: .3em; color: var(--yellow); }
+  .loader-content { width: min(360px, calc(100vw - 48px)); text-align: center; }
+  .loader canvas { width: 100%; height: 220px; }
+  .loader-title { margin: 12px 0 28px; font-size: 14px; font-weight: 700; letter-spacing: 0; }
+  .loader-track { height: 3px; background: #29232e; overflow: hidden; }
+  .loader-fill { height: 100%; width: 0; background: #ff2849; box-shadow: 0 0 12px #ff2849; transition: width .2s linear; }
+  .loader-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: #a8a0ad; letter-spacing: 0; }
+  .loader-percent { color: #ff526b; font-variant-numeric: tabular-nums; }
+  .loader-retry { margin-top: 24px; padding: 10px 20px; border: 1px solid #ff2849; color: #fff; background: transparent; cursor: pointer; }
+  .loader[hidden], .loader-retry[hidden] { display: none; }
+  @media (prefers-reduced-motion: reduce) { .loader, .loader-fill { transition: none; } }
   @media (max-width: 760px) {
     .hud, .hud.flip { left: 16px; right: 16px; width: auto; max-width: none; top: auto; bottom: 4vh; transform: none; }
     .hud p:not(.lead), .hud .tags { display: none; }
@@ -78,7 +87,91 @@
 <div class="progress"><i id="bar"></i></div>
 <div class="hint">SCROLL / ARROWS / DRAG · CLICK A PANEL</div>
 <div class="vignette" aria-hidden="true"></div>
-<div class="loader" id="loader"><span>LOADING NIGHT STREET</span></div>
+<div class="loader" id="loader" role="status" aria-label="Loading Night Street">
+  <div class="loader-content">
+    <canvas id="loader-creature" aria-hidden="true"></canvas>
+    <div class="loader-title">NIGHT STREET</div>
+    <div class="loader-track" role="progressbar" aria-label="Loading assets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loader-fill" id="loader-fill"></div></div>
+    <div class="loader-meta"><span id="loader-status">CONNECTING</span><span class="loader-percent" id="loader-percent">0%</span></div>
+    <button class="loader-retry" id="loader-retry" hidden>RETRY</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  const overlay = document.getElementById('loader');
+  const canvas = document.getElementById('loader-creature');
+  const ctx = canvas.getContext('2d');
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const pointer = { x: 0, y: 0 }, gaze = { x: 0, y: 0 };
+  let finished = false, failed = false, progress = 0;
+  function resize() {
+    const dpr = Math.min(devicePixelRatio, 2);
+    canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(220 * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function track(e) {
+    const box = canvas.getBoundingClientRect();
+    pointer.x = Math.max(-1, Math.min(1, (e.clientX - box.left - box.width / 2) / (box.width / 2)));
+    pointer.y = Math.max(-1, Math.min(1, (e.clientY - box.top - box.height / 2) / 110));
+  }
+  function draw(t) {
+    if (finished) return;
+    gaze.x += (pointer.x - gaze.x) * .12; gaze.y += (pointer.y - gaze.y) * .12;
+    const w = canvas.clientWidth;
+    ctx.clearRect(0, 0, w, 220);
+    ctx.save(); ctx.translate(w / 2, 110 + (reduced ? 0 : Math.sin(t / 600) * 5));
+    const flap = reduced ? 0 : Math.sin(t / 380) * 8;
+    for (const side of [-1, 1]) {
+      ctx.save(); ctx.scale(side, 1);
+      ctx.beginPath(); ctx.moveTo(30, -5); ctx.bezierCurveTo(48, -40, 78, -48 - flap, 134, -50 - flap);
+      ctx.lineTo(113, -14); ctx.quadraticCurveTo(101, -30, 86, 7);
+      ctx.quadraticCurveTo(70, -9, 60, 25); ctx.quadraticCurveTo(43, 10, 30, 29); ctx.closePath();
+      ctx.fillStyle = '#170b15'; ctx.fill(); ctx.strokeStyle = '#b52b45'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(33, 4); ctx.lineTo(113, -37 - flap); ctx.moveTo(33, 4); ctx.lineTo(86, 7); ctx.moveTo(33, 4); ctx.lineTo(60, 25);
+      ctx.strokeStyle = '#5f1b30'; ctx.stroke(); ctx.restore();
+    }
+    // The face floats without a body; only the eyes and grin catch the light.
+    ctx.shadowColor = '#ff173e'; ctx.shadowBlur = 18; ctx.fillStyle = '#ff2849';
+    for (const side of [-1, 1]) {
+      ctx.save(); ctx.translate(side * 20 + gaze.x * 6, -9 + gaze.y * 4);
+      const blink = !reduced && t % 4300 > 4160 ? .12 : 1; ctx.scale(1, blink);
+      ctx.beginPath(); ctx.moveTo(-12, -5 - side * 3); ctx.quadraticCurveTo(0, -1, 12, -5 + side * 3); ctx.quadraticCurveTo(7, 11, -7, 8); ctx.closePath(); ctx.fill();
+      ctx.shadowBlur = 0; ctx.fillStyle = '#30030b'; ctx.fillRect(gaze.x * 2 - 1.5, -2, 3, 10); ctx.restore();
+      ctx.fillStyle = '#ff2849';
+    }
+    ctx.shadowBlur = 8; ctx.strokeStyle = '#ff526b'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-19, 23); ctx.quadraticCurveTo(0, 40, 19, 23); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-13, 27); ctx.lineTo(-10, 34); ctx.lineTo(-7, 30); ctx.moveTo(13, 27); ctx.lineTo(10, 34); ctx.lineTo(7, 30); ctx.stroke();
+    ctx.restore(); requestAnimationFrame(draw);
+  }
+  window.streetLoading = {
+    update(value, label) {
+      if (failed) return;
+      progress = Math.max(progress, Math.min(100, Math.round(value)));
+      document.getElementById('loader-fill').style.width = `${progress}%`;
+      document.getElementById('loader-percent').textContent = `${progress}%`;
+      overlay.querySelector('[role="progressbar"]').setAttribute('aria-valuenow', progress);
+      document.getElementById('loader-status').textContent = label;
+    },
+    finish() {
+      if (failed) return;
+      this.update(100, 'READY');
+      setTimeout(() => { overlay.classList.add('done'); setTimeout(() => { overlay.hidden = true; finished = true; removeEventListener('pointermove', track); removeEventListener('resize', resize); }, reduced ? 0 : 650); }, reduced ? 0 : 300);
+    },
+    fail() {
+      failed = true;
+      document.getElementById('loader-status').textContent = 'CONNECTION FAILED';
+      document.getElementById('loader-retry').hidden = false;
+    }
+  };
+  document.getElementById('loader-retry').addEventListener('click', () => location.reload());
+  addEventListener('pointermove', track); addEventListener('resize', resize);
+  addEventListener('error', () => window.streetLoading.fail());
+  addEventListener('unhandledrejection', () => window.streetLoading.fail());
+  resize(); requestAnimationFrame(draw);
+})();
+</script>
 
 <script type="module">
 import * as THREE from 'three';
@@ -233,13 +326,21 @@ scene.add(key, key.target);
 
 /* ====================== 地面 ====================== */
 const world = new THREE.Group(); scene.add(world);
+let mirror;
+const reflectionScreens = [];
 if (!MOBILE) {
-  const mirror = new Reflector(new THREE.PlaneGeometry(2 * WALL, STREET_LEN), { textureWidth: 512, textureHeight: 512, color: 0x3a3450, clipBias: 0.003 });
+  mirror = new Reflector(new THREE.PlaneGeometry(2 * WALL, STREET_LEN), { textureWidth: 1024, textureHeight: 1024, color: 0xb8adc8, clipBias: 0.003 });
   mirror.rotation.x = -Math.PI / 2; mirror.position.set(0, -0.02, Z0 - STREET_LEN / 2);
+  const renderReflection = mirror.onBeforeRender;
+  mirror.onBeforeRender = function (...args) {
+    for (const screen of reflectionScreens) screen.material.map = screen.userData.reflectionMap;
+    try { renderReflection.apply(this, args); }
+    finally { for (const screen of reflectionScreens) screen.material.map = screen.userData.displayMap; }
+  };
   world.add(mirror);
 }
 const gridCanvas = document.createElement('canvas'); gridCanvas.width = gridCanvas.height = 256;
-{ const g = gridCanvas.getContext('2d'); g.fillStyle = 'rgba(7,6,13,0.78)'; g.fillRect(0, 0, 256, 256);
+{ const g = gridCanvas.getContext('2d'); g.fillStyle = 'rgba(7,6,13,0.48)'; g.fillRect(0, 0, 256, 256);
   g.strokeStyle = 'rgba(0,240,255,0.10)'; g.lineWidth = 2; g.strokeRect(1, 1, 254, 254); }
 const gridTex = new THREE.CanvasTexture(gridCanvas); gridTex.wrapS = gridTex.wrapT = THREE.RepeatWrapping; gridTex.repeat.set(2 * WALL / 9, STREET_LEN / 9);
 const asphalt = new THREE.Mesh(new THREE.PlaneGeometry(2 * WALL, STREET_LEN), new THREE.MeshBasicMaterial({ map: gridTex, transparent: true, depthWrite: false }));
@@ -454,6 +555,11 @@ function buildCity() {
   }
 }
 
+let modelProgress = 0, imagesLoaded = 0;
+const imageTotal = STOPS.filter(st => st.img && !st.kind).length;
+function updateLoading() {
+  window.streetLoading.update(5 + modelProgress * 65 + imagesLoaded / imageTotal * 20, 'LOADING ASSETS');
+}
 function loadCity() {
   return new Promise((resolve, reject) => {
     new GLTFLoader().load('models/city.glb', gltf => {
@@ -472,12 +578,20 @@ function loadCity() {
         protos[o.name] = { geo, mat: toonByMat[src.name], size };
       });
       resolve();
-    }, undefined, reject);
+    }, event => { if (event.total) { modelProgress = event.loaded / event.total; updateLoading(); } }, reject);
   });
 }
 
 /* ====================== 作品面板 ====================== */
 const loader = new THREE.TextureLoader();
+const panelLoads = [];
+function reflectionTexture(image) {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 288;
+  const context = c.getContext('2d');
+  context.filter = 'blur(7px)'; context.drawImage(image, -14, -14, 540, 316);
+  const texture = new THREE.CanvasTexture(c); texture.colorSpace = THREE.SRGBColorSpace;
+  return texture;
+}
 const panels = [];
 const PW = 8.0, PH = 4.5;                                  // 画面尺寸（米）
 const panelGeo = new THREE.PlaneGeometry(PW, PH);
@@ -506,10 +620,25 @@ STOPS.forEach((st, i) => {
   const frame = withOutline(new THREE.Mesh(frameGeo, frameMat)); frame.castShadow = true; g.add(frame);
   const edge = new THREE.Mesh(new THREE.BoxGeometry(PW + 0.3, PH + 0.3, 0.06), new THREE.MeshBasicMaterial({ color: glowColor(side) }));
   edge.position.z = 0.13; g.add(edge);
-  const mat = new THREE.MeshBasicMaterial({ color: 0x1b1a2a });
-  const screen = new THREE.Mesh(panelGeo, mat); screen.position.z = 0.17; g.add(screen);
-  if (st.img) loader.load(st.img, t => { t.colorSpace = THREE.SRGBColorSpace; mat.map = t; mat.color.set(0xd0d0d0); mat.needsUpdate = true; });
-  else mat.color.set(0x5b2a8a);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x1b1a2a, side: THREE.DoubleSide });
+  const screen = new THREE.Mesh(panelGeo, mat); screen.position.z = 0.21; g.add(screen);
+  if (st.img) panelLoads.push(loader.loadAsync(st.img).then(t => {
+    t.colorSpace = THREE.SRGBColorSpace; mat.map = t; mat.color.set(0xd0d0d0); mat.needsUpdate = true;
+    screen.userData.displayMap = t;
+    if (mirror) {
+      screen.userData.reflectionMap = reflectionTexture(t.image); reflectionScreens.push(screen);
+    }
+    imagesLoaded++; updateLoading();
+  }));
+  else {
+    const c = document.createElement('canvas'); c.width = 512; c.height = 288;
+    const context = c.getContext('2d'); context.fillStyle = '#140b24'; context.fillRect(0, 0, 512, 288);
+    context.strokeStyle = '#00f0ff'; context.lineWidth = 4;
+    for (let k = 0; k < 14; k++) { context.beginPath(); context.ellipse(256, 144, 25 + k * 15, 18 + k * 8, k * .18, 0, Math.PI * 2); context.stroke(); }
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; mat.map = t; mat.color.set(0xd0d0d0);
+    screen.userData.displayMap = t;
+    if (mirror) { screen.userData.reflectionMap = reflectionTexture(c); reflectionScreens.push(screen); }
+  }
 
   const label = new THREE.Mesh(new THREE.PlaneGeometry(PW, PW * 170 / 1280), new THREE.MeshBasicMaterial({ map: labelTexture(st, i), transparent: true, depthWrite: false }));
   label.position.set(0, PH / 2 + 0.95, 0.14); g.add(label);
@@ -517,7 +646,7 @@ STOPS.forEach((st, i) => {
   const pole = withOutline(new THREE.Mesh(poleGeo, frameMat), 0.02); pole.position.y = -PH / 2 - 1.7; g.add(pole);
   const glow = new THREE.PointLight(sideColor(side), 5, 16, 1.7); glow.position.set(0, -1.5, 3); g.add(glow);
 
-  screen.userData = frame.userData = edge.userData = g.userData;
+  Object.assign(screen.userData, g.userData); frame.userData = edge.userData = g.userData;
   g.userData.edge = edge; g.userData.glow = glow;
   world.add(g); panels.push(g);
 });
@@ -586,17 +715,18 @@ function updatePanels(dt) {
     u.glow.intensity = 4 + 10 * f;
   }
 }
-function move(d) { camTarget = Math.min(MAX_T, Math.max(0, camTarget + d)); }
+function move(d) { if (!document.getElementById('loader').hidden) return; camTarget = Math.min(MAX_T, Math.max(0, camTarget + d)); }
 function snap() { camTarget = Math.round(camTarget); }
 let snapTimer = 0;
 addEventListener('wheel', e => { e.preventDefault(); move(-e.deltaY / 420); clearTimeout(snapTimer); snapTimer = setTimeout(snap, 140); }, { passive: false });   // 滚轮向上 = 前进
 addEventListener('keydown', e => {
+  if (!document.getElementById('loader').hidden) return;
   if (['ArrowDown', 'ArrowRight', ' '].includes(e.key)) { e.preventDefault(); camTarget = Math.min(MAX_T, Math.round(camTarget) + 1); }
   if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); camTarget = Math.max(0, Math.round(camTarget) - 1); }
   if (e.key === 'Home') camTarget = 0;
 });
 let dragY = null, dragMoved = false;
-addEventListener('pointerdown', e => { if (e.target.closest('a')) return; dragY = e.clientY; dragMoved = false; });
+addEventListener('pointerdown', e => { if (!document.getElementById('loader').hidden || e.target.closest('a')) return; dragY = e.clientY; dragMoved = false; });
 addEventListener('pointermove', e => {
   mouse.set((e.clientX / innerWidth - 0.5) * 2, -(e.clientY / innerHeight - 0.5) * 2);
   if (dragY !== null) { const dy = dragY - e.clientY; if (Math.abs(dy) > 3) dragMoved = true; move(dy / 160); dragY = e.clientY; }
@@ -664,9 +794,14 @@ function frame(t) {
   requestAnimationFrame(frame);
 }
 
-loadCity().then(buildCity)
-  .catch(err => console.warn('city.glb 加载失败，使用空街道', err))
-  .finally(() => { requestAnimationFrame(frame); document.getElementById('loader').classList.add('done'); });
+Promise.all([loadCity().then(() => { modelProgress = 1; updateLoading(); buildCity(); }), ...panelLoads])
+  .then(async () => {
+    window.streetLoading.update(95, 'PREPARING SCENE');
+    updateCamera(0); updatePanels(0); updateHUD(); sky.position.copy(camera.position);
+    await renderer.compileAsync(scene, camera);
+    requestAnimationFrame(t => { frame(t); window.streetLoading.finish(); });
+  })
+  .catch(err => { console.error('Night Street failed to load', err); window.streetLoading.fail(); });
 </script>
 </body>
 </html>
