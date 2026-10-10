@@ -510,6 +510,7 @@
   filter_arch: '建筑与 3D',
   view_grid: '网格',
   view_studio: '工作室',
+  view_rail: '展览带',
 
   proj_aitown_title: 'AI 小镇',
   proj_aitown_card_desc: '你创造一个居民，然后再也无法操控它；并用 24 名参与者研究创造者如何解释随之而来的那段人生。',

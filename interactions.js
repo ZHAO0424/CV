@@ -1356,8 +1356,9 @@ function setupProjectViewMode() {
   const storageKey = 'cv-project-view-mode';
 
   function apply(mode) {
-    const value = mode === 'studio' ? 'studio' : 'grid';
+    const value = ['studio', 'rail'].includes(mode) ? mode : 'grid';
     grid.classList.toggle('is-studio-view', value === 'studio');
+    grid.classList.toggle('is-rail-view', value === 'rail');
     buttons.forEach((button) => {
       const active = button.dataset.view === value;
       button.classList.toggle('is-active', active);
@@ -1372,6 +1373,35 @@ function setupProjectViewMode() {
   bar.addEventListener('click', (event) => {
     const button = event.target.closest('.view-btn');
     if (button && bar.contains(button)) apply(button.dataset.view);
+  });
+
+  let dragging = false;
+  let dragStartX = 0;
+  let dragStartScroll = 0;
+  grid.addEventListener('wheel', (event) => {
+    if (!grid.classList.contains('is-rail-view') || Math.abs(event.deltaY) <= Math.abs(event.deltaX)) return;
+    event.preventDefault();
+    grid.scrollBy({ left: event.deltaY * 1.15, behavior: 'smooth' });
+  }, { passive: false });
+  grid.addEventListener('pointerdown', (event) => {
+    if (!grid.classList.contains('is-rail-view') || event.pointerType === 'touch') return;
+    dragging = true;
+    dragStartX = event.clientX;
+    dragStartScroll = grid.scrollLeft;
+    grid.classList.add('is-dragging');
+    grid.setPointerCapture(event.pointerId);
+  });
+  grid.addEventListener('pointermove', (event) => {
+    if (!dragging) return;
+    grid.scrollLeft = dragStartScroll - (event.clientX - dragStartX);
+  });
+  grid.addEventListener('pointerup', () => {
+    dragging = false;
+    grid.classList.remove('is-dragging');
+  });
+  grid.addEventListener('pointercancel', () => {
+    dragging = false;
+    grid.classList.remove('is-dragging');
   });
 }
 
