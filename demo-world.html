@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Demo · Night Street</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root { --yellow: #fcee0a; --magenta: #ff2a6d; --cyan: #00f0ff; --text: #f5f7ff; --soft: rgba(245,247,255,.68); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #07060d; color: var(--text); font-family: "Space Grotesk", system-ui, sans-serif; overflow: hidden; }
+  canvas { display: block; }
+  #app { position: fixed; inset: 0; }
+
+  /* HUD：和面板同高，站在面板对面那一侧 */
+  .hud { position: fixed; top: 50%; transform: translateY(-52%); left: 6vw; width: 38vw; max-width: 600px; z-index: 5; pointer-events: none; }
+  .hud.flip { left: 56vw; }
+  .hud.center { left: 50%; transform: translate(-50%, -50%); width: 52vw; max-width: 760px; text-align: center; }
+  .hud.center .tags, .hud.center .links { justify-content: center; }
+  .hud.center h2 { font-size: clamp(36px, 5vw, 72px); }
+  .hud .idx { font-size: 12px; letter-spacing: .22em; color: var(--accent, var(--yellow)); font-weight: 600; margin-bottom: 12px; }
+  .hud h2 { margin: 0 0 14px; font-size: clamp(28px, 3.6vw, 50px); line-height: 1.02; letter-spacing: -0.02em; color: var(--accent, var(--yellow));
+            text-shadow: 0 0 22px color-mix(in srgb, var(--accent, var(--yellow)) 35%, transparent); }
+  /* 没有底色，靠字阴影把字从霓虹背景里托出来 */
+  .hud { text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 0 10px rgba(0,0,0,.9), 0 0 24px rgba(0,0,0,.7); }
+  .hud p { margin: 0 0 12px; font-size: 15px; line-height: 1.6; color: rgba(245,247,255,.9); }
+  .hud p.lead { color: var(--text); font-size: 16px; font-weight: 600; }
+  .hud .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 14px; }
+  .hud .tags span { font-size: 12px; font-weight: 600; letter-spacing: .08em; padding: 5px 10px; border: 1px solid var(--accent, var(--yellow)); color: var(--accent, var(--yellow));
+                    box-shadow: 0 0 8px rgba(0,0,0,.8); }
+  .hud .meta { font-size: 12px; color: rgba(245,247,255,.85); letter-spacing: .08em; }
+  .hud .links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  .hud a { pointer-events: auto; display: inline-block; padding: 10px 18px; background: var(--accent, var(--yellow)); color: #0b0a12;
+           font-weight: 700; font-size: 13px; letter-spacing: .1em; text-decoration: none;
+           clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px)); }
+  .hud a.ghost { background: transparent; color: var(--text); box-shadow: inset 0 0 0 1px var(--accent, var(--yellow)); }
+  .hud a:hover { background: #fff; color: #0b0a12; }
+  .hud > * { transition: opacity .25s, transform .25s; }
+  .hud.swap > * { opacity: 0; transform: translateY(8px); }
+
+  .brand { position: fixed; left: 6vw; top: 5vh; z-index: 5; font-size: 13px; letter-spacing: .2em; font-weight: 700; color: var(--yellow); }
+  .brand small { display: block; font-weight: 500; color: var(--soft); letter-spacing: .1em; margin-top: 4px; }
+  .progress { position: fixed; right: 3vw; top: 50%; transform: translateY(-50%); width: 2px; height: 36vh; background: rgba(255,255,255,.12); z-index: 5; }
+  .progress i { display: block; width: 100%; height: 0; background: var(--magenta); box-shadow: 0 0 10px var(--magenta); }
+  .hint { position: fixed; right: 6vw; bottom: 5vh; font-size: 12px; letter-spacing: .14em; color: var(--soft); z-index: 5; }
+  /* 手机上后期关掉了，用一层 CSS 暗角兜底；桌面上也叠一点，让四角更沉 */
+  .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 4;
+              background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.25) 80%, rgba(0,0,0,.55) 100%); }
+  .loader { position: fixed; inset: 0; display: grid; place-items: center; background: #07060d; z-index: 10; transition: opacity .6s; }
+  .loader.done { opacity: 0; pointer-events: none; }
+  .loader span { font-size: 12px; letter-spacing: .3em; color: var(--yellow); }
+  @media (max-width: 760px) {
+    .hud, .hud.flip { left: 16px; right: 16px; width: auto; max-width: none; top: auto; bottom: 4vh; transform: none; }
+    .hud p:not(.lead), .hud .tags { display: none; }
+    .progress, .hint { display: none; }
+  }
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+</head>
+<body>
+<div id="app"></div>
+<div class="brand">ZHAO ZIRUI<small>XR · bare-hand · spatial UI</small></div>
+<div class="hud" id="hud">
+  <div class="idx" id="hIdx"></div>
+  <h2 id="hTitle"></h2>
+  <p class="lead" id="hLead"></p>
+  <p id="hBody"></p>
+  <div class="tags" id="hTags"></div>
+  <div class="meta" id="hMeta"></div>
+  <div class="links" id="hLinks"></div>
+</div>
+<div class="progress"><i id="bar"></i></div>
+<div class="hint">SCROLL / ARROWS / DRAG · CLICK A PANEL</div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="loader" id="loader"><span>LOADING NIGHT STREET</span></div>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { Reflector } from 'three/addons/objects/Reflector.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ====================== 站点：第 0 站是个人主页卡，最后一站是路尽头的装置 ====================== */
+const STOPS = [
+  { kind:'home', img:'images/og-home.jpg', idx:'HOME', title:'Hi, I\'m Zhao Zirui.',
+    lead:'HCI / XR / Multi-Agent Systems / Affective Computing / Multimodal Interaction',
+    body:'I design and build XR interaction. I am currently a Unity Interaction Engineer at VITURE, working on gesture, gaze and spatial UI for AR glasses — from SDK-level prototypes to product-facing demos. Alongside that I keep a research line in HCI: emotion-aware interaction, and how AI agents shape what people believe about the systems they are inside, with work at CHI EA 2026 and IEEE VR 2026. An architecture background is still how I think about atmosphere, structure, and human presence in virtual space.',
+    tags:['Bare-hand interaction','Emotion-aware XR','AI agents','Spatial UI'], meta:'Unity Interaction Engineer · VITURE',
+    links:[['View Resume','resume.html'],['GitHub','https://github.com/ZHAO0424','ghost'],['LinkedIn','https://www.linkedin.com/in/zhao000424','ghost'],['Email','mailto:zzrsnow@outlook.com','ghost'],['Photography','photography.html','ghost']] },
+  { href:"projects/ai-town.html", img:"images/projects/covers/home/ai-town-home.webp", type:"AI / HCI", stack:"Unity 6 · Local LLM", title:"AI Town",
+    lead:"A player authors one resident, then never controls it again. A Unity 6 town simulation, and a 24-participant study of how people explain a life they started but cannot steer.",
+    body:"Thirteen established residents and one player-created resident navigate, work, use facilities, transact, find housing, and shift their social relationships over nine simulated days. The player authors the resident once — appearance, attributes, background, life goal, behaviour, social style — and from then on can only watch, follow, and inspect.",
+    tags:['Authored Autonomy','Psychological Ownership','Legibility','Generative Agents'] },
+  { href:"projects/skyvine.html", img:"images/projects/covers/home/skyvine-home.webp", type:"AR / Game", stack:"Unity · VITURE", title:"Skyvine",
+    lead:"A tabletop AR tower-defense roguelike for AR glasses. A floating garden sits on your real desk; you plant, upgrade, and turn it with bare hands, because the side you cannot reach is the side under attack.",
+    body:"A mother core at the centre, floating islands around it, vines linking island to island. Bugs come from the outer ring for the core and the vines. You plant defences on the islands, spread firepower along the vines, and survive wave after wave. Built solo on VITURE AR glasses and playable end to end.",
+    tags:['Tabletop AR','Hand Tracking','Tower Defense','Roguelike'] },
+  { href:"projects/stellar-forge.html", img:"images/projects/covers/home/stellar-forge-home.webp", type:"AR / Game", stack:"Unity · OpenXR", title:"Stellar Forge",
+    lead:"A deckbuilding roguelike where half of the build lives in the space in front of you. Star spirits stand on a disc that floats at arm's length; neighbouring spirits form a resonance chain.",
+    body:"A late-night star workshop: you throw star cards into the forge, match recipes to brew a score, and hit a target every night. Balatro proved the skeleton; the proposition here is to move half of the build out of the card pool and into physical space.",
+    tags:['Spatial Deckbuilding','Roguelike','Gesture Design','Game Feel'] },
+  { href:"https://zhao0424.github.io/webxr-todo/", img:"", type:"WebXR / Creative Coding", stack:"WebGL2 · WebXR", title:"Flux",
+    lead:"A WebXR creative-coding piece that runs straight in the browser and drops into immersive mode on AR glasses.",
+    body:"Hand-written WebGL2 with a WebXR session layer on top: the same page is a flat canvas on a laptop and a spatial scene on a headset.", tags:['WebXR','WebGL2','Shaders'] },
+  { href:"projects/tabletop.html", img:"images/projects/tabletop/vitrine-desktop.webp", type:"XR / Design Tool", stack:"Unity 6 · OpenXR", title:"Vitrine",
+    lead:"A spatial second screen. Your CAD model stands on your real desk, live with the source document, while you keep modelling with the keyboard and mouse in front of you.",
+    body:"You keep working in Rhino, Blender or Grasshopper; you look up and the form is really three-dimensional. No headset to take off, no mode to switch. Built solo in ten days from kickoff to an installer handed to colleagues, with three source-application adapters.",
+    tags:['Spatial Second Screen','CAD Live Link','Two-Hand Interaction','Cross-Platform'] },
+  { href:"projects/respire-2.html", img:"images/projects/covers/home/respire-2-home.webp", type:"VR / Interactive Art", stack:"Unity 6 · Sensor Data", title:"Respire 2.0",
+    lead:"Immersive VR artwork mapping live breathing data into light, motion, and a responsive organic sculpture.",
+    body:"Developed during Research Assistant work at HKUST(GZ). A live respiratory belt captures the visitor's breathing, while a 3D organic form responds through synchronized light, motion, and spatial atmosphere.",
+    tags:['VR Artwork','Respiratory Sensor','URP','Biofeedback'] },
+  { href:"projects/mr-english-ai.html", img:"images/projects/covers/home/mr-english-ai-home.webp", type:"AI / MR Learning", stack:"Unity 6 · Quest 3", title:"MR English Learning Assistant",
+    lead:"Unity 6 mixed-reality AI tutor combining cafe conversation practice and presentation training on Meta Quest 3.",
+    body:"Connects voice interaction, AI-generated feedback, text-to-speech playback, and scene-based learning tasks into a complete language practice loop. Built during Research Assistant work at HKUST(GZ).",
+    tags:['AI Tutor','Voice Interaction','World-Space UI','Presentation Training'] },
+  { href:"projects/feeling-ai-narrative-systems.html", img:"images/projects/covers/home/feelingai-home.webp", type:"AI / Narrative", stack:"Unity · LLM", title:"Feeling AI Narrative Demo",
+    lead:"Structured multi-character storytelling demo built around trust, memory, and world-state reasoning.",
+    body:"During an internship at Feeling AI (Shanghai Yunwu Tech), I led the development of an AI-driven multi-character narrative demo designed to test how large language models could support structured interactive storytelling.",
+    tags:['LLM','Narrative AI','Memory','Trust Modeling','NPC Systems'] },
+  { href:"projects/auckland-bird-xr.html", img:"images/projects/covers/home/bird-data-home.webp", type:"XR / Ecology", stack:"Unreal · Ambisonics", title:"Bird Data Immersive XR System",
+    lead:"Unreal-based ecological VR system translating bird data into spatialized audiovisual storytelling.",
+    body:"As a Research Assistant at the University of Auckland's Augmented Human Lab, I developed an immersive VR system in Unreal Engine that transformed real-time bird data into a perceivable ecological experience.",
+    tags:['Unreal Engine','LiDAR','Ambisonics','Data Sonification'] },
+  { href:"projects/curelandscape-vr.html", img:"images/projects/covers/home/curelandscape-home.webp", type:"XR / Wellbeing", stack:"Unity · VR", title:"CureLandscape VR",
+    lead:"An ongoing VR experiment exploring homesickness, emotional restoration, and healing landscape design for international students.",
+    body:"Explores how restorative landscape design, memory, and immersive atmosphere can support emotional comfort inside virtual space.", tags:['Wellbeing','Homesickness','Healing Landscape','HCI'] },
+  { href:"projects/multimodal-emotion-vr-dialogue.html", img:"images/projects/covers/home/emotion-dialogue-home.webp", type:"VR / Affective Computing", stack:"Unity · ONNX", title:"Emotion Dialogue",
+    lead:"An affect-aware VR dialogue system that shifts the focus from recognition accuracy to user experience, integrating speech, text, VAD signals and adaptive avatar feedback in a closed loop.",
+    body:"Multimodal emotion recognition (speech, text, valence-arousal-dominance) feeds a large language model; a within-subject study measured the effect on experience rather than on accuracy.",
+    tags:['Emotion-aware VR','ONNX Sentis','VAD Prompting','Empathic AI'] },
+  { href:"projects/multi-agent-influence.html", img:"images/projects/covers/home/multi-agent-home.webp", type:"AI Agents / Game", stack:"Unity · Multi-Agent", title:"Multi-Agent Influence",
+    lead:"A narrative game that uses multi-agent social dynamics to explore how emotional expressions and group consensus shape sustainable decision-making.",
+    body:"Promoting sustainable behaviour is hard because sustainability feels distant from people's immediate goals. Agents with emotions and opinions pull the player's choices through social pressure instead of lectures.",
+    tags:['Multi-Agent','Sustainability','Prompt Engineering','Social Dynamics'] },
+  { href:"projects/vr-siren.html", img:"images/projects/covers/home/vr-siren-home.webp", type:"VR / Narrative Art", stack:"Unreal Engine · VR", title:"VR SIREN",
+    lead:"Carbonis: Siren's Elegia — a collaborative VR project blending mythology, ecological narrative and immersive technology to critique exploitation and greenwashing.",
+    body:"As creative and art director, I led the core concept, narrative structure, and artistic vision. The story follows a protagonist sealed in a saltwater pool symbolising human greed, while their soul meets the Sirens' judgment.",
+    tags:['Mythology','Ecology','XR Art','Art Direction'] },
+  { href:"projects/mr-planting.html", img:"images/projects/covers/home/mr-planting-home.webp", type:"AR / Game", stack:"Unity · Quest 3", title:"MR Planting",
+    lead:"A mixed reality gardening adventure that connects real-world movement, virtual planting, and playful resource loops.",
+    body:"Bloomiverse: through mystical portals, players collect seeds from another world and use shovels, watering cans and flowerpots to grow plants in their real room, defending seedlings from evil bubbles.",
+    tags:['Unity','AR Foundation','C#','3D Modeling'] },
+  { href:"projects/architecture-portfolio.html", img:"images/projects/covers/home/architecture-home.webp", type:"Architecture", stack:"Rhino · Grasshopper", title:"Architecture Portfolio",
+    lead:"A selected body of architectural work from design studios, international competitions, and research-driven experiments.",
+    body:"Developed at Harbin Institute of Technology. The projects move between terrestrial and extraterrestrial settings, cultural preservation and urban renewal, and experimental structures that connect environmental response with new spatial imaginaries.",
+    tags:['Rhino','Grasshopper','V-Ray','Competitions'] },
+  { href:"projects/3d-modeling.html", img:"images/projects/covers/home/modeling-home.webp", type:"3D Art / Modeling", stack:"Maya · Substance", title:"3D Modeling",
+    lead:"A collection of hard-surface models, character designs, and rendering experiments.",
+    body:"Studies grouped by pipeline: hard-surface props, one stylised character carried from topology through to a lit render, and an environment scene assembled from modular props. Presented on a plain turntable on purpose.",
+    tags:['Hard Surface','Character Pipeline','UV & Texturing','Environment Art'] },
+  { href:"projects/fire-escape-vr.html", img:"images/projects/covers/home/fire-escape-home.webp", type:"VR / Serious Game", stack:"Unity · Quest 3", title:"FireEscapeVR",
+    lead:"A VR fire escape simulation for Quest 3 that places players inside a forest fire, combining hazards, stamina and smoke management, spatial audio guidance and survival decisions.",
+    body:"Players learn the controls through step-by-step onboarding, then navigate a tense escape while managing stamina, smoke exposure, environmental hazards, and limited resources.",
+    tags:['XR Interaction','Spatial Audio','Haptics','Quest 3'] },
+  { href:"projects/coastal-fps.html", img:"images/projects/covers/home/coastal-fps-home.webp", type:"Unity / FPS", stack:"Unity · C#", title:"Coastal FPS",
+    lead:"A first-person action prototype set in a near-future shoreline devastated by pollution, where marine life has mutated into hostile creatures.",
+    body:"A de-make study referencing Dungeonball: keep first-person combat, enemy pressure and emergent play, cut procedural levels and heavy pipelines that the scope could not carry.",
+    tags:['Unity','C#','NavMesh','Starter Assets'] },
+  { href:"projects/gravity-experiment.html", img:"images/projects/covers/home/gravity-home.webp", type:"Unreal / Physics", stack:"Unreal Engine · Blueprint", title:"Unreal Experiments",
+    lead:"A paired Unreal Engine study: a gravity manipulation prototype and a survival systems prototype, both about interaction logic and real-time player state.",
+    body:"A custom physics character lets the player move in 3D space, redirect gravity in real time, and influence tagged objects — a spatial interaction experiment about orientation, force, and player-controlled physical rules.",
+    tags:['Blueprints','Enhanced Input','Physics','Player Stats'] },
+  { kind:'end', idx:'END OF STREET', title:'Let\'s build something spatial.',
+    lead:'Gesture, gaze and spatial UI for AR glasses. Research-grade interaction prototypes, shipped.',
+    body:'Open to collaborations on XR interaction, AI agents in immersive systems, and research-to-product prototyping.',
+    tags:['Unity 6','OpenXR','WebXR','Hand Tracking'], meta:'zzrsnow@outlook.com',
+    links:[['Email me','mailto:zzrsnow@outlook.com'],['Resume','resume.html','ghost'],['Back to top','#top','ghost']] },
+];
+
+/* ====================== 参数 ====================== */
+const SPACING = 17;
+const SIDE = 6.2;                        // 停在路边
+const SIDE_FOCUS = 4.0;                  // 聚焦时滑到的位置
+const WALL = 13.5;
+const N = STOPS.length;
+const STREET_LEN = N * SPACING + 160;
+const Z0 = 30;
+const Z_END = -(N - 1) * SPACING - 26;   // 路尽头装置的中心
+const MOBILE = innerWidth < 760;
+const COL = { yellow: 0xfcee0a, magenta: 0xff2a6d, cyan: 0x00f0ff, fog: 0x1a0d2e };
+const sideColor = s => (s < 0 ? COL.yellow : COL.magenta);
+// 发光用的 HDR 颜色：把两种颜色缩放到同一亮度（≈0.8），bloom 才会一视同仁。黄色本身亮度 0.88，品红 0.36
+const glowColor = s => new THREE.Color(sideColor(s)).multiplyScalar(s < 0 ? 0.9 : 2.2);
+const seed = (() => { let s = 1337; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+
+/* ====================== 渲染器 / 场景 ====================== */
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1 : 1.5));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = !MOBILE;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.05;
+document.getElementById('app').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(COL.fog, 25, 190);
+const camera = new THREE.PerspectiveCamera(55, innerWidth / innerHeight, 0.1, 500);
+
+const sky = new THREE.Mesh(new THREE.SphereGeometry(320, 24, 12), new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false, fog: false,
+  uniforms: { top: { value: new THREE.Color(0x05030c) }, mid: { value: new THREE.Color(0x1d0f33) }, hor: { value: new THREE.Color(0x3a1a4a) } },
+  vertexShader: `varying vec3 vW; void main(){ vW = (modelMatrix * vec4(position,1.0)).xyz - cameraPosition; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+  fragmentShader: `uniform vec3 top, mid, hor; varying vec3 vW;
+    void main(){ float h = normalize(vW).y; vec3 c = mix(hor, mid, smoothstep(0.0, 0.18, h)); c = mix(c, top, smoothstep(0.18, 0.7, h)); gl_FragColor = vec4(c, 1.0); }`
+}));
+scene.add(sky);
+
+const gradient = new THREE.DataTexture(new Uint8Array([50, 50, 50, 255, 150, 150, 150, 255, 255, 255, 255, 255]), 3, 1, THREE.RGBAFormat);
+gradient.minFilter = gradient.magFilter = THREE.NearestFilter; gradient.needsUpdate = true;
+const outlineMat = new THREE.MeshBasicMaterial({ color: 0x000000, side: THREE.BackSide });
+
+/* ====================== 灯光 ====================== */
+scene.add(new THREE.HemisphereLight(0x6a4bff, 0x1a0820, 0.7));
+const key = new THREE.DirectionalLight(0xffc27a, 0.9);
+key.position.set(-12, 30, 10);
+key.castShadow = !MOBILE;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.left = key.shadow.camera.bottom = -40; key.shadow.camera.right = key.shadow.camera.top = 40;
+key.shadow.camera.far = 120; key.shadow.bias = -0.0005;
+scene.add(key, key.target);
+
+/* ====================== 地面 ====================== */
+const world = new THREE.Group(); scene.add(world);
+if (!MOBILE) {
+  const mirror = new Reflector(new THREE.PlaneGeometry(2 * WALL, STREET_LEN), { textureWidth: 512, textureHeight: 512, color: 0x3a3450, clipBias: 0.003 });
+  mirror.rotation.x = -Math.PI / 2; mirror.position.set(0, -0.02, Z0 - STREET_LEN / 2);
+  world.add(mirror);
+}
+const gridCanvas = document.createElement('canvas'); gridCanvas.width = gridCanvas.height = 256;
+{ const g = gridCanvas.getContext('2d'); g.fillStyle = 'rgba(7,6,13,0.78)'; g.fillRect(0, 0, 256, 256);
+  g.strokeStyle = 'rgba(0,240,255,0.10)'; g.lineWidth = 2; g.strokeRect(1, 1, 254, 254); }
+const gridTex = new THREE.CanvasTexture(gridCanvas); gridTex.wrapS = gridTex.wrapT = THREE.RepeatWrapping; gridTex.repeat.set(2 * WALL / 9, STREET_LEN / 9);
+const asphalt = new THREE.Mesh(new THREE.PlaneGeometry(2 * WALL, STREET_LEN), new THREE.MeshBasicMaterial({ map: gridTex, transparent: true, depthWrite: false }));
+asphalt.rotation.x = -Math.PI / 2; asphalt.position.set(0, 0.0, Z0 - STREET_LEN / 2); world.add(asphalt);
+const outer = new THREE.Mesh(new THREE.PlaneGeometry(400, STREET_LEN + 200), new THREE.MeshToonMaterial({ color: 0x0b0914, gradientMap: gradient }));
+outer.rotation.x = -Math.PI / 2; outer.position.set(0, -0.05, Z0 - STREET_LEN / 2); outer.receiveShadow = true; world.add(outer);
+for (const s of [-1, 1]) {
+  const strip = new THREE.Mesh(new THREE.PlaneGeometry(0.1, STREET_LEN), new THREE.MeshBasicMaterial({ color: glowColor(s) }));
+  strip.rotation.x = -Math.PI / 2; strip.position.set(s * 7.6, 0.02, Z0 - STREET_LEN / 2); world.add(strip);
+}
+
+/* ====================== 雨 ====================== */
+const RAIN = MOBILE ? 400 : 1600;
+const rainPos = new Float32Array(RAIN * 3);
+for (let i = 0; i < RAIN; i++) { rainPos[i * 3] = (seed() - 0.5) * 40; rainPos[i * 3 + 1] = seed() * 30; rainPos[i * 3 + 2] = (seed() - 0.5) * 60; }
+const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rain = new THREE.Points(rainGeo, new THREE.PointsMaterial({ color: 0x9fd8ff, size: 0.06, transparent: true, opacity: 0.45, depthWrite: false }));
+scene.add(rain);
+
+/* ====================== 城市 ====================== */
+const protos = {}, placements = {};
+const tmpM = new THREE.Matrix4(), tmpP = new THREE.Vector3(), tmpQ = new THREE.Quaternion(), tmpS = new THREE.Vector3();
+function place(name, x, y, z, rotY = 0, scale = 1) {
+  if (!protos[name]) return;
+  tmpP.set(x, y, z); tmpQ.setFromEuler(new THREE.Euler(0, rotY, 0)); tmpS.setScalar(scale);
+  (placements[name] ||= []).push(tmpM.clone().compose(tmpP, tmpQ, tmpS));
+}
+const pick = arr => arr[Math.floor(seed() * arr.length)];
+const frameMat = new THREE.MeshToonMaterial({ color: 0x171426, gradientMap: gradient });
+const animated = [];                        // 每帧要转的东西
+
+function buildCity() {
+  const BLD = Object.keys(protos).filter(n => n.startsWith('SM_Env_Background_Building') && !n.includes('Detail'));
+  const near = BLD.filter(n => /Skinny|Small|Simple|Round|Building_0[2-5]/.test(n));
+  const far = BLD.filter(n => /Large|Round|Building_0[1-5]/.test(n));
+  for (const s of [-1, 1]) {
+    let z = Z0 + 10;
+    while (z > Z0 - STREET_LEN) {
+      const n = pick(near), w = protos[n].size.x, d = protos[n].size.z;
+      if (seed() < 0.12) { z -= 6; continue; }
+      place(n, s * (WALL + d / 2), 0, z - w / 2, s < 0 ? Math.PI / 2 : -Math.PI / 2, 1);
+      z -= w + 0.6;
+    }
+    let z2 = Z0 + 30;
+    while (z2 > Z0 - STREET_LEN - 40) {
+      const n = pick(far), w = protos[n].size.x;
+      place(n, s * (WALL + 34 + seed() * 10), 0, z2 - w / 2, seed() * Math.PI, 1.15 + seed() * 0.3);
+      z2 -= w * 0.8 + 4;
+    }
+  }
+  const SIGNS = Object.keys(protos).filter(n => /Sign_|Neon_Shape/.test(n) && !/Exit|Sign_Bar_01/.test(n));
+  for (let i = 0; i < 120; i++) {
+    const s = i % 2 ? 1 : -1, n = pick(SIGNS);
+    place(n, s * (WALL - 0.25), 3.5 + seed() * 13, Z0 - seed() * STREET_LEN, s < 0 ? Math.PI / 2 : -Math.PI / 2, 2.2 + seed() * 1.6);
+  }
+  for (let i = 0; i < 70; i++) {
+    const s = i % 2 ? 1 : -1, z = Z0 - seed() * STREET_LEN;
+    place(pick(['SM_Bld_FireEscape_01', 'SM_Bld_FireEscape_02', 'SM_Bld_FireEscape_03']), s * (WALL - 0.9), 3 + seed() * 10, z, s < 0 ? Math.PI / 2 : -Math.PI / 2, 1.4);
+    place(pick(['SM_Prop_Pipes_01_Mesh', 'SM_Prop_Pipes_Rusted_01_Mesh', 'SM_Prop_Pipes_Valves_01_Mesh', 'SM_Prop_Venting_01', 'SM_Prop_AirVent_01', 'SM_Prop_AirVent_02']), s * (WALL - 0.4), seed() * 6, z - 3, s < 0 ? Math.PI / 2 : -Math.PI / 2, 1.3);
+  }
+  const JUNK = ['SM_Prop_Dumpster_01', 'SM_Prop_Rubbish_Bin_01', 'SM_Prop_Pallet_01', 'SM_Prop_Box_Stack_01', 'SM_Prop_Box_Stack_02', 'SM_Prop_Box_Stack_03', 'SM_Prop_TrashBag_01', 'SM_Prop_Speaker_Large_01', 'SM_Prop_Planter_01', 'SM_Prop_Stanchions_Rope_01', 'SM_Prop_Scene_End_Pole_01', 'SM_Prop_Light_Stage_Spot_01'];
+  for (let i = 0; i < 90; i++) {
+    const s = i % 2 ? 1 : -1, z = Z0 - seed() * STREET_LEN;
+    if (z < Z_END + 24) continue;                                  // 装置区留空
+    place(pick(JUNK), s * (8.8 + seed() * 3.6), 0, z, seed() * Math.PI * 2, 1.2);
+  }
+  for (let i = 0; i < 40; i++) {
+    const s = i % 2 ? 1 : -1;
+    place(pick(['SM_Prop_Venting_Corner_01', 'SM_Prop_Greeble_04', 'SM_Prop_Greeble_05', 'SM_Prop_Light_Spotlight_01']), s * (WALL + 4 + seed() * 6), 30 + seed() * 30, Z0 - seed() * STREET_LEN, seed() * Math.PI, 3);
+  }
+  // 全息广告牌
+  const GLYPH = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789XRAIVR';
+  const ADS = ['NIGHT CITY', 'ARASAKA', 'DATA', 'CYBER', 'XR LAB', 'VITURE', 'BARE HAND', 'SPATIAL', 'ZHAO', 'NEON'];
+  function adTexture(word, col, w = 512, h = 768) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d');
+    g.fillStyle = '#0a0812'; g.fillRect(0, 0, w, h);
+    g.fillStyle = col; g.fillRect(0, 0, w, 22); g.fillRect(0, h - 22, w, 22);
+    g.textAlign = 'center'; g.font = `700 ${Math.round(w * 0.29)}px "Space Grotesk", sans-serif`; g.fillText(word.length > 6 ? word.slice(0, 6) : word, w / 2, h * 0.39);
+    let glyphs = ''; for (let k = 0; k < 4; k++) glyphs += GLYPH[Math.floor(seed() * GLYPH.length)];
+    g.font = `700 ${Math.round(w * 0.23)}px sans-serif`; g.fillText(glyphs, w / 2, h * 0.61);
+    g.fillStyle = 'rgba(255,255,255,0.12)'; for (let y = 0; y < h; y += 6) g.fillRect(0, y, w, 2);
+    g.fillStyle = col; g.font = `600 ${Math.round(w * 0.08)}px "Space Grotesk", sans-serif`; g.fillText(`${String(1 + Math.floor(seed() * 98)).padStart(2, '0')} · ${pick(['TOKYO', 'SHENZHEN', 'SHANGHAI', 'AUCKLAND'])}`, w / 2, h * 0.83);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  }
+  for (let i = 0; i < 26; i++) {
+    const s = i % 2 ? 1 : -1, col = pick(['#fcee0a', '#ff2a6d', '#00f0ff', '#fcee0a']);
+    const w = 7 + seed() * 6, h = w * 1.5;
+    const ad = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ map: adTexture(pick(ADS), col), transparent: true, opacity: 0.92, side: THREE.DoubleSide }));
+    ad.position.set(s * (WALL - 0.3), 14 + seed() * 30, Z0 - seed() * STREET_LEN);
+    ad.rotation.y = s < 0 ? Math.PI / 2 : -Math.PI / 2; world.add(ad);
+    const back = new THREE.Mesh(new THREE.BoxGeometry(w + 0.6, h + 0.6, 0.3), frameMat); back.position.copy(ad.position); back.position.x += s * 0.2; back.rotation.copy(ad.rotation); world.add(back);
+  }
+
+  /* ---------- 上空：交错的电线 + 横跨街道的桁架轨道 ---------- */
+  const wireMat = new THREE.MeshBasicMaterial({ color: 0x05040a });
+  const lampGeo = new THREE.SphereGeometry(0.18, 8, 6);
+  for (let z = Z0 - 6; z > Z_END + 30; z -= 7 + seed() * 6) {
+    const n = 1 + Math.floor(seed() * 3);
+    for (let k = 0; k < n; k++) {
+      const y1 = 9 + seed() * 22, y2 = 9 + seed() * 22, dz = (seed() - 0.5) * 12;   // 两端不同高、不同 z，看起来交错
+      const a = new THREE.Vector3(-WALL + 0.2, y1, z), b = new THREE.Vector3(WALL - 0.2, y2, z + dz);
+      const mid = a.clone().lerp(b, 0.5); mid.y -= 1.5 + seed() * 2.5;                    // 下垂
+      const curve = new THREE.QuadraticBezierCurve3(a, mid, b);
+      world.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 16, 0.035, 5, false), wireMat));
+    }
+  }
+  // 桁架轨道：横跨街道，一部分斜着跨；底下一条发光带，上面跑一个小车
+  function truss(z, y, angle, s) {
+    const dir = new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle));        // 轨道方向（水平面内）
+    const half = WALL / Math.cos(angle) + 1;                                    // 斜跨时要更长才能搭到两边楼上
+    const n = Math.ceil(half / 5);
+    for (let k = -n; k <= n; k++) place('SM_Prop_Gantry_01', dir.x * k * 5, y, z + dir.z * k * 5, Math.PI / 2 - angle, 2);
+    const strip = new THREE.Mesh(new THREE.BoxGeometry(2 * half, 0.08, 0.3), new THREE.MeshBasicMaterial({ color: glowColor(s) }));
+    strip.position.set(0, y - 0.1, z); strip.rotation.y = -angle; world.add(strip);
+    const pod = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.0, 1.2), frameMat); pod.add(body);
+    const win = new THREE.Mesh(new THREE.BoxGeometry(2.5, 0.3, 1.3), new THREE.MeshBasicMaterial({ color: glowColor(-s) })); win.position.y = 0.15; pod.add(win);
+    pod.rotation.y = -angle; world.add(pod);
+    const speed = 5 + seed() * 4, phase = seed() * 20;
+    animated.push(dt => {
+      const t = (performance.now() * 0.001 * speed + phase) % (4 * half), d = s * (t - 2 * half);
+      pod.position.set(dir.x * d, y + 1.2, z + dir.z * d);
+    });
+  }
+  for (let z = Z0 - 75; z > Z_END + 40; z -= 42 + seed() * 24) {        // 第一道离主页站远一点，不压标题
+    const y = 26 + seed() * 10, s = seed() < 0.5 ? -1 : 1;
+    const angle = seed() < 0.7 ? (seed() < 0.5 ? -1 : 1) * (0.78 + seed() * 0.3) : 0;   // 七成斜跨，45° 到 62°
+    truss(z, y, angle, s);
+  }
+
+  /* ---------- 路尽头的装置：舞台 + 巨型迪斯科球 + 光环 + 光束 ---------- */
+  const ze = Z_END;
+  // 舞台地板 7x7 块，台阶在前
+  for (let x = -3; x <= 3; x++) for (let z = -3; z <= 3; z++) place('SM_Prop_Stage_Floor_01', x * 5, 0, ze + z * 5, 0, 2);
+  for (let x = -3; x <= 3; x++) place('SM_Prop_Stage_Steps_01', x * 4.4, 0, ze + 19.5, 0, 2);
+  // 龙门架：两侧立柱 + 顶梁上的灯
+  for (const s of [-1, 1]) {
+    for (let k = 0; k < 5; k++) place('SM_Prop_Gantry_01', s * 15, k * 5, ze - 4, 0, 2);
+    place('SM_Prop_Speaker_Large_02', s * 12, 0.2, ze + 10, s < 0 ? 0.5 : -0.5, 2.6);
+    place('SM_Prop_Speaker_Large_02', s * 12, 9.8, ze + 10, s < 0 ? 0.5 : -0.5, 2.6);
+    place('SM_Prop_Dancing_Cage_02', s * 8, 0.2, ze - 2, 0, 2.2);
+    place(s < 0 ? 'SM_Prop_Sculpture_01' : 'SM_Prop_Sculpture_02', s * 20, 0, ze + 4, s < 0 ? 0.6 : -0.6, 3.5);
+    for (let k = 0; k < 6; k++) place(pick(['SM_Prop_Light_Stage_01', 'SM_Prop_Light_Stage_02', 'SM_Prop_Light_Stage_03']), s * (3 + k * 2.2), 24.6, ze - 4, Math.PI, 3);
+  }
+  for (let k = -3; k <= 3; k++) place('SM_Prop_Gantry_01', k * 5, 25, ze - 4, Math.PI / 2, 2);     // 顶梁（横放的立柱）
+  place('SM_Prop_DJ_Booth_01', 0, 0.2, ze + 6, 0, 3);
+  place('SM_Prop_Sculpture_03', 0, 0.2, ze - 14, 0, 4);
+
+  // 巨型迪斯科球（单独 Mesh，要转）
+  const ballProto = protos['SM_Prop_Disco_Ball_01'];
+  if (ballProto) {
+    const ball = new THREE.Mesh(ballProto.geo, new THREE.MeshToonMaterial({ map: ballProto.mat.map, gradientMap: gradient, emissive: 0x7fe9ff, emissiveMap: ballProto.mat.map, emissiveIntensity: 1.4 }));
+    ball.scale.setScalar(11); ball.position.set(0, 15, ze - 2); world.add(ball);
+    animated.push(dt => { ball.rotation.y += dt * 0.25; });
+  }
+  // 三个发光环，不同倾角各自转
+  const ringCols = [glowColor(-1), glowColor(1), new THREE.Color(COL.cyan).multiplyScalar(1.1)];
+  ringCols.forEach((c, i) => {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(8 + i * 2.6, 0.12, 8, 96), new THREE.MeshBasicMaterial({ color: c }));
+    ring.position.set(0, 14, ze - 2); ring.rotation.set(0.5 + i * 0.6, 0, 0.3 * i);
+    world.add(ring);
+    animated.push(dt => { ring.rotation.z += dt * (0.25 + i * 0.12); ring.rotation.x += dt * 0.08; });
+  });
+  // 废弃物堆：按圆丘分布把杂物一层层堆上去，越靠中心越高
+  const PILE = ['SM_Prop_Dumpster_01', 'SM_Prop_Pallet_01', 'SM_Prop_Box_Stack_01', 'SM_Prop_Box_Stack_02', 'SM_Prop_Box_Stack_03', 'SM_Prop_TrashBag_01', 'SM_Prop_TrashBag_01',
+                'SM_Prop_Rubbish_Bin_01', 'SM_Prop_Speaker_01', 'SM_Prop_Speaker_Large_01', 'SM_Prop_Pipes_01_Mesh', 'SM_Prop_Venting_End_01', 'SM_Prop_AirVent_01',
+                'SM_Prop_TV_01', 'SM_Prop_Display_Board_02', 'SM_Prop_Planter_01', 'SM_Prop_Pallet_01', 'SM_Prop_Box_Stack_02'];
+  const R = 13;
+  for (let i = 0; i < 170; i++) {
+    const r = Math.sqrt(seed()) * R, a = seed() * Math.PI * 2;
+    const x = Math.cos(a) * r, z = ze + 2 + Math.sin(a) * r * 0.8;
+    const h = Math.max(0, 1 - r / R);                       // 圆丘：中心高 7 米，边缘贴地
+    const y = h * h * 7 + seed() * 0.6;
+    place(pick(PILE), x, y, z, seed() * Math.PI * 2, 1.2 + seed() * 0.8);
+  }
+  // 堆前面的补光：底部两侧两盏强光 + 一圈贴地的发光底线
+  for (const s of [-1, 1]) {
+    const fl = new THREE.PointLight(s < 0 ? COL.yellow : COL.magenta, 10, 32, 1.6); fl.position.set(s * 12, 1.2, ze + 16); world.add(fl);
+    const fl2 = new THREE.PointLight(0xfff0c0, 4, 24, 1.6); fl2.position.set(s * 5, 3, ze + 12); world.add(fl2);
+  }
+  const baseRing = new THREE.Mesh(new THREE.TorusGeometry(R + 1.5, 0.1, 6, 80), new THREE.MeshBasicMaterial({ color: glowColor(1) }));
+  baseRing.rotation.x = Math.PI / 2; baseRing.position.set(0, 0.25, ze + 2); baseRing.scale.set(1, 0.8, 1); world.add(baseRing);
+  const baseLine = new THREE.Mesh(new THREE.BoxGeometry(2 * R + 8, 0.08, 0.3), new THREE.MeshBasicMaterial({ color: glowColor(-1) }));
+  baseLine.position.set(0, 0.26, ze + 16); world.add(baseLine);
+  // 几块歪倒的招牌插在堆里
+  // 堆里的招牌：避开白底的，单独用一份弱自发光材质（废弃的灯只剩一点余光）
+  const SIGNS2 = Object.keys(protos).filter(n => /Sign_/.test(n) && !/Exit|Sign_Bar_01|Escape|White_Cloud|Diamond/.test(n));
+  const dimSign = protos[SIGNS2[0]].mat.clone(); dimSign.emissiveIntensity = 0.35;
+  for (let i = 0; i < 5; i++) {
+    const r = 4 + seed() * 8, a = seed() * Math.PI * 2, p = protos[pick(SIGNS2)];
+    const m = new THREE.Mesh(p.geo, dimSign);
+    m.position.set(Math.cos(a) * r, 1 + seed() * 4, ze + 2 + Math.sin(a) * r * 0.8);
+    m.rotation.set((seed() - 0.5) * 0.8, seed() * Math.PI * 2, (seed() - 0.5) * 0.6);   // 歪着插
+    m.scale.setScalar(2.2 + seed() * 1.2); world.add(m);
+  }
+  // 舞台背景大屏
+  const stageLight = new THREE.PointLight(COL.magenta, 40, 60, 1.5); stageLight.position.set(0, 10, ze); world.add(stageLight);
+  const stageLight2 = new THREE.PointLight(COL.yellow, 30, 60, 1.5); stageLight2.position.set(0, 22, ze - 6); world.add(stageLight2);
+
+  // 生成 InstancedMesh（本体 + 细描边）
+  for (const [name, mats] of Object.entries(placements)) {
+    const p = protos[name];
+    const im = new THREE.InstancedMesh(p.geo, p.mat, mats.length);
+    const io = new THREE.InstancedMesh(p.geo, outlineMat, mats.length);
+    const bigOne = p.size.y > 20;
+    mats.forEach((m, i) => {
+      im.setMatrixAt(i, m);
+      tmpM.copy(m).decompose(tmpP, tmpQ, tmpS); tmpS.multiplyScalar(bigOne ? 1.006 : 1.018); io.setMatrixAt(i, tmpM.compose(tmpP, tmpQ, tmpS));
+    });
+    im.castShadow = bigOne; im.receiveShadow = true;
+    world.add(im, io);
+  }
+}
+
+function loadCity() {
+  return new Promise((resolve, reject) => {
+    new GLTFLoader().load('models/city.glb', gltf => {
+      const toonByMat = {};
+      gltf.scene.traverse(o => {
+        if (!o.isMesh) return;
+        const src = o.material;
+        if (!toonByMat[src.name]) {
+          const isBld = src.name === 'Buildings';
+          if (src.map) src.map.colorSpace = THREE.SRGBColorSpace;
+          toonByMat[src.name] = new THREE.MeshToonMaterial({ map: src.map, gradientMap: gradient, emissive: 0xffffff, emissiveMap: src.emissiveMap, emissiveIntensity: isBld ? 1.1 : 1.8 });
+        }
+        const geo = o.geometry; geo.computeBoundingBox();
+        const b = geo.boundingBox, size = new THREE.Vector3(); b.getSize(size);
+        geo.translate(-(b.min.x + b.max.x) / 2, -b.min.y, -(b.min.z + b.max.z) / 2);
+        protos[o.name] = { geo, mat: toonByMat[src.name], size };
+      });
+      resolve();
+    }, undefined, reject);
+  });
+}
+
+/* ====================== 作品面板 ====================== */
+const loader = new THREE.TextureLoader();
+const panels = [];
+const PW = 8.0, PH = 4.5;                                  // 画面尺寸（米）
+const panelGeo = new THREE.PlaneGeometry(PW, PH);
+const frameGeo = new THREE.BoxGeometry(PW + 0.5, PH + 0.5, 0.25);
+const poleGeo = new THREE.CylinderGeometry(0.1, 0.1, 3.4, 8);
+function withOutline(mesh, t = 0.015) { const o = new THREE.Mesh(mesh.geometry, outlineMat); o.scale.setScalar(1 + t); mesh.add(o); return mesh; }
+
+function labelTexture(st, idx) {
+  const c = document.createElement('canvas'); c.width = 1280; c.height = 170;
+  const g = c.getContext('2d');                                     // 透明底，只有文字和一道色条
+  const col = idx % 2 === 0 ? '#fcee0a' : '#ff2a6d';
+  g.fillStyle = col; g.fillRect(0, 0, 10, 170);
+  g.fillStyle = col; g.font = '600 26px "Space Grotesk", sans-serif';
+  g.fillText(st.kind === 'home' ? 'HOME  ·  PORTFOLIO' : `${String(idx).padStart(2, '0')}  ·  ${(st.type || '').toUpperCase()}`, 36, 56);
+  g.fillStyle = '#e6e9f5'; g.font = '700 64px "Space Grotesk", sans-serif'; g.fillText(st.title, 36, 132);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+STOPS.forEach((st, i) => {
+  if (st.kind === 'end' || st.kind === 'home') return;               // 主页站只有居中文字，尽头站看装置
+  const side = i % 2 === 0 ? -1 : 1;
+  const g = new THREE.Group();
+  g.position.set(side * SIDE, 3.6, -i * SPACING);
+  g.userData = { index: i, href: st.href || 'index.html', side, focus: 0 };
+
+  const frame = withOutline(new THREE.Mesh(frameGeo, frameMat)); frame.castShadow = true; g.add(frame);
+  const edge = new THREE.Mesh(new THREE.BoxGeometry(PW + 0.3, PH + 0.3, 0.06), new THREE.MeshBasicMaterial({ color: glowColor(side) }));
+  edge.position.z = 0.13; g.add(edge);
+  const mat = new THREE.MeshBasicMaterial({ color: 0x1b1a2a });
+  const screen = new THREE.Mesh(panelGeo, mat); screen.position.z = 0.17; g.add(screen);
+  if (st.img) loader.load(st.img, t => { t.colorSpace = THREE.SRGBColorSpace; mat.map = t; mat.color.set(0xd0d0d0); mat.needsUpdate = true; });
+  else mat.color.set(0x5b2a8a);
+
+  const label = new THREE.Mesh(new THREE.PlaneGeometry(PW, PW * 170 / 1280), new THREE.MeshBasicMaterial({ map: labelTexture(st, i), transparent: true, depthWrite: false }));
+  label.position.set(0, PH / 2 + 0.95, 0.14); g.add(label);
+
+  const pole = withOutline(new THREE.Mesh(poleGeo, frameMat), 0.02); pole.position.y = -PH / 2 - 1.7; g.add(pole);
+  const glow = new THREE.PointLight(sideColor(side), 5, 16, 1.7); glow.position.set(0, -1.5, 3); g.add(glow);
+
+  screen.userData = frame.userData = edge.userData = g.userData;
+  g.userData.edge = edge; g.userData.glow = glow;
+  world.add(g); panels.push(g);
+});
+
+/* ====================== 后期 ====================== */
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, camera));
+const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), 0.5, 0.7, 0.7);
+if (!MOBILE) composer.addPass(bloom);
+const stylize = new ShaderPass({
+  uniforms: { tDiffuse: { value: null }, uTime: { value: 0 } },
+  vertexShader: `varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+  fragmentShader: `
+    uniform sampler2D tDiffuse; uniform float uTime; varying vec2 vUv;
+    float bayer(vec2 p){ int x = int(mod(p.x,4.0)); int y = int(mod(p.y,4.0)); int i = x + y*4;
+      int m[16]; m[0]=0;m[1]=8;m[2]=2;m[3]=10;m[4]=12;m[5]=4;m[6]=14;m[7]=6;m[8]=3;m[9]=11;m[10]=1;m[11]=9;m[12]=15;m[13]=7;m[14]=13;m[15]=5;
+      for(int k=0;k<16;k++){ if(k==i) return float(m[k])/16.0; } return 0.0; }
+    void main(){
+      vec2 uv = vUv; vec2 d = (uv - 0.5) * 0.0012;
+      vec3 c = vec3(texture2D(tDiffuse, uv + d).r, texture2D(tDiffuse, uv).g, texture2D(tDiffuse, uv - d).b);
+      float levels = 16.0; float n = bayer(gl_FragCoord.xy) - 0.5;
+      c = floor(c * levels + n * 0.6) / levels;
+      // 暗角：中心不动，四角压到 15% 左右
+      float v = 1.0 - smoothstep(0.32, 0.78, length(uv - 0.5)); c *= mix(0.12, 1.0, v);
+      c *= 0.97 + 0.03 * sin(gl_FragCoord.y * 1.6);
+      gl_FragColor = vec4(c, 1.0);
+    }`
+});
+if (!MOBILE) composer.addPass(stylize);
+composer.addPass(new OutputPass());
+
+/* ====================== 相机：直线平推 ====================== */
+let camT = 0, camTarget = 0;
+const MAX_T = N - 1;
+const mouse = new THREE.Vector2(0, 0), mouseS = new THREE.Vector2(0, 0);
+const look = new THREE.Vector3();
+function updateCamera(dt) {
+  camT += (camTarget - camT) * Math.min(1, dt * 5);
+  mouseS.lerp(mouse, 0.06);
+  const z = -camT * SPACING;
+  // 最后一站：停远一点、抬头看装置
+  const endF = Math.max(0, camT - (N - 2));
+  const homeF = Math.max(0, 1 - camT);                 // 主页站：抬高相机、看向上空，面板落到画面下方，不压文字
+  camera.position.set(mouseS.x * 0.45, 3.6 + mouseS.y * 0.2 + endF * 2.5 + homeF * 8, z + 14);
+  look.set(mouseS.x * 0.9, 3.8 + mouseS.y * 0.4 + endF * 6 + homeF * 18, z - 40);
+  camera.lookAt(look);
+  key.position.set(camera.position.x - 12, 30, camera.position.z - 10); key.target.position.set(0, 0, camera.position.z - 20);
+  rain.position.set(0, 0, camera.position.z - 15);
+  // 主页站："停电"：只压暗、降饱和，不模糊（HUD 是 DOM，不在 canvas 上，不受影响）
+  const bright = (1 - homeF * 0.6).toFixed(2);
+  const f = homeF > 0.01 ? `brightness(${bright}) saturate(${(1 - homeF * 0.4).toFixed(2)})` : '';
+  if (renderer.domElement.style.filter !== f) renderer.domElement.style.filter = f;
+  renderer.toneMappingExposure = 1.05 - homeF * 0.5;
+  bloom.strength = 0.5 - homeF * 0.3;
+}
+function updatePanels(dt) {
+  for (const g of panels) {
+    const u = g.userData, want = Math.max(0, 1 - Math.abs(camT - u.index) * 1.25);
+    u.focus += (want - u.focus) * Math.min(1, dt * 6);
+    const f = u.focus, s = u.side;
+    g.position.x = s * THREE.MathUtils.lerp(SIDE, SIDE_FOCUS, f);
+    g.position.y = 3.6 + 0.3 * f;
+    g.rotation.y = s * THREE.MathUtils.lerp(-0.85, 0, f);
+    g.scale.setScalar(1 + 0.1 * f);
+    u.edge.material.color.copy(glowColor(s)).multiplyScalar(1 + 0.35 * f);   // 聚焦只加亮，不改色相
+    u.glow.intensity = 4 + 10 * f;
+  }
+}
+function move(d) { camTarget = Math.min(MAX_T, Math.max(0, camTarget + d)); }
+function snap() { camTarget = Math.round(camTarget); }
+let snapTimer = 0;
+addEventListener('wheel', e => { e.preventDefault(); move(-e.deltaY / 420); clearTimeout(snapTimer); snapTimer = setTimeout(snap, 140); }, { passive: false });   // 滚轮向上 = 前进
+addEventListener('keydown', e => {
+  if (['ArrowDown', 'ArrowRight', ' '].includes(e.key)) { e.preventDefault(); camTarget = Math.min(MAX_T, Math.round(camTarget) + 1); }
+  if (['ArrowUp', 'ArrowLeft'].includes(e.key)) { e.preventDefault(); camTarget = Math.max(0, Math.round(camTarget) - 1); }
+  if (e.key === 'Home') camTarget = 0;
+});
+let dragY = null, dragMoved = false;
+addEventListener('pointerdown', e => { if (e.target.closest('a')) return; dragY = e.clientY; dragMoved = false; });
+addEventListener('pointermove', e => {
+  mouse.set((e.clientX / innerWidth - 0.5) * 2, -(e.clientY / innerHeight - 0.5) * 2);
+  if (dragY !== null) { const dy = dragY - e.clientY; if (Math.abs(dy) > 3) dragMoved = true; move(dy / 160); dragY = e.clientY; }
+});
+addEventListener('pointerup', e => { if (dragY !== null) { dragY = null; snap(); if (!dragMoved) click(e); } });
+
+const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
+function click(e) {
+  ndc.set((e.clientX / innerWidth) * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(panels, true).find(h => h.object.userData && h.object.userData.href);
+  if (!hit) return;
+  const { index, href } = hit.object.userData;
+  if (Math.round(camTarget) !== index) { camTarget = index; return; }
+  href.startsWith('http') ? open(href, '_blank', 'noreferrer') : (location.href = href);
+}
+
+/* ====================== HUD ====================== */
+const hud = document.getElementById('hud');
+let hudIndex = -1;
+function updateHUD() {
+  const i = Math.round(camT);
+  if (i === hudIndex) return;
+  const first = hudIndex === -1;
+  hudIndex = i;
+  const st = STOPS[i];
+  const accent = i % 2 === 0 ? '#fcee0a' : '#ff2a6d';
+  hud.style.setProperty('--accent', accent);
+  hud.classList.toggle('center', st.kind === 'home');
+  hud.classList.toggle('flip', i % 2 === 0 && !st.kind);
+  const fill = () => {
+    document.getElementById('hIdx').textContent = st.idx || `${String(i).padStart(2, '0')} / ${N - 2}  ·  ${st.type}`;
+    document.getElementById('hTitle').textContent = st.title;
+    document.getElementById('hLead').textContent = st.lead || '';
+    document.getElementById('hBody').textContent = st.body || '';
+    document.getElementById('hTags').innerHTML = (st.tags || []).map(t => `<span>${t}</span>`).join('');
+    document.getElementById('hMeta').textContent = st.meta || st.stack || '';
+    const links = st.links || [['OPEN PROJECT →', st.href]];
+    document.getElementById('hLinks').innerHTML = links.map(([t, h, cls]) =>
+      `<a href="${h}" class="${cls || ''}" ${h.startsWith('http') ? 'target="_blank" rel="noreferrer"' : ''} ${h === '#top' ? 'data-top="1"' : ''}>${t}</a>`).join('');
+    hud.classList.remove('swap');
+  };
+  if (first) fill(); else { hud.classList.add('swap'); setTimeout(fill, 180); }
+  document.getElementById('bar').style.height = `${(i / MAX_T) * 100}%`;
+}
+hud.addEventListener('click', e => { const a = e.target.closest('a[data-top]'); if (a) { e.preventDefault(); camTarget = 0; } });
+
+/* ====================== 循环 ====================== */
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight); composer.setSize(innerWidth, innerHeight);
+});
+{ const at = Number(new URLSearchParams(location.search).get('at')); if (at > 0) camT = camTarget = Math.min(MAX_T, at - 1); }
+let last = performance.now();
+function frame(t) {
+  const dt = Math.min(0.05, (t - last) / 1000); last = t;
+  stylize.uniforms.uTime.value = t / 1000;
+  const a = rainGeo.attributes.position.array;
+  for (let i = 1; i < a.length; i += 3) { a[i] -= dt * 14; if (a[i] < 0) a[i] += 30; }
+  rainGeo.attributes.position.needsUpdate = true;
+  for (const fn of animated) fn(dt);
+  updateCamera(dt); updatePanels(dt); updateHUD();
+  sky.position.copy(camera.position);
+  composer.render();
+  requestAnimationFrame(frame);
+}
+
+loadCity().then(buildCity)
+  .catch(err => console.warn('city.glb 加载失败，使用空街道', err))
+  .finally(() => { requestAnimationFrame(frame); document.getElementById('loader').classList.add('done'); });
+</script>
+</body>
+</html>

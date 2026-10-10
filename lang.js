@@ -19,6 +19,7 @@
   hero_scroll: '\u5411\u4e0b\u67e5\u770b\u7cbe\u9009\u9879\u76ee',
   hero_btn_resume: '\u67e5\u770b\u7b80\u5386',
   hero_btn_portfolio: '\u65e7\u7248\u4f5c\u54c1\u96c6\uff08Wix\uff09',
+  hero_btn_future: '\u8fdb\u5165\u672a\u6765',
 
   resume_tagline: 'XR / VR / AI \u4ea4\u4e92 / \u5efa\u7b51',
   section_education: '\u6559\u80b2\u7ecf\u5386',

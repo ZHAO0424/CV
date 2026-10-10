@@ -3722,3 +3722,12 @@ body[data-cursor-contrast='dark'] .cursor-trail {
   .project-view-switch { width: 100%; }
   .view-btn { flex: 1; }
 }
+
+/* 首页 → 3D 作品街 的入口按钮：霓虹描边 */
+.btn-future {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35), 0 0 18px rgba(59, 130, 246, 0.35);
+}
+.btn-future:hover {
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.6), 0 0 26px rgba(59, 130, 246, 0.6);
+}
