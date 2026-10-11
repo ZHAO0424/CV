@@ -4,9 +4,13 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Demo · Night Street</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+<link rel="modulepreload" href="assets/night-street-vendor.js" />
+<link rel="preload" href="models/city.glb" as="fetch" crossorigin />
+<link rel="preload" href="images/projects/covers/home/ai-town-home.webp" as="image" />
+<link rel="preload" href="images/projects/covers/home/skyvine-home.webp" as="image" />
+<link rel="preload" href="assets/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
 <style>
+  @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 500 700; font-display: swap; src: url('assets/space-grotesk-latin.woff2') format('woff2'); }
   :root { --yellow: #fcee0a; --magenta: #ff2a6d; --cyan: #00f0ff; --text: #f5f7ff; --soft: rgba(245,247,255,.68); }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: #07060d; color: var(--text); font-family: "Space Grotesk", system-ui, sans-serif; overflow: hidden; }
@@ -47,30 +51,53 @@
   /* 手机上后期关掉了，用一层 CSS 暗角兜底；桌面上也叠一点，让四角更沉 */
   .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 4;
               background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.25) 80%, rgba(0,0,0,.55) 100%); }
-  .loader { position: fixed; inset: 0; display: grid; place-items: center; background: #07060d; z-index: 10; transition: opacity .6s; }
+  .loader { position: fixed; inset: 0; display: grid; place-items: center; overflow: hidden; background: radial-gradient(ellipse at 50% 48%, #121920 0%, #080b12 52%, #05060a 100%); z-index: 10; transition: opacity .35s; }
   .loader.done { opacity: 0; pointer-events: none; }
-  .loader-content { width: min(360px, calc(100vw - 48px)); text-align: center; }
-  .loader canvas { width: 100%; height: 220px; }
-  .loader-title { margin: 12px 0 28px; font-size: 14px; font-weight: 700; letter-spacing: 0; }
-  .loader-track { height: 3px; background: #29232e; overflow: hidden; }
-  .loader-fill { height: 100%; width: 0; background: #ff2849; box-shadow: 0 0 12px #ff2849; transition: width .2s linear; }
-  .loader-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; color: #a8a0ad; letter-spacing: 0; }
-  .loader-percent { color: #ff526b; font-variant-numeric: tabular-nums; }
-  .loader-retry { margin-top: 24px; padding: 10px 20px; border: 1px solid #ff2849; color: #fff; background: transparent; cursor: pointer; }
+  .loader-content { position: relative; width: min(570px, calc(100vw - 64px)); text-align: center; }
+  .loader-sign { --power: .12; --frame-power: .25; position: relative; display: grid; place-items: center; height: 235px; margin-bottom: 28px; isolation: isolate; transform-origin: 50% -38px; transform: translateY(-100vh) rotate(-9deg); will-change: transform; }
+  .loader-sign::before { content: ''; position: absolute; inset: 30px 2px 12px; background: repeating-linear-gradient(0deg, transparent 0 4px, #ffffff05 5px 6px), linear-gradient(138deg, #18242b, #0a0d14 43%, #171822 78%, #080d12); clip-path: polygon(0 20px, 20px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px)); box-shadow: inset 0 0 55px #000; }
+  .loader-sign::after { content: ''; position: absolute; inset: 30px 2px 12px; border: 5px solid rgba(255, 42, 109, calc(var(--frame-power) * .85)); clip-path: polygon(0 20px, 20px 0, calc(100% - 18px) 0, 100% 18px, 100% calc(100% - 18px), calc(100% - 18px) 100%, 18px 100%, 0 calc(100% - 18px)); box-shadow: inset 0 0 15px rgba(255, 42, 109, calc(var(--frame-power) * .4)), 0 0 23px rgba(255, 42, 109, calc(var(--frame-power) * .5)); }
+  .sign-inner-frame { position: absolute; z-index: 1; inset: 40px 12px 22px; border: 3px solid rgba(0, 240, 255, calc(var(--frame-power) * .86)); clip-path: polygon(0 11px, 11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px)); box-shadow: inset 0 0 15px rgba(0, 240, 255, calc(var(--frame-power) * .45)), 0 0 15px rgba(0, 240, 255, calc(var(--frame-power) * .4)); }
+  .sign-cable { position: absolute; top: -39px; width: 2px; height: 80px; background: linear-gradient(#293f43, #4d8589, #152329); box-shadow: 2px 0 5px #000; }
+  .sign-cable.left { left: 15%; } .sign-cable.right { right: 15%; }
+  .sign-bolt { position: absolute; z-index: 2; top: 42px; width: 8px; height: 8px; border-radius: 50%; background: #223a40; box-shadow: 0 0 0 2px #0a0d12, 0 0 4px #48c6ca; }
+  .sign-bolt.left { left: 15%; } .sign-bolt.right { right: 15%; }
+  .sign-wordmark { position: relative; z-index: 2; width: 86%; height: auto; margin-top: 28px; overflow: visible; transform: skewX(-11deg); }
+  .sign-glyph { opacity: var(--power); }
+  .sign-glyph path { fill: none; stroke: #ff2a6d; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 3px #ff75a0) drop-shadow(0 0 10px #b50050); }
+  .sign-glyph .tube-core { stroke: #ffe3ed; stroke-width: 1.6; filter: drop-shadow(0 0 3px #fff0f5); }
+  .sign-glyph.fault { opacity: .025; }
+  .sign-underbar { position: absolute; z-index: 2; bottom: 29px; left: 7%; right: 7%; height: 2px; background: linear-gradient(90deg, #00dce4 0 38%, transparent 38% 40%, #e8b74e 40% 76%, transparent 76% 78%, #00dce4 78%); opacity: calc(var(--power) * .75); box-shadow: 0 0 10px #00f0ff, 0 0 19px #ffbd3f; }
+  .sign-plate { position: absolute; z-index: 2; left: 7%; top: 49px; width: 42px; height: 3px; background: #fcee0a; opacity: calc(var(--power) * .6); box-shadow: 0 0 10px #fcee0a; }
+  .loader-sign.charge-mid { --power: .6; --frame-power: .65; }
+  .loader-sign.charge-full { --power: 1; --frame-power: 1; }
+  .loader-sign.brownout { --power: var(--brownout-level, .22); --frame-power: .34; }
+  .loader-sign.power-cut { --power: .012; --frame-power: .04; }
+  .loader-track { width: min(480px, 100%); height: 3px; margin: auto; background: #29232e; overflow: hidden; }
+  .loader-fill { height: 100%; width: 0; background: var(--magenta); box-shadow: 0 0 12px #ff2a6d88; transition: width .2s linear; }
+  .loader-meta { display: flex; justify-content: space-between; width: min(480px, 100%); margin: 12px auto 0; font-size: 11px; color: #a8a0ad; letter-spacing: 0; }
+  .loader-percent { color: var(--magenta); font-variant-numeric: tabular-nums; }
+  .loader-retry { margin-top: 24px; padding: 10px 20px; border: 1px solid #fcee0a; color: #fff; background: transparent; cursor: pointer; }
   .loader[hidden], .loader-retry[hidden] { display: none; }
-  @media (prefers-reduced-motion: reduce) { .loader, .loader-fill { transition: none; } }
+  @media (prefers-reduced-motion: reduce) { .loader, .loader-fill { transition: none; } .loader-sign { transform: rotate(-1deg); will-change: auto; } }
   @media (max-width: 760px) {
+    .loader-content { width: min(300px, calc(100vw - 56px)); }
+    .loader-sign { height: 165px; margin-bottom: 26px; }
+    .loader-sign::before, .loader-sign::after { inset: 22px 0 8px; }
+    .loader-sign::after { border-width: 4px; }
+    .sign-inner-frame { inset: 29px 8px 15px; border-width: 2px; }
+    .sign-cable { top: -28px; height: 58px; }
+    .sign-bolt { top: 29px; width: 6px; height: 6px; }
+    .sign-wordmark { width: 85%; margin-top: 19px; }
+    .sign-glyph path { stroke-width: 8; }
+    .sign-glyph .tube-core { stroke-width: 2; }
+    .sign-plate { top: 35px; width: 28px; }
+    .sign-underbar { bottom: 20px; }
     .hud, .hud.flip { left: 16px; right: 16px; width: auto; max-width: none; top: auto; bottom: 4vh; transform: none; }
     .hud p:not(.lead), .hud .tags { display: none; }
     .progress, .hint { display: none; }
   }
 </style>
-<script type="importmap">
-{ "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
-} }
-</script>
 </head>
 <body>
 <div id="app"></div>
@@ -89,8 +116,25 @@
 <div class="vignette" aria-hidden="true"></div>
 <div class="loader" id="loader" role="status" aria-label="Loading Night Street">
   <div class="loader-content">
-    <canvas id="loader-creature" aria-hidden="true"></canvas>
-    <div class="loader-title">NIGHT STREET</div>
+    <div class="loader-sign" id="loader-sign" aria-hidden="true">
+      <span class="sign-cable left"></span><span class="sign-cable right"></span>
+      <span class="sign-bolt left"></span><span class="sign-bolt right"></span>
+      <span class="sign-inner-frame"></span>
+      <span class="sign-plate"></span>
+      <svg class="sign-wordmark" viewBox="0 0 620 100" role="img" aria-label="ZhaoSphere">
+        <g class="sign-glyph" transform="translate(10 0)"><path d="M8 12 L52 9 L6 67 L51 64" /></g>
+        <g class="sign-glyph" transform="translate(68 0)"><path d="M17 8 L3 77 M10 48 L39 27 L46 33 L39 66" /></g>
+        <g class="sign-glyph" transform="translate(126 0)"><path d="M44 31 L16 33 L5 48 L9 64 L40 53 M46 31 L38 67" /></g>
+        <g class="sign-glyph" transform="translate(184 0)"><path d="M16 31 L41 28 M47 35 L49 42 L39 62 L12 67 L5 54 L16 31" /></g>
+        <g class="sign-glyph" transform="translate(252 0)"><path d="M50 9 L20 8 L5 25 L12 37 L44 39 L49 51 L37 65 L4 67" /></g>
+        <g class="sign-glyph" transform="translate(318 0)"><path d="M17 31 L2 89 M17 34 L41 27 L49 39 L41 54 L9 60" /></g>
+        <g class="sign-glyph" transform="translate(376 0)"><path d="M17 8 L3 77 M10 48 L39 27 L46 33 L39 66" /></g>
+        <g class="sign-glyph" transform="translate(434 0)"><path d="M7 49 L47 42 L45 30 L18 32 L5 47 L10 64 L42 66" /></g>
+        <g class="sign-glyph" transform="translate(492 0)"><path d="M12 32 L4 69 M10 49 L27 33 L48 28" /></g>
+        <g class="sign-glyph" transform="translate(550 0)"><path d="M7 49 L47 42 L45 30 L18 32 L5 47 L10 64 L42 66" /></g>
+      </svg>
+      <span class="sign-underbar"></span>
+    </div>
     <div class="loader-track" role="progressbar" aria-label="Loading assets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loader-fill" id="loader-fill"></div></div>
     <div class="loader-meta"><span id="loader-status">CONNECTING</span><span class="loader-percent" id="loader-percent">0%</span></div>
     <button class="loader-retry" id="loader-retry" hidden>RETRY</button>
@@ -100,50 +144,64 @@
 <script>
 (() => {
   const overlay = document.getElementById('loader');
-  const canvas = document.getElementById('loader-creature');
-  const ctx = canvas.getContext('2d');
+  const sign = document.getElementById('loader-sign');
+  const glyphs = [...sign.querySelectorAll('.sign-glyph')];
+  for (const glyph of glyphs) {
+    const core = glyph.querySelector('path').cloneNode();
+    core.classList.add('tube-core');
+    glyph.append(core);
+  }
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const pointer = { x: 0, y: 0 }, gaze = { x: 0, y: 0 };
-  let finished = false, failed = false, progress = 0;
-  function resize() {
-    const dpr = Math.min(devicePixelRatio, 2);
-    canvas.width = Math.round(canvas.clientWidth * dpr); canvas.height = Math.round(220 * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  function track(e) {
-    const box = canvas.getBoundingClientRect();
-    pointer.x = Math.max(-1, Math.min(1, (e.clientX - box.left - box.width / 2) / (box.width / 2)));
-    pointer.y = Math.max(-1, Math.min(1, (e.clientY - box.top - box.height / 2) / 110));
-  }
-  function draw(t) {
-    if (finished) return;
-    gaze.x += (pointer.x - gaze.x) * .12; gaze.y += (pointer.y - gaze.y) * .12;
-    const w = canvas.clientWidth;
-    ctx.clearRect(0, 0, w, 220);
-    ctx.save(); ctx.translate(w / 2, 110 + (reduced ? 0 : Math.sin(t / 600) * 5));
-    const flap = reduced ? 0 : Math.sin(t / 380) * 8;
-    for (const side of [-1, 1]) {
-      ctx.save(); ctx.scale(side, 1);
-      ctx.beginPath(); ctx.moveTo(30, -5); ctx.bezierCurveTo(48, -40, 78, -48 - flap, 134, -50 - flap);
-      ctx.lineTo(113, -14); ctx.quadraticCurveTo(101, -30, 86, 7);
-      ctx.quadraticCurveTo(70, -9, 60, 25); ctx.quadraticCurveTo(43, 10, 30, 29); ctx.closePath();
-      ctx.fillStyle = '#170b15'; ctx.fill(); ctx.strokeStyle = '#b52b45'; ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(33, 4); ctx.lineTo(113, -37 - flap); ctx.moveTo(33, 4); ctx.lineTo(86, 7); ctx.moveTo(33, 4); ctx.lineTo(60, 25);
-      ctx.strokeStyle = '#5f1b30'; ctx.stroke(); ctx.restore();
+  let finished = false, finishing = false, failed = false, progress = 0;
+  const effectTimers = new Set();
+  if (!reduced) {
+    let offset = -Math.min(innerHeight * .5, 480), velocity = 0;
+    let tilt = -.14, angularVelocity = 0, lastFrame = 0;
+    function moveSign(time) {
+      if (finished) return;
+      const dt = Math.min((time - (lastFrame || time)) / 1000, .033);
+      lastFrame = time;
+      velocity += (-70 * offset - 13 * velocity) * dt;
+      offset += velocity * dt;
+      angularVelocity += (-28 * tilt - 6 * angularVelocity) * dt;
+      tilt += angularVelocity * dt;
+      const idleSway = Math.sin(time / 1050) * .004;
+      sign.style.transform = `translateY(${offset.toFixed(2)}px) rotate(${(tilt + idleSway - Math.PI / 180).toFixed(4)}rad)`;
+      requestAnimationFrame(moveSign);
     }
-    // The face floats without a body; only the eyes and grin catch the light.
-    ctx.shadowColor = '#ff173e'; ctx.shadowBlur = 18; ctx.fillStyle = '#ff2849';
-    for (const side of [-1, 1]) {
-      ctx.save(); ctx.translate(side * 20 + gaze.x * 6, -9 + gaze.y * 4);
-      const blink = !reduced && t % 4300 > 4160 ? .12 : 1; ctx.scale(1, blink);
-      ctx.beginPath(); ctx.moveTo(-12, -5 - side * 3); ctx.quadraticCurveTo(0, -1, 12, -5 + side * 3); ctx.quadraticCurveTo(7, 11, -7, 8); ctx.closePath(); ctx.fill();
-      ctx.shadowBlur = 0; ctx.fillStyle = '#30030b'; ctx.fillRect(gaze.x * 2 - 1.5, -2, 3, 10); ctx.restore();
-      ctx.fillStyle = '#ff2849';
-    }
-    ctx.shadowBlur = 8; ctx.strokeStyle = '#ff526b'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(-19, 23); ctx.quadraticCurveTo(0, 40, 19, 23); ctx.stroke();
-    ctx.beginPath(); ctx.moveTo(-13, 27); ctx.lineTo(-10, 34); ctx.lineTo(-7, 30); ctx.moveTo(13, 27); ctx.lineTo(10, 34); ctx.lineTo(7, 30); ctx.stroke();
-    ctx.restore(); requestAnimationFrame(draw);
+    requestAnimationFrame(moveSign);
+  }
+
+  function later(fn, delay) {
+    const timer = setTimeout(() => { effectTimers.delete(timer); fn(); }, delay);
+    effectTimers.add(timer);
+  }
+  function clearEffects() {
+    for (const timer of effectTimers) clearTimeout(timer);
+    effectTimers.clear();
+    sign.classList.remove('power-cut', 'brownout');
+    for (const glyph of glyphs) glyph.classList.remove('fault');
+  }
+
+  function queueFlicker() {
+    if (reduced || failed || finishing || finished || progress < 35 || effectTimers.size) return;
+    const interval = progress >= 85 ? 580 + Math.random() * 850 : 240 + Math.random() * 500;
+    later(() => {
+      const event = Math.random();
+      if (event < .48) {
+        const first = glyphs[Math.floor(Math.random() * glyphs.length)];
+        first.classList.add('fault');
+        if (Math.random() < .35) glyphs[(glyphs.indexOf(first) + 1) % glyphs.length].classList.add('fault');
+        later(() => { for (const glyph of glyphs) glyph.classList.remove('fault'); queueFlicker(); }, 90 + Math.random() * 180);
+      } else if (event < .86) {
+        sign.style.setProperty('--brownout-level', (.12 + Math.random() * .22).toFixed(2));
+        sign.classList.add('brownout');
+        later(() => { sign.classList.remove('brownout'); queueFlicker(); }, 150 + Math.random() * 270);
+      } else {
+        sign.classList.add('power-cut');
+        later(() => { sign.classList.remove('power-cut'); queueFlicker(); }, 45 + Math.random() * 75);
+      }
+    }, interval);
   }
   window.streetLoading = {
     update(value, label) {
@@ -153,35 +211,39 @@
       document.getElementById('loader-percent').textContent = `${progress}%`;
       overlay.querySelector('[role="progressbar"]').setAttribute('aria-valuenow', progress);
       document.getElementById('loader-status').textContent = label;
+      sign.classList.toggle('charge-mid', progress >= 35 && progress < 85);
+      sign.classList.toggle('charge-full', progress >= 85);
+      queueFlicker();
     },
     finish() {
-      if (failed) return;
+      if (failed || finishing) return;
       this.update(100, 'READY');
-      setTimeout(() => { overlay.classList.add('done'); setTimeout(() => { overlay.hidden = true; finished = true; removeEventListener('pointermove', track); removeEventListener('resize', resize); }, reduced ? 0 : 650); }, reduced ? 0 : 300);
+      finishing = true;
+      clearEffects();
+      if (!reduced) {
+        later(() => sign.classList.add('brownout'), 120);
+        later(() => sign.classList.remove('brownout'), 340);
+        later(() => sign.classList.add('power-cut'), 470);
+        later(() => sign.classList.remove('power-cut'), 545);
+      }
+      later(() => overlay.classList.add('done'), reduced ? 0 : 800);
+      later(() => { overlay.hidden = true; finished = true; sign.style.willChange = 'auto'; clearEffects(); }, reduced ? 0 : 1180);
     },
     fail() {
       failed = true;
+      clearEffects();
       document.getElementById('loader-status').textContent = 'CONNECTION FAILED';
       document.getElementById('loader-retry').hidden = false;
     }
   };
   document.getElementById('loader-retry').addEventListener('click', () => location.reload());
-  addEventListener('pointermove', track); addEventListener('resize', resize);
   addEventListener('error', () => window.streetLoading.fail());
   addEventListener('unhandledrejection', () => window.streetLoading.fail());
-  resize(); requestAnimationFrame(draw);
 })();
 </script>
 
 <script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { Reflector } from 'three/addons/objects/Reflector.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { THREE, GLTFLoader, Reflector, EffectComposer, RenderPass, UnrealBloomPass, ShaderPass, OutputPass } from './assets/night-street-vendor.js';
 
 /* ====================== 站点：第 0 站是个人主页卡，最后一站是路尽头的装置 ====================== */
 const STOPS = [
@@ -795,10 +857,10 @@ function frame(t) {
 }
 
 Promise.all([loadCity().then(() => { modelProgress = 1; updateLoading(); buildCity(); }), ...panelLoads])
-  .then(async () => {
+  .then(() => {
     window.streetLoading.update(95, 'PREPARING SCENE');
     updateCamera(0); updatePanels(0); updateHUD(); sky.position.copy(camera.position);
-    await renderer.compileAsync(scene, camera);
+    // The first render prepares visible materials instead of compiling the entire street.
     requestAnimationFrame(t => { frame(t); window.streetLoading.finish(); });
   })
   .catch(err => { console.error('Night Street failed to load', err); window.streetLoading.fail(); });

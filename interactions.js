@@ -705,6 +705,7 @@ function setupBackgroundAtmosphere() {
 
   function drawWaveBand(now, index, opacity, thickness) {
     const t = now * 0.001;
+    const cyber = document.documentElement.dataset.theme === 'cyber';
     const yBase = height * (0.18 + index * 0.23);
     ctx.beginPath();
     ctx.moveTo(-40, yBase);
@@ -715,7 +716,9 @@ function setupBackgroundAtmosphere() {
       const y = yBase + a * (12 + index * 4) + b * 10 + c * 8;
       ctx.lineTo(x, y);
     }
-    ctx.strokeStyle = index === 0
+    ctx.strokeStyle = cyber
+      ? `rgba(${['0, 240, 255', '255, 42, 109', '252, 238, 10'][index]}, ${opacity})`
+      : index === 0
       ? `rgba(168, 196, 229, ${opacity})`
       : index === 1
         ? `rgba(208, 146, 184, ${opacity * 0.9})`
@@ -732,10 +735,11 @@ function setupBackgroundAtmosphere() {
     ctx.save();
 
     ctx.globalCompositeOperation = 'source-over';
+    const cyber = document.documentElement.dataset.theme === 'cyber';
     const gradient = ctx.createLinearGradient(0, 0, width, height);
     gradient.addColorStop(0, 'rgba(255,255,255,0)');
-    gradient.addColorStop(0.35, 'rgba(215,228,246,0.08)');
-    gradient.addColorStop(0.65, 'rgba(189,212,240,0.11)');
+    gradient.addColorStop(0.35, cyber ? 'rgba(0,240,255,0.015)' : 'rgba(215,228,246,0.08)');
+    gradient.addColorStop(0.65, cyber ? 'rgba(255,42,109,0.015)' : 'rgba(189,212,240,0.11)');
     gradient.addColorStop(1, 'rgba(255,255,255,0)');
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, width, height);
@@ -757,19 +761,21 @@ function setupBackgroundAtmosphere() {
       mote.x = centerX + Math.cos(angle) * radial;
       mote.y = centerY + Math.sin(angle * 0.92) * radial * 0.52 + Math.cos(angle * 0.4) * 24;
 
-      ctx.fillStyle = mote.color;
+      ctx.fillStyle = cyber ? ['#00f0ff33', '#ff2a6d33', '#fcee0a33'][index % 3] : mote.color;
       ctx.fillRect(mote.x, mote.y, mote.size, mote.size);
 
       ctx.fillStyle = 'rgba(255,255,255,0.18)';
       ctx.fillRect(mote.x + 1, mote.y + 1, Math.max(1, mote.size * 0.4), Math.max(1, mote.size * 0.4));
     });
 
-    const wash = ctx.createRadialGradient(width * 0.58, height * 0.72, 10, width * 0.58, height * 0.72, width * 0.52);
-    wash.addColorStop(0, 'rgba(180, 221, 255, 0.14)');
-    wash.addColorStop(0.42, 'rgba(129, 185, 255, 0.08)');
-    wash.addColorStop(1, 'rgba(129, 185, 255, 0)');
-    ctx.fillStyle = wash;
-    ctx.fillRect(0, 0, width, height);
+    if (!cyber) {
+      const wash = ctx.createRadialGradient(width * 0.58, height * 0.72, 10, width * 0.58, height * 0.72, width * 0.52);
+      wash.addColorStop(0, 'rgba(180, 221, 255, 0.14)');
+      wash.addColorStop(0.42, 'rgba(129, 185, 255, 0.08)');
+      wash.addColorStop(1, 'rgba(129, 185, 255, 0)');
+      ctx.fillStyle = wash;
+      ctx.fillRect(0, 0, width, height);
+    }
 
     ctx.restore();
 
@@ -786,6 +792,7 @@ function setupBackgroundAtmosphere() {
   });
 
   window.addEventListener('resize', resize, { passive: true });
+  window.addEventListener('portfolio-theme-change', () => { cancelAnimationFrame(raf); draw(performance.now()); });
   resize();
   if (prefersReduced || compactViewport) {
     draw(performance.now());
@@ -1200,6 +1207,7 @@ function setupFooterField() {
 
       const nodes = [];
       const now = performance.now();
+      const cyber = document.documentElement.dataset.theme === 'cyber';
 
       pairs.forEach((pair) => {
         pair.cx += pair.driftX;
@@ -1239,14 +1247,14 @@ function setupFooterField() {
 
         const intensity = mouse.active ? Math.max(0, 1 - Math.min(Math.hypot(pair.cx - mouse.x, pair.cy - mouse.y), 220) / 220) : 0;
 
-        ctx.strokeStyle = `rgba(180, 204, 244, ${0.16 + intensity * 0.26})`;
+        ctx.strokeStyle = `rgba(${cyber ? '0, 240, 255' : '180, 204, 244'}, ${0.16 + intensity * 0.26})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
         ctx.moveTo(ax, ay);
         ctx.lineTo(bx, by);
         ctx.stroke();
 
-        ctx.fillStyle = `rgba(244, 248, 255, ${0.52 + intensity * 0.24})`;
+        ctx.fillStyle = `rgba(${cyber ? '252, 238, 10' : '244, 248, 255'}, ${0.52 + intensity * 0.24})`;
         ctx.beginPath();
         ctx.arc(ax, ay, 1.6 + intensity * 0.4, 0, Math.PI * 2);
         ctx.arc(bx, by, 1.6 + intensity * 0.4, 0, Math.PI * 2);
@@ -1262,7 +1270,7 @@ function setupFooterField() {
           const dist = Math.hypot(dx, dy);
           if (dist < 96) {
             const opacity = (1 - dist / 96) * 0.08 + Math.max(nodes[i].intensity, nodes[j].intensity) * 0.08;
-            ctx.strokeStyle = `rgba(164, 190, 240, ${opacity})`;
+            ctx.strokeStyle = `rgba(${cyber ? '255, 42, 109' : '164, 190, 240'}, ${opacity})`;
             ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(nodes[i].x, nodes[i].y);
@@ -1278,6 +1286,8 @@ function setupFooterField() {
         mouse.active = false;
       }
     }
+
+    window.addEventListener('portfolio-theme-change', scheduleDraw);
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {

@@ -1,0 +1,14 @@
+{
+  "name": "zirui-portfolio",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-assets.mjs"
+  },
+  "dependencies": {
+    "three": "0.170.0",
+    "lucide": "0.468.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}
