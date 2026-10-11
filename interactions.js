@@ -204,10 +204,7 @@ function setupHomeHeroIntro() {
 
 function runNonCriticalSetup() {
   setupBackgroundAtmosphere();
-  setupMagneticTargets();
-  setupCursorEffects();
   setupFooterField();
-  setupLogoPixelBurst();
 }
 
 function scheduleNonCriticalSetup() {
@@ -409,246 +406,6 @@ function setupPhotoLightbox() {
     if (ev.key === 'Escape' && overlay.classList.contains('is-open')) closeLightbox();
   });
 }
-function setupMagneticTargets() {
-  if (!supportsFinePointer() || prefersReducedMotion()) return;
-
-  const targets = Array.from(
-    document.querySelectorAll(
-      '.nav-link, .lang-btn, .proj-back, .footer-link, .tag'
-    )
-  );
-
-  targets.forEach((target) => {
-    const strength = 5;
-    let rect = null;
-    let raf = 0;
-    let pointerX = 0;
-    let pointerY = 0;
-
-    function onEnter() {
-      rect = target.getBoundingClientRect();
-    }
-
-    function onMove(ev) {
-      pointerX = ev.clientX;
-      pointerY = ev.clientY;
-      if (raf) return;
-
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        if (!rect) rect = target.getBoundingClientRect();
-        const offsetX = pointerX - (rect.left + rect.width / 2);
-        const offsetY = pointerY - (rect.top + rect.height / 2);
-        const moveX = (offsetX / rect.width) * strength;
-        const moveY = (offsetY / rect.height) * strength;
-        target.style.setProperty('--cursor-mx', `${moveX.toFixed(2)}px`);
-        target.style.setProperty('--cursor-my', `${moveY.toFixed(2)}px`);
-        target.classList.add('cursor-magnetic');
-      });
-    }
-
-    function onLeave() {
-      cancelAnimationFrame(raf);
-      raf = 0;
-      rect = null;
-      target.style.removeProperty('--cursor-mx');
-      target.style.removeProperty('--cursor-my');
-      target.classList.remove('cursor-magnetic');
-    }
-
-    target.addEventListener('pointerenter', onEnter, { passive: true });
-    target.addEventListener('pointermove', onMove, { passive: true });
-    target.addEventListener('pointerleave', onLeave);
-  });
-}
-
-function setupCursorEffects() {
-  if (!supportsFinePointer() || prefersReducedMotion()) return;
-
-  const body = document.body;
-  if (!body) return;
-
-  const shell = document.createElement('div');
-  shell.className = 'cursor-shell';
-  shell.innerHTML = `
-    <div class="cursor-trail cursor-trail-1"></div>
-    <div class="cursor-aura"></div>
-    <div class="cursor-ring"></div>
-  `;
-  body.appendChild(shell);
-  body.classList.add('has-custom-cursor');
-  body.dataset.cursorContrast = 'light';
-
-  const aura = shell.querySelector('.cursor-aura');
-  const ring = shell.querySelector('.cursor-ring');
-  const trail = shell.querySelector('.cursor-trail');
-
-  const state = {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-    currentX: window.innerWidth / 2,
-    currentY: window.innerHeight / 2,
-    trailX: window.innerWidth / 2,
-    trailY: window.innerHeight / 2,
-    hover: 'default',
-    target: null,
-    visible: false,
-    raf: 0
-  };
-
-  function applyHoverState(kind) {
-    state.hover = kind;
-    body.dataset.cursor = kind;
-  }
-
-  function parseColor(color) {
-    if (!color || color === 'transparent') return null;
-    const match = color.match(/rgba?\(([^)]+)\)/i);
-    if (!match) return null;
-    const parts = match[1].split(',').map((part) => Number.parseFloat(part.trim()));
-    if (parts.length < 3 || parts.some(Number.isNaN)) return null;
-    return {
-      r: parts[0],
-      g: parts[1],
-      b: parts[2],
-      a: parts.length > 3 && !Number.isNaN(parts[3]) ? parts[3] : 1
-    };
-  }
-
-  function luminanceOf(color) {
-    const toLinear = (value) => {
-      const channel = value / 255;
-      return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-    };
-
-    return 0.2126 * toLinear(color.r) + 0.7152 * toLinear(color.g) + 0.0722 * toLinear(color.b);
-  }
-
-  function resolveSurfaceContrast(target) {
-    if (!target) return 'light';
-    if (target.closest('.footer, .footer-field')) return 'dark';
-    if (target.closest('video')) return 'light';
-
-    const candidates = [];
-    let node = target.nodeType === 1 ? target : target.parentElement;
-    while (node && candidates.length < 6) {
-      candidates.push(node);
-      node = node.parentElement;
-    }
-    candidates.push(document.body);
-
-    for (const candidate of candidates) {
-      const styles = window.getComputedStyle(candidate);
-      const color = parseColor(styles.backgroundColor);
-      if (!color) continue;
-      if (color.a <= 0.04) continue;
-      const luminance = luminanceOf(color);
-      if (color.a < 0.18 && luminance < 0.24) return 'dark';
-      if (luminance > 0.45 || color.a < 0.24) return 'light';
-      return 'dark';
-    }
-
-    return 'light';
-  }
-
-  function applyContrastState(kind) {
-    body.dataset.cursorContrast = kind;
-  }
-
-  function resolveHoverKind(target) {
-    if (!target) return 'default';
-    if (target.closest('video')) return 'video';
-    if (target.closest('a, button, .lang-btn')) return 'link';
-    if (target.closest('.project-card, .photo-card, .shot, .side-cover-box')) return 'card';
-    return 'default';
-  }
-
-  function onPointerMove(ev) {
-    state.x = ev.clientX;
-    state.y = ev.clientY;
-    state.visible = true;
-    shell.classList.add('is-visible');
-    scheduleFrame();
-  }
-
-  function onPointerOver(ev) {
-    if (ev.target === state.target) return;
-    state.target = ev.target;
-    applyHoverState(resolveHoverKind(ev.target));
-    applyContrastState(resolveSurfaceContrast(ev.target));
-  }
-
-  function onPointerLeave() {
-    state.visible = false;
-    state.target = null;
-    shell.classList.remove('is-visible');
-    applyHoverState('default');
-    applyContrastState('light');
-  }
-
-  function animate() {
-    state.raf = 0;
-    state.currentX += (state.x - state.currentX) * 0.34;
-    state.currentY += (state.y - state.currentY) * 0.34;
-    state.trailX += (state.currentX - state.trailX) * 0.2;
-    state.trailY += (state.currentY - state.trailY) * 0.2;
-
-    const cursorTransform = `translate3d(${state.currentX.toFixed(2)}px, ${state.currentY.toFixed(2)}px, 0) translate(-50%, -50%)`;
-    aura.style.transform = cursorTransform;
-    ring.style.transform = cursorTransform;
-    trail.style.transform = `translate3d(${state.trailX.toFixed(2)}px, ${state.trailY.toFixed(2)}px, 0) translate(-50%, -50%)`;
-
-    const cursorDistance = Math.abs(state.x - state.currentX) + Math.abs(state.y - state.currentY);
-    const trailDistance = Math.abs(state.currentX - state.trailX) + Math.abs(state.currentY - state.trailY);
-    if (state.visible && (cursorDistance > 0.08 || trailDistance > 0.08)) scheduleFrame();
-  }
-
-  function scheduleFrame() {
-    if (!state.raf) state.raf = window.requestAnimationFrame(animate);
-  }
-
-  document.addEventListener('pointermove', onPointerMove, { passive: true });
-  document.addEventListener('pointerover', onPointerOver, { passive: true });
-  document.addEventListener('pointerleave', onPointerLeave);
-  window.addEventListener('blur', onPointerLeave);
-}
-let threeLibraryPromise = null;
-
-function loadThreeLibrary() {
-  if (window.THREE) return Promise.resolve(window.THREE);
-  if (threeLibraryPromise) return threeLibraryPromise;
-
-  threeLibraryPromise = new Promise((resolve, reject) => {
-    const existing = document.querySelector('script[data-three-runtime="true"]');
-    if (existing) {
-      existing.addEventListener('load', () => resolve(window.THREE), { once: true });
-      existing.addEventListener('error', reject, { once: true });
-      return;
-    }
-
-    const script = document.createElement('script');
-    const base = window.location.pathname.includes('/projects/') ? '../' : './';
-    script.src = `${base}vendor/three.min.js`;
-    script.async = true;
-    script.dataset.threeRuntime = 'true';
-    script.onload = () => resolve(window.THREE);
-    script.onerror = reject;
-    document.head.appendChild(script);
-  });
-
-  return threeLibraryPromise;
-}
-
-function cubicBezier(a, b, c, d, t) {
-  const mt = 1 - t;
-  return mt * mt * mt * a + 3 * mt * mt * t * b + 3 * mt * t * t * c + t * t * t * d;
-}
-
-function smoothStep(edge0, edge1, value) {
-  const t = Math.max(0, Math.min(1, (value - edge0) / (edge1 - edge0)));
-  return t * t * (3 - 2 * t);
-}
-
 function setupBackgroundAtmosphere() {
   if (!document.querySelector('.hero-home')) return;
   if (document.querySelector('.page-atmosphere')) return;
@@ -669,6 +426,7 @@ function setupBackgroundAtmosphere() {
   let dpr = 1;
   let raf = 0;
   let visible = !document.hidden;
+  let lastPaint = 0;
 
   const motes = Array.from({ length: compactViewport ? 2 : 28 }, () => ({
     x: 0,
@@ -730,6 +488,11 @@ function setupBackgroundAtmosphere() {
   function draw(now) {
     raf = 0;
     if (!visible) return;
+    if (!prefersReduced && !compactViewport && now - lastPaint < 40) {
+      raf = requestAnimationFrame(draw);
+      return;
+    }
+    lastPaint = now;
 
     ctx.clearRect(0, 0, width, height);
     ctx.save();
@@ -792,7 +555,11 @@ function setupBackgroundAtmosphere() {
   });
 
   window.addEventListener('resize', resize, { passive: true });
-  window.addEventListener('portfolio-theme-change', () => { cancelAnimationFrame(raf); draw(performance.now()); });
+  window.addEventListener('portfolio-theme-change', () => {
+    cancelAnimationFrame(raf);
+    lastPaint = 0;
+    draw(performance.now());
+  });
   resize();
   if (prefersReduced || compactViewport) {
     draw(performance.now());
@@ -830,9 +597,9 @@ function setupPageLoader() {
   `;
   document.body.appendChild(overlay);
 
-  const showDelay = hasSeenLoader ? 220 : 140;
-  const minVisible = hasSeenLoader ? 180 : 680;
-  const maxVisible = hasSeenLoader ? 900 : 1600;
+  const showDelay = hasSeenLoader ? 220 : 180;
+  const minVisible = hasSeenLoader ? 100 : 250;
+  const maxVisible = hasSeenLoader ? 800 : 1200;
   let shownAt = 0;
   let shown = false;
   let ready = document.readyState === 'complete';
@@ -895,221 +662,6 @@ function setupPageLoader() {
   return {
     close: removeLoader
   };
-}
-
-function createLogoThreeBurstSystem(trigger, THREE) {
-  let layer = document.querySelector('.logo-three-layer');
-  if (!layer) {
-    layer = document.createElement('div');
-    layer.className = 'logo-three-layer';
-    layer.innerHTML = '<canvas class="logo-three-canvas"></canvas>';
-    document.body.appendChild(layer);
-  }
-
-  const canvas = layer.querySelector('.logo-three-canvas');
-  const renderer = new THREE.WebGLRenderer({
-    canvas,
-    alpha: true,
-    antialias: true,
-    powerPreference: 'high-performance'
-  });
-
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-  renderer.setClearColor(0x000000, 0);
-  if (renderer.outputEncoding !== undefined && THREE.sRGBEncoding !== undefined) {
-    renderer.outputEncoding = THREE.sRGBEncoding;
-  }
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 1, 2000);
-  camera.position.z = 480;
-
-  const ambient = new THREE.AmbientLight(0xffffff, 0.95);
-  const key = new THREE.DirectionalLight(0xffffff, 1.45);
-  const rim = new THREE.PointLight(0xc7e5ff, 1.7, 980);
-  const blush = new THREE.PointLight(0xffd1a5, 0.95, 760);
-  key.position.set(0, 0, 320);
-  rim.position.set(160, 80, 260);
-  blush.position.set(70, -40, 210);
-  scene.add(ambient, key, rim, blush);
-
-  const geometry = new THREE.BoxGeometry(1, 1, 0.22);
-  const palette = [0x2667ff, 0xd63f73, 0xf6b73c, 0x10b384, 0x7dd8ff, 0x8e72ff];
-  const active = [];
-  let raf = 0;
-  let viewportWidth = 0;
-  let viewportHeight = 0;
-
-  function resize() {
-    viewportWidth = window.innerWidth;
-    viewportHeight = window.innerHeight;
-    renderer.setSize(viewportWidth, viewportHeight, false);
-    camera.left = -viewportWidth / 2;
-    camera.right = viewportWidth / 2;
-    camera.top = viewportHeight / 2;
-    camera.bottom = -viewportHeight / 2;
-    camera.updateProjectionMatrix();
-  }
-
-  function buildMaterial(colorValue) {
-    return new THREE.MeshPhongMaterial({
-      color: colorValue,
-      emissive: colorValue,
-      emissiveIntensity: 0.34,
-      specular: 0xffffff,
-      shininess: 135,
-      transparent: true,
-      opacity: 0,
-      depthWrite: false
-    });
-  }
-
-  function createParticle(originX, originY, index) {
-    const color = palette[Math.floor(Math.random() * palette.length)];
-    const material = buildMaterial(color);
-    const mesh = new THREE.Mesh(geometry, material);
-    const size = 9 + Math.random() * 8;
-    const biasRight = Math.random() < 0.9 ? 1 : -1;
-    const baseSide = size * (0.92 + Math.random() * 0.24);
-    const depth = 2.2 + Math.random() * 1.6;
-    const endX = originX + biasRight * (biasRight > 0 ? 180 + Math.random() * 220 : 42 + Math.random() * 70);
-    const endY = originY - (74 + Math.random() * 160);
-
-    mesh.scale.set(baseSide, baseSide, depth);
-    mesh.position.set(originX, originY, 0);
-    scene.add(mesh);
-
-    return {
-      mesh,
-      material,
-      startedAt: performance.now() + index * (8 + Math.random() * 8),
-      duration: 2600 + Math.random() * 980,
-      originX,
-      originY,
-      cp1X: originX + biasRight * (36 + Math.random() * 72),
-      cp1Y: originY - (8 + Math.random() * 28),
-      cp2X: originX + biasRight * (114 + Math.random() * 148),
-      cp2Y: originY - (42 + Math.random() * 88),
-      endX,
-      endY,
-      swirlRadius: 18 + Math.random() * 30,
-      swirlTurns: 0.82 + Math.random() * 0.76,
-      baseAngle: Math.random() * Math.PI * 2,
-      tiltX: (Math.random() - 0.5) * 0.56,
-      tiltY: (Math.random() - 0.5) * 0.56,
-      spin: (Math.random() - 0.5) * 0.18,
-      driftDown: 64 + Math.random() * 90,
-      baseSide,
-      depth
-    };
-  }
-
-  function destroyParticle(particle) {
-    scene.remove(particle.mesh);
-    particle.material.dispose();
-  }
-
-  function tick(now) {
-    for (let i = active.length - 1; i >= 0; i -= 1) {
-      const particle = active[i];
-      if (now < particle.startedAt) continue;
-
-      const t = Math.max(0, Math.min(1, (now - particle.startedAt) / particle.duration));
-      const eased = 1 - Math.pow(1 - t, 3);
-      const x = cubicBezier(particle.originX, particle.cp1X, particle.cp2X, particle.endX, eased);
-      const yCurve = cubicBezier(particle.originY, particle.cp1Y, particle.cp2Y, particle.endY, eased);
-      const swirlDecay = Math.pow(1 - t, 1.08);
-      const swirlAngle = particle.baseAngle + particle.swirlTurns * Math.PI * 2 * eased;
-      const swirlX = Math.cos(swirlAngle) * particle.swirlRadius * swirlDecay;
-      const swirlY = Math.sin(swirlAngle) * particle.swirlRadius * swirlDecay * 0.48;
-      const y = yCurve - swirlY - Math.pow(t, 1.16) * particle.driftDown;
-      const opacity = smoothStep(0, 0.07, t) * (1 - smoothStep(0.82, 1, t)) * 1.04;
-      const scalePulse = 0.96 + Math.sin(t * Math.PI) * 0.12;
-
-      particle.mesh.position.set(x + swirlX, y, Math.sin(swirlAngle * 0.85) * 28);
-      particle.mesh.rotation.set(
-        particle.tiltX + swirlAngle * 0.28,
-        particle.tiltY + swirlAngle * 0.34,
-        swirlAngle * 0.22 + particle.spin * (now * 0.01)
-      );
-      particle.mesh.scale.set(
-        particle.baseSide * scalePulse,
-        particle.baseSide * scalePulse,
-        particle.depth
-      );
-      particle.material.opacity = opacity;
-      particle.material.emissiveIntensity = 0.26 + opacity * 0.64;
-
-      if (t >= 1) {
-        destroyParticle(particle);
-        active.splice(i, 1);
-      }
-    }
-
-    renderer.render(scene, camera);
-
-    if (active.length > 0) {
-      raf = requestAnimationFrame(tick);
-      layer.classList.add('is-visible');
-    } else {
-      raf = 0;
-      layer.classList.remove('is-visible');
-    }
-  }
-
-  function burst() {
-    const rect = trigger.getBoundingClientRect();
-    const originX = rect.left + rect.width / 2 - viewportWidth / 2;
-    const originY = viewportHeight / 2 - (rect.top + rect.height / 2);
-    const count = 96;
-
-    for (let i = 0; i < count; i += 1) {
-      active.push(createParticle(originX, originY, i));
-    }
-
-    if (!raf) raf = requestAnimationFrame(tick);
-  }
-
-  window.addEventListener('resize', resize, { passive: true });
-  resize();
-
-  return { burst };
-}
-
-function setupLogoPixelBurst() {
-  if (prefersReducedMotion()) return;
-
-  const trigger = document.querySelector('.pixel-square');
-  if (!trigger || trigger.dataset.pixelBurstBound === 'true') return;
-  trigger.dataset.pixelBurstBound = 'true';
-
-  let layer = document.querySelector('.logo-pixel-burst-layer');
-  if (!layer) {
-    layer = document.createElement('div');
-    layer.className = 'logo-pixel-burst-layer';
-    document.body.appendChild(layer);
-  }
-
-  trigger.addEventListener('click', () => {
-    const rect = trigger.getBoundingClientRect();
-    const colors = ['#60a5fa', '#f0abfc', '#86efac', '#fca5a5', '#ffffff'];
-
-    for (let i = 0; i < 16; i += 1) {
-      const pixel = document.createElement('span');
-      const angle = (Math.PI * 2 * i) / 16 + (Math.random() - 0.5) * 0.34;
-      const distance = 34 + Math.random() * 64;
-      pixel.className = 'logo-burst-pixel';
-      pixel.style.left = `${rect.left + rect.width / 2}px`;
-      pixel.style.top = `${rect.top + rect.height / 2}px`;
-      pixel.style.setProperty('--burst-x', `${Math.cos(angle) * distance}px`);
-      pixel.style.setProperty('--burst-y', `${Math.sin(angle) * distance}px`);
-      pixel.style.setProperty('--burst-r', `${Math.round((Math.random() - 0.5) * 220)}deg`);
-      pixel.style.setProperty('--burst-delay', `${i * 5}ms`);
-      pixel.style.setProperty('--burst-color', colors[i % colors.length]);
-      layer.appendChild(pixel);
-      window.setTimeout(() => pixel.remove(), 850);
-    }
-  });
 }
 
 function setupProjectViewTransitions() {

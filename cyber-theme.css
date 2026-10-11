@@ -81,12 +81,6 @@ html[data-theme="cyber"] :is(.page-loader-subtitle, .page-loader-status) { color
 html[data-theme="cyber"] .page-loader-pixel-mark span { background: var(--accent); }
 html[data-theme="cyber"] .page-loader-pixel-mark span:nth-child(2n) { background: var(--accent2); }
 html[data-theme="cyber"] .page-loader-scan span { background: var(--cyan); }
-html[data-theme="cyber"] .logo-burst-pixel { background: var(--accent) !important; }
-html[data-theme="cyber"] .logo-burst-pixel:nth-child(3n) { background: var(--accent2) !important; }
-html[data-theme="cyber"] .logo-burst-pixel:nth-child(3n + 1) { background: var(--cyan) !important; }
-html[data-theme="cyber"] .cursor-ring { border-color: var(--cyan) !important; background: #00f0ff08 !important; }
-html[data-theme="cyber"] .cursor-aura { background: #ff2a6d18 !important; }
-html[data-theme="cyber"] .cursor-trail { background: var(--accent) !important; box-shadow: 0 0 6px #fcee0a44 !important; }
 @media (prefers-reduced-motion: no-preference) {
   html[data-theme="cyber"].theme-entering :is(.hero-title, .proj-title, .photo-title, .resume-name-main) { animation: cyber-arrival .6s ease-out; }
 }
