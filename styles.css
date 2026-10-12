@@ -741,6 +741,7 @@ body {
   justify-content: center;
   min-height: 38px;
   padding: 0 16px;
+  font-size: 12px;   /* 和原来的 View Resume / 入口按钮同字号 */
   border-radius: 999px;
   text-decoration: none;
   color: rgba(15, 23, 42, 0.84);
@@ -754,9 +755,21 @@ body {
 
 .hero-link-pill:hover {
   transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.76);
-  box-shadow: 0 16px 30px rgba(148, 163, 184, 0.2);
+  background: rgba(255, 255, 255, 0.82);
+  border-color: rgba(255, 255, 255, 1);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.82);
+  color: var(--accent);
 }
+/* 和原来 btn-ghost 一样的扫光：悬停时一道高光从左扫到右 */
+.hero-link-pill { position: relative; overflow: hidden; z-index: 1; }
+.hero-link-pill::before {
+  content: '';
+  position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 50%, rgba(255,255,255,0) 100%);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+.hero-link-pill:hover::before { transform: translateX(100%); }
 
 .hero-about {
   width: min(1080px, 100%);
@@ -1459,7 +1472,7 @@ body {
   border-color: rgba(59, 130, 246, 0.4);
   transform: translateY(-1px);
   color: #2563eb;
-}
+}
 .proj-gallery {
   padding: 22px 24px 24px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(248, 250, 252, 0.46));
@@ -3499,11 +3512,72 @@ img[loading='lazy'] {
   .view-btn { flex: 1; }
 }
 
-/* 首页 → 3D 作品街 的入口按钮：霓虹描边 */
+/* ===== 首页 → 3D 作品街 的入口按钮：赛博朋克主按钮，独占一行、比其他按钮大 =====
+   不填色：颜色和特效只在边框和文字上。
+   边框是三层斜切的框：::before 黄色主框（切角）、::after 品红框斜向错位、outline 青色外框；
+   整组框 skewX 倾斜，文字保持正立。发光用 filter: drop-shadow 跟着框的形状走。 */
 .btn-future {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.35), 0 0 18px rgba(59, 130, 246, 0.35);
+  --fy: #fcee0a; --fc: #00f0ff; --fm: #ff2a6d;
+  position: relative; isolation: isolate;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 0 28px; line-height: 1.2; margin-top: 4px;
+  font-family: "Orbitron", "Space Grotesk", sans-serif; font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+  color: #16122b; text-decoration: none; border: 0; border-radius: 0; background: transparent;
+  text-shadow: 0.7px 0 0 rgba(0, 240, 255, 0.6), -0.7px 0 0 rgba(255, 42, 109, 0.6), 0 0 8px rgba(0, 240, 255, 0.2);
+  filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.3));
+  animation: future-breathe 3s ease-in-out infinite;
+  transition: transform 0.15s var(--ease-out), filter 0.2s var(--ease-out), color 0.2s;
+}
+/* 第 1 层：黄色主框，倾斜 + 切角，切角处留出缺口 */
+.btn-future::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  border: 2px solid #00d4e6;
+  transform: skewX(-16deg);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  /* 第 3 层：青色外框，比主框大一圈 */
+  outline: 1px solid rgba(252, 238, 10, 0.7); outline-offset: 3px;
+  background:
+    repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.07) 0 1px, transparent 1px 4px);   /* 框内淡扫描线，不算填色 */
+}
+/* 第 2 层：品红框，斜向错位，像另一块玻璃叠在后面；会轻微抖动 */
+.btn-future::after {
+  content: ''; position: absolute; inset: 0; z-index: -2; pointer-events: none;
+  border: 2px solid var(--fm);
+  transform: translate(3px, 3px) skewX(-16deg);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  opacity: 0.8;
+  animation: future-jitter 2.4s steps(1) infinite;
 }
 .btn-future:hover {
-  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.6), 0 0 26px rgba(59, 130, 246, 0.6);
+  transform: translateY(-3px) scale(1.03);
+  color: #0b0a12;
+  filter: drop-shadow(0 0 14px rgba(0, 240, 255, 0.6));
+  animation: future-glitch 0.45s steps(2) infinite;
 }
+.btn-future:hover::before { border-color: var(--fc); box-shadow: 0 0 18px rgba(0, 240, 255, 0.55), inset 0 0 18px rgba(0, 240, 255, 0.15); }
+.btn-future:hover::after { transform: translate(-3px, 3px) skewX(-16deg); border-color: var(--fy); }
+.btn-future:active { transform: translateY(0) scale(0.99); }
+.btn-future:focus-visible { outline: 2px solid var(--fc); outline-offset: 10px; }
+@keyframes future-breathe {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(0, 240, 255, 0.3)); }
+  50% { filter: drop-shadow(0 0 16px rgba(0, 240, 255, 0.55)); }
+}
+/* 品红框偶尔错一下位，像信号不稳 */
+@keyframes future-jitter {
+  0%, 86%, 100% { transform: translate(3px, 3px) skewX(-16deg); }
+  88% { transform: translate(4px, 2px) skewX(-16deg); }
+  91% { transform: translate(2px, 4px) skewX(-16deg); }
+  94% { transform: translate(3px, 3px) skewX(-16deg); }
+}
+/* 悬停时文字抖出青/品红的色散 */
+@keyframes future-glitch {
+  0% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 1.5px 0 0 var(--fc), -1.5px 0 0 var(--fm); }
+  50% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), -1.5px 1px 0 var(--fc), 1.5px -1px 0 var(--fm); }
+  100% { text-shadow: 0 0 8px rgba(255, 255, 255, 0.6), 1px 0 0 var(--fc), -1px 0 0 var(--fm); }
+}
+/* 和旁边两个按钮同一行、同一高度；斜框会伸出去一点，留点横向余量 */
+.btn-future { margin: 0 8px; }
+@media (prefers-reduced-motion: reduce) { .btn-future, .btn-future::after, .btn-future:hover { animation: none; } }
+
+/* 简历按钮放进链接行时，和胶囊同高 */
+.hero-links .btn-primary { min-height: 38px; padding: 0 16px; }
