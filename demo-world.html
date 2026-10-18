@@ -178,28 +178,29 @@
                        50% { transform: translate(5px, -3px); filter: invert(.12); } 75% { transform: translate(-3px, 2px); } }
   /* 收尾时终端界面留作背景，只压暗，横幅叠在前面 */
   .loader.final .bt-shell, .loader.final .bt-pops { filter: brightness(.5) saturate(1.3); transition: filter .18s steps(3); }
-  .bt-final { position: absolute; left: 50%; top: 50%; z-index: 30; display: grid; justify-items: center; gap: 12px; width: min(760px, calc(100vw - 32px));
-              padding: 22px 28px 20px; transform: translate(-50%, -50%) scale(1, .02); pointer-events: none; opacity: 0;
-              background: rgba(12,7,3,.9); border: 1px solid var(--red); box-shadow: 0 0 0 1px #000, 8px 8px 0 rgba(0,0,0,.6), 0 0 40px rgba(255,74,42,.35);
-              transition: transform .22s steps(4), opacity .1s; }
-  .loader.final .bt-final { opacity: 1; transform: translate(-50%, -50%); }
-  .bt-hazard { width: 100%; height: 8px; background: repeating-linear-gradient(-45deg, var(--amber) 0 12px, transparent 12px 24px);
-               transform: scaleX(0); transition: transform .3s steps(6); }
-  .loader.final .bt-hazard { transform: scaleX(1); }
-  .bt-final-big { position: relative; margin: 0; font: 700 clamp(20px, 3.4vw, 54px)/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .08em; white-space: nowrap;
-                  color: var(--amber-hi); text-align: center; text-shadow: 0 0 10px rgba(255,170,60,.8), 0 0 40px rgba(255,74,42,.55); }
+  /* 收尾弹窗：和其它对话框同一套老电脑样式，叠在终端界面前面 */
+  .bt-final.bt-win { left: 50%; top: 50%; z-index: 30; width: min(560px, calc(100vw - 24px)); pointer-events: none; opacity: 0;
+                     transform: translate(-50%, -50%) scale(1, .02); animation: none; transition: transform .22s steps(4), opacity .1s;
+                     box-shadow: 0 0 0 1px #000, 10px 10px 0 rgba(0,0,0,.6), 0 0 36px rgba(255,74,42,.4); }
+  .loader.final .bt-final.bt-win { opacity: 1; transform: translate(-50%, -50%); }
+  .bt-final .bt-body { padding: 14px 16px 14px; }
+  .bt-final-row { display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
+  .bt-final-icon { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border: 2px solid var(--red); color: var(--red);
+                   font: 700 26px/1 ui-monospace, Consolas, monospace; box-shadow: 0 0 10px rgba(255,74,42,.5); animation: btBlink 1s steps(1) infinite; }
+  .bt-final-big { position: relative; margin: 0; font: 700 clamp(20px, 3.2vw, 38px)/1.1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .06em;
+                  white-space: nowrap; color: var(--amber-hi); text-shadow: 0 0 8px rgba(255,170,60,.75), 0 0 26px rgba(255,74,42,.45); }
   .bt-final-big::before, .bt-final-big::after { content: attr(data-text); position: absolute; inset: 0; text-shadow: none; mix-blend-mode: screen; }
-  .bt-final-big::before { color: var(--punk); transform: translateX(-4px); clip-path: inset(0 0 60% 0); animation: btSliceA 1s steps(2) infinite; }
-  .bt-final-big::after { color: var(--red); transform: translateX(4px); clip-path: inset(55% 0 0 0); animation: btSliceB .7s steps(2) infinite; }
-  @keyframes btSliceA { 50% { clip-path: inset(28% 0 42% 0); transform: translateX(-8px); } 100% { clip-path: inset(8% 0 78% 0); } }
-  @keyframes btSliceB { 50% { clip-path: inset(68% 0 12% 0); transform: translateX(7px); } 100% { clip-path: inset(42% 0 33% 0); } }
-  .bt-final-sub { font-size: 11px; letter-spacing: .45em; color: var(--red); text-align: center; }
+  .bt-final-big::before { color: var(--punk); transform: translateX(-3px); clip-path: inset(0 0 60% 0); animation: btSliceA 1s steps(2) infinite; }
+  .bt-final-big::after { color: var(--red); transform: translateX(3px); clip-path: inset(55% 0 0 0); animation: btSliceB .7s steps(2) infinite; }
+  @keyframes btSliceA { 50% { clip-path: inset(28% 0 42% 0); transform: translateX(-6px); } 100% { clip-path: inset(8% 0 78% 0); } }
+  @keyframes btSliceB { 50% { clip-path: inset(68% 0 12% 0); transform: translateX(5px); } 100% { clip-path: inset(42% 0 33% 0); } }
+  .bt-final .bt-kv { margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--amber-faint); }
   .bt-skip { position: absolute; right: 14px; bottom: 46px; z-index: 31; font-size: 11px; letter-spacing: .2em; color: var(--amber-dim); opacity: 0; }
   .loader.final .bt-skip { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .loader, .loader-fill, .loader.final .bt-shell, .loader.final .bt-pops, .bt-hazard { transition: none; }
-    .bt-crt, .bt-lines div, .bt-node.flash, .bt-win, .bt-win.closing, .loader.breach .bt-shell, .bt-final-big::before, .bt-final-big::after, .bt-preview::after { animation: none; }
+    .loader, .loader-fill, .loader.final .bt-shell, .loader.final .bt-pops, .bt-final.bt-win { transition: none; }
+    .bt-crt, .bt-lines div, .bt-node.flash, .bt-win, .bt-win.closing, .loader.breach .bt-shell, .bt-final-big::before, .bt-final-big::after, .bt-final-icon, .bt-preview::after { animation: none; }
     .bt-preview::after { display: none; }
   }
   @media (max-width: 760px) {
@@ -268,11 +269,14 @@
     </div>
   </div>
   <div class="bt-pops" id="bt-pops"></div>
-  <div class="bt-final" aria-live="assertive">
-    <div class="bt-hazard"></div>
-    <p class="bt-final-big" data-text="UNKNOWN INTRUSION">UNKNOWN INTRUSION</p>
-    <div class="bt-final-sub">ZHAOSPHERE // SYSTEM REWRITTEN</div>
-    <div class="bt-hazard"></div>
+  <div class="bt-final bt-win alert" aria-live="assertive">
+    <h3>SYSTEM ALERT<i>0xC0000005</i></h3>
+    <div class="bt-body">
+      <div class="bt-final-row"><span class="bt-final-icon">!</span><div class="bt-final-big" data-text="UNKNOWN INTRUSION">UNKNOWN INTRUSION</div></div>
+      <p>An unknown process has taken control of NIGHT-STREET-07. All 20 portfolio nodes have been rewritten.</p>
+      <dl class="bt-kv"><dt>SOURCE</dt><dd class="bad">UNKNOWN</dd><dt>OWNER</dt><dd>ZHAOSPHERE</dd><dt>STATUS</dt><dd class="ok">SYSTEM REWRITTEN</dd></dl>
+      <div class="bt-btns"><span>ABORT</span><span>RETRY</span><span class="pri press">ENTER</span></div>
+    </div>
   </div>
   <div class="bt-skip">CLICK / ESC TO ENTER</div>
   <div class="bt-crt" aria-hidden="true"></div>
