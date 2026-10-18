@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flux | Zhao Zirui</title>
+  <link rel="stylesheet" href="../styles.css?v=20261011-perf" />
+  <script src="../theme-init.js"></script>
+  <link rel="stylesheet" href="../cyber-theme.css?v=20261011-perf" />
+  <script defer src="../assets/site-theme.js?v=20261011"></script>
+  <meta name="description" content="Reach in and stir a floating cloud of particles. A zero-dependency WebGL2 + WebXR particle field with three forms: Gradient, Black Hole and Aurora." />
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Flux | Zhao Zirui" />
+  <meta property="og:description" content="Reach in and stir a floating cloud of particles. A zero-dependency WebGL2 + WebXR particle field with three forms: Gradient, Black Hole and Aurora." />
+  <meta property="og:image" content="../images/projects/covers/home/webxr-flux-home.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Flux | Zhao Zirui" />
+  <meta name="twitter:description" content="Reach in and stir a floating cloud of particles. A zero-dependency WebGL2 + WebXR particle field with three forms: Gradient, Black Hole and Aurora." />
+  <meta name="twitter:image" content="../images/projects/covers/home/webxr-flux-home.webp" />
+  <!-- /social preview -->
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">WebXR</span>
+            <span class="proj-pill">WebGL2</span>
+            <span class="proj-pill">Creative Coding</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_webxr_title">Flux</h1>
+          <p class="proj-subtitle" data-i18n="proj_webxr_card_desc">Reach in and stir a floating cloud of particles. A zero-dependency WebGL2 + WebXR particle field with three forms: Gradient, Black Hole and Aurora.</p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="flux_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="flux_overview_text">
+              Reach into a floating cloud of particles and stir it. When your hand stops, the cloud keeps turning and slowly settles. The whole piece is a single HTML file: raw WebGL2 plus the WebXR Device API, with no framework and no CDN. On a laptop it is a mouse-driven canvas; in a headset you stir it with your bare hands.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="flux_forms_title">Three Forms</h2>
+            <p class="proj-p" data-i18n-html="flux_forms_text">
+              <b>Gradient</b> cycles continuously between three parameter sets. Viscosity and turbulence differ by up to five times, so the medium itself changes, from restless plasma to something thick that clings to the field lines.<br />
+              <b>Black Hole</b> has an accretion disc with Keplerian rotation, an event horizon that swallows particles, Doppler beaming, a photon ring and the secondary image of gravitational lensing. You can push matter over the horizon by hand.<br />
+              <b>Aurora</b> sends three curtains flowing towards you through the dark, coloured by real emission altitude: magenta N&#8322; at the hem, oxygen's 557.7&nbsp;nm green, then blue-violet fading upwards. Make a fist to slow it down.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="flux_build_title">How It's Built</h2>
+            <p class="proj-p" data-i18n="flux_build_text">
+              Positions, velocities and trail history live in float textures that ping-pong on the GPU. The simulation is computed once and shared by both eyes. The velocity field is curl noise, so it is divergence-free and needs no pressure solve. The hand stirs the field with a cross product rather than a push, so particles keep swirling after the hand has passed. Rendering is additive into RGBA16F, then a mip-chain bloom and an exponential tonemap keep dense areas from clipping to white.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="flux_xr_title">Lessons from XR</h2>
+            <p class="proj-p" data-i18n="flux_xr_text">
+              Runtimes without floor tracking report the local-floor origin at head height, so nothing may be placed at hard-coded world heights. Fist gestures are computed from joint positions rather than the squeeze event, which some runtimes also fire for a fist. Trail length is decoupled from frame rate, so a piece tuned at 240&nbsp;fps on a desktop looks the same at 72&nbsp;Hz in a headset. Bloom samples are clamped per eye so light cannot leak between them.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="flux_side_role_title">Role</div>
+            <div class="side-text" data-i18n="flux_side_role_text">Solo: concept, shaders, simulation, WebXR</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="flux_side_platform_title">Runs On</div>
+            <div class="side-text" data-i18n="flux_side_platform_text">Desktop browser (mouse) · Meta Quest Browser (hand tracking) · phone (desktop mode)</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="flux_side_links_title">Links</div>
+            <div class="side-text">
+              <a href="https://zhao0424.github.io/webxr-todo/" target="_blank" rel="noreferrer" data-i18n="proj_webxr_demo">Live Demo</a> ·
+              <a href="https://github.com/ZHAO0424/webxr-todo" target="_blank" rel="noreferrer" data-i18n="proj_webxr_code">GitHub</a>
+            </div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="flux_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">WebGL2</span>
+              <span class="tag">WebXR</span>
+              <span class="tag">GPU Particles</span>
+              <span class="tag">Curl Noise</span>
+              <span class="tag">Hand Tracking</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/home/webxr-flux-home.webp" alt="Flux: Gradient, Black Hole and Aurora" />
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/webxr-flux/blackhole.webp" alt="Black Hole form" />
+            <figcaption class="shot-cap" data-i18n="flux_cap_blackhole">Black Hole: accretion disc, photon ring and three freely tumbling rings you can push by hand</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/webxr-flux/auto.webp" alt="Gradient form" />
+            <figcaption class="shot-cap" data-i18n="flux_cap_auto">Gradient: the cloud after being stirred</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/webxr-flux/tunnel.webp" alt="Aurora form" />
+            <figcaption class="shot-cap" data-i18n="flux_cap_tunnel">Aurora: the corridor flows past while you stand still</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">zzrsnow@outlook.com</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20261011-perf"></script>
+</body>
+</html>
