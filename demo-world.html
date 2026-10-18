@@ -69,8 +69,9 @@
 
   /* 底层：固定的控制台布局 */
   .bt-shell { position: absolute; inset: 0; display: grid; gap: 6px; padding: 8px;
-              grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto;
-              grid-template-areas: "top top top" "tele core code" "tele core matrix" "foot foot foot"; }
+              grid-template-columns: minmax(0, .9fr) minmax(0, 1.35fr) minmax(0, 1fr) minmax(0, 1fr);
+              grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) minmax(0, .8fr) auto;
+              grid-template-areas: "top top top top" "tele core code proc" "tele core asm matrix" "wave core asm matrix" "foot foot foot foot"; }
   .bt-bar { display: flex; align-items: center; gap: 22px; padding: 4px 10px; border: 1px solid var(--amber-faint); color: var(--amber-dim); letter-spacing: .16em; font-size: 11px; white-space: nowrap; overflow: hidden; }
   .bt-bar b { color: var(--amber); font-weight: 600; }
   .bt-bar .bt-grow { flex: 1; }
@@ -86,13 +87,38 @@
   .bt-core { grid-area: core; }
   .bt-code { grid-area: code; }
   .bt-matrix { grid-area: matrix; }
+  .bt-asm { grid-area: asm; }
+  .bt-proc { grid-area: proc; }
+  .bt-wave { grid-area: wave; }
+  .bt-wave .bt-body { padding: 4px; }
+  .bt-wave canvas { display: block; width: 100%; height: 100%; }
+  .loader .bt-lines div { font-size: 11px; line-height: 1.45; }
+  .bt-asm .bt-lines div { white-space: pre; color: #c98c3a; }
+  .bt-asm .bt-lines b { color: var(--amber-hi); font-weight: 400; }
+  .bt-asm .bt-lines em { color: var(--amber-dim); font-style: normal; }
+  .bt-ps { width: 100%; border-collapse: collapse; font-size: 11px; font-variant-numeric: tabular-nums; }
+  .bt-ps th { text-align: left; font-weight: 400; color: var(--amber-dim); letter-spacing: .12em; padding: 0 4px 3px 0; border-bottom: 1px solid var(--amber-faint); }
+  .bt-ps td { padding: 1px 4px 0 0; color: var(--amber); white-space: nowrap; }
+  .bt-ps td.n { text-align: right; color: var(--amber-hi); }
+  .bt-ps tr.hot td { color: var(--red); }
+  .bt-ps tr.new td { color: var(--ok); }
+  /* 中间不断弹出又关掉的 DOS 命令行窗口：模拟系统载入 */
+  .bt-win.cmd { background: #050302; border: 1px solid #c9c2b0; box-shadow: 0 0 0 1px #000, 6px 6px 0 rgba(0,0,0,.6); min-width: 0; }
+  .bt-win.cmd > h3 { color: #f5efe0; background: #1c1610; border-bottom: 1px solid #5a5040; letter-spacing: .06em; font-weight: 400; }
+  .bt-win.cmd > h3::before { display: none; }
+  .bt-win.cmd > h3 i::after { content: '_  []  X'; letter-spacing: .3em; color: #c9c2b0; }
+  .bt-win.cmd .bt-body { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding: 6px 8px; overflow: hidden; }
+  .bt-win.cmd .bt-body div { flex: none; white-space: pre; font-size: 11px; line-height: 1.35; color: #d8d2c2; overflow: hidden; text-overflow: ellipsis; }
+  .bt-win.cmd .bt-body .y { color: var(--amber-hi); } .bt-win.cmd .bt-body .r { color: var(--red); } .bt-win.cmd .bt-body .g { color: var(--ok); }
+  .bt-win.cmd .bt-cursor::after { content: '_'; animation: btBlink .6s steps(1) infinite; }
+  @keyframes btBlink { 50% { opacity: 0; } }
   .bt-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }
   .bt-kv dt { color: var(--amber-dim); letter-spacing: .14em; }
   .bt-kv dd { margin: 0; text-align: right; color: var(--amber-hi); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .bt-kv dd.ok { color: var(--ok); } .bt-kv dd.bad { color: var(--red); }
   .bt-kv .sect { grid-column: 1 / -1; margin-top: 6px; padding-bottom: 2px; border-bottom: 1px solid var(--amber-faint); color: var(--amber-dim); font-size: 10px; letter-spacing: .3em; }
   .bt-lines { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
-  .bt-lines div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: btType .22s steps(14) both; }
+  .bt-lines div { flex: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: btType .22s steps(14) both; }
   .bt-lines .hi { color: var(--amber-hi); } .bt-lines .dim { color: var(--amber-dim); } .bt-lines .bad { color: var(--red); } .bt-lines .ok { color: var(--ok); }
   .bt-lines .cmd { color: #fff3dc; }
   @keyframes btType { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
@@ -173,8 +199,8 @@
     .bt-preview::after { display: none; }
   }
   @media (max-width: 760px) {
-    .bt-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto; grid-template-areas: "top" "core" "matrix" "foot"; }
-    .bt-tele, .bt-code, .bt-hide-sm { display: none; }
+    .bt-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) 130px auto auto; grid-template-areas: "top" "core" "asm" "matrix" "foot"; }
+    .bt-tele, .bt-code, .bt-proc, .bt-wave, .bt-hide-sm { display: none; }
     .bt-matrix .bt-body { height: 76px; flex: none; }
     .bt-grid { grid-template-columns: repeat(10, 1fr); }
     .bt-node span { display: none; }
@@ -211,16 +237,22 @@
       <span class="bt-hide-sm">MODE <b id="bt-mode">PASSIVE</b></span>
       <span class="bt-hide-sm">JURISDICTION <b>PORTFOLIO-01</b></span>
       <span class="bt-hide-sm">SESSION <b id="bt-session">0x0000</b></span>
+      <span class="bt-hide-sm">KERNEL <b>zs-7.4.1-rt</b></span>
+      <span class="bt-hide-sm">MEM <b id="bt-mem">0K</b></span>
       <span class="bt-grow"></span>
       <span>TIME <b id="bt-clock">00:00:00</b></span>
     </div>
     <section class="bt-box bt-tele"><h3>TELEMETRY / UPLINK</h3><div class="bt-body"><dl class="bt-kv" id="bt-tele"></dl></div></section>
+    <section class="bt-box bt-wave"><h3>SIGNAL SCOPE<i>CH-A / CH-B</i></h3><div class="bt-body"><canvas id="bt-scope"></canvas></div></section>
     <section class="bt-box bt-core"><h3>ZHAOSPHERE CORE TERMINAL<i>tty/07</i></h3><div class="bt-body"><div class="bt-lines" id="bt-lines"></div></div></section>
     <section class="bt-box bt-code"><h3>FIRMWARE INJECTION<i>night_street.c</i></h3><div class="bt-body"><div class="bt-lines" id="bt-code"></div></div></section>
+    <section class="bt-box bt-asm"><h3>DISASSEMBLY<i>0x0040A000</i></h3><div class="bt-body"><div class="bt-lines" id="bt-asm"></div></div></section>
+    <section class="bt-box bt-proc"><h3>PROCESS TABLE<i id="bt-load">LOAD 0.00</i></h3><div class="bt-body"><table class="bt-ps" id="bt-ps"></table></div></section>
     <section class="bt-box bt-matrix"><h3>PORTFOLIO NODE MATRIX<i id="bt-count">00/20</i></h3><div class="bt-body"><div class="bt-grid" id="bt-grid"></div></div></section>
     <div class="bt-bar bt-foot">
       <span>STAGE <b id="loader-status">CONNECTING</b></span>
       <span class="bt-hide-sm">NODE <b id="bt-nodes">00 / 20</b></span>
+      <span class="bt-hide-sm">PKT <b id="bt-pkt">0</b></span>
       <span class="bt-grow"></span>
       <span>OVERRIDE</span>
       <div class="loader-track" role="progressbar" aria-label="Loading assets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loader-fill" id="loader-fill"></div></div>
@@ -252,6 +284,7 @@
   // 终端至少演这么久：缓存命中时加载可能不到一秒，收尾不能紧贴着开场
   const MIN_TERMINAL = reduced ? 0 : 3600;
   let progress = 0, label = '', failed = false, finishing = false, finished = false;
+  let lastUpdate = performance.now();
   const timers = new Set();
   function later(fn, delay) {
     const timer = setTimeout(() => { timers.delete(timer); fn(); }, delay);
@@ -333,12 +366,94 @@
     if (finishing || failed) return;
     if (coreAt < CORE_SCRIPT.length) line(core, ...CORE_SCRIPT[coreAt++]);
     else line(core, ...pick(CORE_FILLER)());
-    later(coreLoop, rand(120, 380));
+    later(coreLoop, rand(60, 210));
   }
   function codeLoop() {
     if (finishing || failed) return;
     line(code, ...CODE[codeAt++ % CODE.length], 40);
     later(codeLoop, rand(160, 420));
+  }
+
+
+  /* ---------- 开机自检：核心终端一开始就是满的 ---------- */
+  const POST = [
+    ['ZHAOSPHERE BIOS v4.07  (C) 1997-2026 ZS Systems', 'hi'], ['CPU: ZS-486DX4 @ 100 MHz', 'dim'],
+    ['Memory test: 655360K OK', 'dim'], ['Detecting IDE drives … PRI MASTER: PORTFOLIO-01 (20 nodes)', 'dim'],
+    ['Detecting IDE drives … PRI SLAVE : NIGHT-STREET-07 (city.glb)', 'dim'], ['Loading HIMEM.SYS … ok', 'dim'],
+    ['Loading XR_HAND.SYS  (26 joints) … ok', 'dim'], ['Loading GAZE.DRV … ok', 'dim'], ['Loading NEON.VXD … ok', 'dim'],
+    ['Mounting C:\\PROJECTS … 20 entries', 'dim'], ['Starting ZS-DOS …', 'dim'], ['', ''],
+  ];
+  POST.forEach(([t, c]) => line(core, t, c));
+
+  /* ---------- 反汇编 ---------- */
+  const asm = $('bt-asm');
+  const OPS = ['mov eax, [ebp+%d]', 'push ebx', 'xor ecx, ecx', 'call zs_node_override', 'cmp eax, 0x5A485A53', 'jne short 0x%x', 'lea edi, [esi+%d]',
+               'rep movsd', 'test al, al', 'call ice_patch', 'pop ebp', 'ret', 'shl edx, 4', 'or eax, OWNER_ZS', 'int 0x80', 'nop', 'jmp 0x%x', 'call read_reg'];
+  let addr = 0x40A000;
+  function asmLoop() {
+    if (finishing || failed) return;
+    addr += Math.floor(rand(1, 6));
+    const op = pick(OPS).replace('%d', Math.floor(rand(4, 64))).replace('%x', (addr + Math.floor(rand(16, 256))).toString(16).toUpperCase());
+    const bytes = Array.from({ length: Math.floor(rand(1, 6)) }, () => hex(2)).join(' ').padEnd(15);
+    const el = document.createElement('div');
+    el.innerHTML = `<b>${addr.toString(16).toUpperCase().padStart(8, '0')}</b>  <em>${bytes}</em> ${op}`;
+    asm.append(el);
+    while (asm.children.length > 60) asm.firstChild.remove();
+    later(asmLoop, rand(45, 140));
+  }
+
+  /* ---------- 进程表 ---------- */
+  const PROCS = ['init', 'zs_kernel', 'night_streetd', 'gltf_loader', 'neon_bake', 'skyvine_srv', 'ai_town.exe', 'gaze_hook.so', 'hand_jointd',
+                 'flux_gpu', 'lidar_sync', 'ice_daemon', 'wdg', 'xfer.exe', 'crack.exe', 'resume_dec'];
+  const procs = PROCS.map((cmd, i) => ({ pid: i ? 100 + Math.floor(rand(0, 9000)) : 1, user: i < 3 ? 'root' : pick(['zs', 'zs', 'guest']), cmd, cpu: 0, mem: rand(.2, 8) }));
+  const ps = $('bt-ps');
+  function psLoop() {
+    if (finished) return;
+    for (const pr of procs) pr.cpu = Math.max(0, Math.min(99, pr.cpu + rand(-12, 14)));
+    if (Math.random() < .25) { const pr = pick(procs.slice(3)); pr.pid = 100 + Math.floor(rand(0, 9000)); pr.fresh = 4; }
+    const top = [...procs].sort((a, b) => b.cpu - a.cpu).slice(0, small ? 6 : 13);
+    ps.innerHTML = '<tr><th>PID</th><th>USER</th><th>CPU%</th><th>MEM%</th><th>CMD</th></tr>' + top.map(pr => {
+      const cls = pr.fresh ? 'new' : pr.cpu > 80 ? 'hot' : '';
+      if (pr.fresh) pr.fresh--;
+      return `<tr class="${cls}"><td class="n">${pr.pid}</td><td>${pr.user}</td><td class="n">${pr.cpu.toFixed(1)}</td><td class="n">${pr.mem.toFixed(1)}</td><td>${pr.cmd}</td></tr>`;
+    }).join('');
+    $('bt-load').textContent = `LOAD ${(procs.reduce((a, pr) => a + pr.cpu, 0) / 100).toFixed(2)}`;
+    later(psLoop, 420);
+  }
+
+  /* ---------- 示波器：两路琥珀色波形 + 频谱条 ---------- */
+  const scope = $('bt-scope');
+  const sctx = scope.getContext('2d');
+  function scopeLoop(time) {
+    if (finished) return;
+    const w = scope.clientWidth, h = scope.clientHeight;
+    if (w && (scope.width !== w || scope.height !== h)) { scope.width = w; scope.height = h; }
+    if (w) {
+      sctx.fillStyle = 'rgba(11,8,5,.55)';
+      sctx.fillRect(0, 0, w, h);
+      sctx.strokeStyle = 'rgba(122,85,36,.35)';
+      sctx.lineWidth = 1;
+      for (let gx = 0; gx < w; gx += w / 8) { sctx.beginPath(); sctx.moveTo(gx, 0); sctx.lineTo(gx, h); sctx.stroke(); }
+      for (let gy = 0; gy < h; gy += h / 4) { sctx.beginPath(); sctx.moveTo(0, gy); sctx.lineTo(w, gy); sctx.stroke(); }
+      const t = time / 1000, amp = .18 + progress / 260;
+      [['#f0a73a', 0, 1], ['#ff4a2a', 1.7, .6]].forEach(([col, ph, k]) => {
+        sctx.strokeStyle = col; sctx.lineWidth = 1.4; sctx.shadowColor = col; sctx.shadowBlur = 6; sctx.beginPath();
+        for (let x = 0; x <= w; x += 2) {
+          const u = x / w * 12 + t * 3 * k + ph;
+          const y = h * .45 + Math.sin(u) * h * amp * k + Math.sin(u * 3.7 + t * 5) * h * .06 + (Math.random() - .5) * h * .03;
+          x ? sctx.lineTo(x, y) : sctx.moveTo(x, y);
+        }
+        sctx.stroke();
+      });
+      sctx.shadowBlur = 0;
+      const bars = 24, bw = w / bars;
+      for (let i = 0; i < bars; i++) {
+        const v = Math.abs(Math.sin(i * 1.3 + t * 4)) * .6 + Math.random() * .4;
+        sctx.fillStyle = v > .85 ? '#ff4a2a' : 'rgba(240,167,58,.55)';
+        sctx.fillRect(i * bw + 1, h - v * h * .22, bw - 2, v * h * .22);
+      }
+    }
+    requestAnimationFrame(scopeLoop);
   }
 
   /* ---------- 遥测 ---------- */
@@ -357,7 +472,7 @@
     tele.insertAdjacentHTML('beforeend', `<dt>${key}</dt><dd></dd>`);
     return [tele.lastElementChild, val, cls];
   }).filter(Boolean);
-  let frames = 0, lastFps = performance.now();
+  let frames = 0, lastFps = performance.now(), pkts = 0;
   (function countFrames() { if (finished) return; frames++; requestAnimationFrame(countFrames); })();
   function teleLoop() {
     if (finished) return;
@@ -366,6 +481,9 @@
     const s = Math.floor((now - t0) / 1000);
     $('bt-clock').textContent = `00:${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
     for (const [dd, val, cls] of teleCells) { dd.textContent = val(); dd.className = cls ? cls() : ''; }
+    $('bt-mem').textContent = `${Math.floor(655360 * (.3 + progress / 160) + rand(0, 4096)).toLocaleString('en')}K`;
+    pkts += Math.floor(rand(40, 400));
+    $('bt-pkt').textContent = pkts.toLocaleString('en');
     later(teleLoop, 160);
   }
 
@@ -373,12 +491,13 @@
   const pops = $('bt-pops');
   const MAX_WINS = small ? 3 : 7;
   let z = 1;
-  function openWin({ title, tag = '', cls = '', width = rand(240, 340), body, life = rand(1600, 3400), at }) {
+  function openWin({ title, tag = '', cls = '', width = rand(240, 340), height, body, life = rand(1600, 3400), at }) {
     if (!finishing && pops.children.length >= MAX_WINS) closeWin(pops.firstElementChild);
     const win = document.createElement('div');
     win.className = `bt-win ${cls}`;
     win.style.zIndex = String(z++);
     win.style.width = `${Math.min(width, innerWidth - 24)}px`;
+    if (height) win.style.height = `${Math.min(height, innerHeight - 80)}px`;
     win.innerHTML = `<h3>${title}<i>${tag}</i></h3><div class="bt-body"></div>`;
     pops.append(win);
     body(win.querySelector('.bt-body'), win);
@@ -449,6 +568,46 @@
       L.forEach(([t, c], i) => later(() => el.isConnected && line(el, `${stamp()} ${t}`, c, 6), i * rand(160, 280)));
     } }),
   ];
+
+  /* ---------- 中间不断弹出的命令行窗口：模拟老电脑载入 ---------- */
+  const CMD_JOBS = [
+    () => ['C:\\ZS\\BOOT.EXE', ['C:\\> boot /fast /node:07', 'ZS-DOS Boot Loader v7.4', ...Array.from({ length: 10 }, (_, i) => [`  loading module ${String(i + 1).padStart(2, '0')}/10  ${pick(['kernel32.zs', 'xr_hand.drv', 'gaze.drv', 'neon.vxd', 'gltf.dll', 'bloom.fx', 'toon.fx', 'reflect.fx', 'audio.drv', 'net.sys'])} ... OK`, '']), ['Boot sequence complete.', 'g']]],
+    () => ['C:\\WINDOWS\\SYSTEM32\\CMD.EXE', ['C:\\> xcopy C:\\PROJECTS\\* Z:\\ /s /e', ...NODES.slice(Math.floor(rand(0, 10))).slice(0, 9).map(([n]) => `C:\\PROJECTS\\${n}\\cover.webp`), [`${Math.floor(rand(9, 20))} File(s) copied`, 'y']]],
+    () => ['C:\\ZS\\MEMTEST.EXE', ['C:\\> memtest /quick', ...Array.from({ length: 9 }, (_, i) => `  block 0x${(0x10000 * (i + 1)).toString(16).toUpperCase().padStart(6, '0')}  ${'#'.repeat(4 + i * 2)}  ok`), ['655360K tested, 0 errors', 'g']]],
+    () => ['C:\\ZS\\NETSTAT.EXE', ['C:\\> netstat -an', '  Proto  Local            Foreign               State', ...Array.from({ length: 8 }, () => `  TCP    10.7.0.${Math.floor(rand(2, 254))}:${Math.floor(rand(1024, 65000))}  ${Math.floor(rand(11, 223))}.${Math.floor(rand(0, 255))}.${Math.floor(rand(0, 255))}.${Math.floor(rand(1, 254))}:443  ${pick(['ESTABLISHED', 'ESTABLISHED', 'SYN_SENT', 'TIME_WAIT'])}`), ['  1 connection is not yours.', 'r']]],
+    () => ['C:\\ZS\\SCANDISK.EXE', ['C:\\> scandisk C: /autofix', 'Checking directory structure ...', 'Checking file allocation table ...', 'Checking free space ...', ...Array.from({ length: 6 }, () => `  cluster ${Math.floor(rand(1000, 99999))} ${pick(['ok', 'ok', 'ok', 'relocated'])}`), ['ScanDisk did not find any problems.', 'g']]],
+    () => ['C:\\ZS\\GLTF.EXE', ['C:\\> gltf --load models\\city.glb', '  parsing header ... glTF 2.0', `  meshes: ${Math.floor(rand(180, 420))}  materials: ${Math.floor(rand(12, 40))}`, '  decoding buffers ...', ...Array.from({ length: 6 }, (_, i) => `  buffer ${i}  ${Math.floor(rand(64, 900))} KB  ok`), [`  payload ${progress}%`, 'y']]],
+    () => ['C:\\ZS\\TRACERT.EXE', ['C:\\> tracert night-street.zhaosphere', ...Array.from({ length: 8 }, (_, i) => `  ${i + 1}   ${Math.floor(rand(2, 60))} ms   ${Math.floor(rand(2, 60))} ms   ${i === 7 ? 'night-street.zhaosphere' : `10.${i}.${Math.floor(rand(0, 255))}.1`}`), ['Trace complete.', 'g']]],
+  ];
+  function openCmd() {
+    const [title, rows] = pick(CMD_JOBS)();
+    // 落在画面中间那一块（核心终端附近），彼此错开
+    const cw = Math.min(rand(360, 470), innerWidth - 24), ch = rand(170, 240);
+    const cx = innerWidth * (small ? .5 : rand(.32, .62)) - cw / 2, cy = innerHeight * rand(.22, .62) - ch / 2;
+    openWin({ title, tag: '', cls: 'cmd', width: cw, height: ch, life: 0, at: [Math.max(8, cx), Math.max(36, cy)], body: (el, win) => {
+      let i = 0;
+      const step = () => {
+        if (!el.isConnected) return;
+        el.querySelector('.bt-cursor')?.classList.remove('bt-cursor');
+        if (i < rows.length) {
+          const [text, cls] = Array.isArray(rows[i]) ? rows[i] : [rows[i], ''];
+          const d = document.createElement('div');
+          d.textContent = text;
+          d.className = `${cls} bt-cursor`;
+          el.append(d);
+          i++;
+          later(step, i === 1 ? 260 : rand(35, 120));
+        } else later(() => closeWin(win), rand(250, 600));
+      };
+      step();
+    } });
+  }
+  function cmdLoop() {
+    if (finishing || failed || reduced) return;
+    openCmd();
+    later(cmdLoop, rand(700, 1600));
+  }
+
   function popLoop() {
     if (finishing || failed || reduced) return;
     pick(WINDOWS)();
@@ -459,8 +618,13 @@
   /* ---------- 开始 ---------- */
   coreLoop();
   codeLoop();
+  asmLoop();
+  psLoop();
   teleLoop();
-  later(popLoop, 600);
+  requestAnimationFrame(scopeLoop);
+  later(cmdLoop, 250);
+  later(popLoop, 900);
+  watchdog();
 
   /* ---------- 收尾 ---------- */
   function end() {
@@ -498,7 +662,8 @@
 
   window.streetLoading = {
     update(value, text) {
-      if (failed) return;
+      if (failed) recover();
+      lastUpdate = performance.now();
       const next = Math.max(progress, Math.min(100, Math.round(value)));
       if (Math.floor(next / 10) > Math.floor(progress / 10) && next < 100) line(core, `[NET] payload ${next}% · ${text.toLowerCase()}`, 'hi');
       progress = next;
@@ -509,7 +674,8 @@
       openNodes(Math.floor(progress / 100 * nodeEls.length));
     },
     finish() {
-      if (failed || finishing) return;
+      if (failed) recover();
+      if (finishing) return;
       this.update(100, 'READY');
       finishing = true;
       line(core, '[NET] payload 100% · scene ready', 'ok');
@@ -524,9 +690,40 @@
       $('loader-retry').hidden = false;
     },
   };
+  // 判定失败之后如果加载其实还在推进（比如一条无关的报错），就自己恢复，不用手动 RETRY
+  function recover() {
+    failed = false;
+    $('loader-retry').hidden = true;
+    $('bt-net').textContent = 'ONLINE';
+    line(core, '[ZS] link restored.', 'ok');
+    coreLoop(); codeLoop(); asmLoop(); cmdLoop(); popLoop();
+  }
+  // 引擎脚本还没开始汇报进度时（下载 vendor 那几秒），进度条也要慢慢动，不然看着像卡死
+  function creep() {
+    if (finishing || finished) return;
+    if (progress < 4 && !failed) {
+      progress = Math.min(4, Math.floor((performance.now() - t0) / 1800));
+      $('loader-fill').style.width = `${progress}%`;
+      $('loader-percent').textContent = `${progress}%`;
+      if (progress >= 1 && label === '') { label = 'FETCHING RUNTIME'; $('loader-status').textContent = label; }
+    }
+    later(creep, 400);
+  }
+  creep();
+  // 真正的失败：25 秒没有任何进度汇报
+  function watchdog() {
+    if (finishing || finished) return;
+    if (!failed && performance.now() - lastUpdate > 25000) window.streetLoading.fail();
+    later(watchdog, 2000);
+  }
   $('loader-retry').addEventListener('click', () => location.reload());
-  addEventListener('error', () => window.streetLoading.fail());
-  addEventListener('unhandledrejection', () => window.streetLoading.fail());
+  // 只有本页脚本的未捕获异常才算失败；资源 404、跨页 View Transition 被中止这类无害报错不算
+  addEventListener('error', e => { if (e.error && /demo-world|night-street/.test(e.filename || '')) window.streetLoading.fail(); });
+  addEventListener('unhandledrejection', e => {
+    const name = e.reason && e.reason.name;
+    if (name === 'AbortError' || name === 'InvalidStateError') return;
+    console.warn('Night Street: unhandled rejection', e.reason);
+  });
 })();
 </script>
 
