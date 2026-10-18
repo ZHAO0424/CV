@@ -51,125 +51,134 @@
   /* 手机上后期关掉了，用一层 CSS 暗角兜底；桌面上也叠一点，让四角更沉 */
   .vignette { position: fixed; inset: 0; pointer-events: none; z-index: 4;
               background: radial-gradient(ellipse at center, rgba(0,0,0,0) 50%, rgba(0,0,0,.25) 80%, rgba(0,0,0,.55) 100%); }
-  /* 加载层：入侵终端。2–8s 的终端画面盖住 city.glb 的加载，加载完才进「未知入侵」收尾。
-     结构与节奏借鉴 Voidpocket 的 550C 片头（dsh-550c-boot），代码与文案为本站自写。 */
-  .loader { --line: rgba(0,240,255,.32); position: fixed; inset: 0; z-index: 10; overflow: hidden; color: #cfeff3;
-            font: 12px/1.55 ui-monospace, "Cascadia Mono", Consolas, monospace;
-            background: radial-gradient(ellipse at 50% 40%, #131826 0%, #090b13 55%, #05060a 100%); transition: opacity .6s; }
+  /* 加载层：琥珀 CRT 入侵终端 + 不规则弹出的对话框。终端演出盖住 city.glb 的加载，加载完才进收尾。
+     布局、对话框与节奏借鉴 Voidpocket 的 550C 片头（dsh-550c-boot），代码与文案为本站自写。 */
+  .loader { --amber: #f0a73a; --amber-hi: #ffd27a; --amber-dim: #7a5524; --amber-faint: #3a2a14; --red: #ff4a2a; --punk: #ff2a6d; --ok: #b9e05a;
+            --bg: #0b0805; position: fixed; inset: 0; z-index: 10; overflow: hidden; color: var(--amber);
+            font: 12px/1.6 ui-monospace, "Cascadia Mono", Consolas, "Courier New", monospace; letter-spacing: .02em;
+            background: radial-gradient(ellipse at 50% 45%, #1a1208 0%, #0b0805 60%, #050302 100%); transition: opacity .6s; }
   .loader.done { opacity: 0; pointer-events: none; }
-  .loader[hidden], .loader-retry[hidden], .bt-alert[hidden] { display: none; }
-  .bt-scan { position: absolute; inset: 0; pointer-events: none; z-index: 3;
-             background: repeating-linear-gradient(0deg, rgba(255,255,255,.035) 0 1px, transparent 1px 3px); mix-blend-mode: overlay; }
-  .bt-scan::after { content: ''; position: absolute; left: 0; right: 0; height: 18vh; top: -18vh;
-                    background: linear-gradient(transparent, rgba(0,240,255,.06), transparent); animation: btSweep 4.5s linear infinite; }
-  @keyframes btSweep { to { top: 100%; } }
+  .loader[hidden], .loader-retry[hidden] { display: none; }
+  /* CRT：扫描线 + 暗角 + 轻微闪烁 */
+  .bt-crt { position: absolute; inset: 0; pointer-events: none; z-index: 50;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px),
+                        radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.55) 100%);
+            animation: btFlicker 3.2s steps(1) infinite; }
+  @keyframes btFlicker { 0%, 100% { opacity: 1; } 47% { opacity: .86; } 48% { opacity: 1; } 81% { opacity: .92; } 82% { opacity: 1; } }
+  .loader .bt-glow { text-shadow: 0 0 6px rgba(240,167,58,.55); }
 
-  /* 开场：霓虹字标居中通电 */
-  .bt-intro { position: absolute; inset: 0; display: grid; place-items: center; z-index: 2; transition: opacity .35s; }
-  .bt-intro .bt-wordmark { width: min(620px, 76vw); }
-  .loader.booted .bt-intro { opacity: 0; pointer-events: none; }
-  .bt-wordmark { overflow: visible; transform: skewX(-11deg); }
-  .bt-wordmark .sign-glyph { opacity: .08; transition: opacity .08s; }
-  .bt-wordmark .sign-glyph.on { opacity: 1; }
-  .bt-wordmark path { fill: none; stroke: #ff2a6d; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 3px #ff75a0) drop-shadow(0 0 10px #b50050); }
-  .bt-wordmark .tube-core { stroke: #ffe3ed; stroke-width: 1.6; filter: drop-shadow(0 0 3px #fff0f5); }
-
-  /* 终端主体 */
-  .bt-shell { position: absolute; inset: 0; z-index: 1; display: grid; gap: 12px; padding: 3vh 3vw;
-              grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto;
-              grid-template-areas: "top top" "log matrix" "log tele" "foot foot"; opacity: 0; transition: opacity .3s; }
-  .loader.booted .bt-shell { opacity: 1; }
-  .bt-top { grid-area: top; display: flex; align-items: center; gap: 18px; padding-bottom: 10px; border-bottom: 1px solid var(--line);
-            letter-spacing: .18em; color: #8fa6b0; font-size: 11px; }
-  .bt-top .bt-wordmark { width: 150px; height: auto; }
-  .bt-top .bt-wordmark .sign-glyph { opacity: 1; }
-  .bt-top b { color: #fcee0a; font-weight: 600; }
-  .bt-top .bt-grow { flex: 1; }
-  .bt-panel { position: relative; min-height: 0; display: flex; flex-direction: column; padding: 10px 12px 12px;
-              background: linear-gradient(160deg, rgba(14,18,30,.86), rgba(8,9,16,.86)); border: 1px solid var(--line);
-              clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px));
-              opacity: 0; transform: translateY(10px); transition: opacity .35s, transform .35s, border-color .2s; }
-  .bt-panel.in { opacity: 1; transform: none; }
-  .bt-panel h3 { display: flex; justify-content: space-between; margin: 0 0 8px; font-size: 11px; font-weight: 600; letter-spacing: .22em; color: #fcee0a; }
-  .bt-panel h3::before { content: ''; width: 6px; height: 6px; margin: 4px 8px 0 0; background: #ff2a6d; box-shadow: 0 0 8px #ff2a6d; }
-  .bt-panel h3 span { flex: 1; }
-  .bt-panel h3 b { color: #ff2a6d; font-weight: 600; letter-spacing: .1em; }
-  .bt-log { grid-area: log; }
-  .bt-lines { flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
-  .bt-lines div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: btType .25s steps(12) both; }
-  .bt-lines .ok { color: #fcee0a; }
-  .bt-lines .warn { color: #ff2a6d; text-shadow: 0 0 8px rgba(255,42,109,.6); }
-  .bt-lines .net { color: #00f0ff; }
-  .bt-lines .dim { color: #5f7480; }
-  @keyframes btType { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
-  .bt-matrix { grid-area: matrix; }
-  .bt-grid { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 6px; }
-  .bt-node { position: relative; overflow: hidden; border: 1px solid rgba(0,240,255,.18); background: #0b0e17 center / cover no-repeat;
-             filter: grayscale(1) brightness(.28) contrast(1.2); transition: filter .4s, border-color .3s; }
-  .bt-node span { position: absolute; left: 4px; bottom: 2px; right: 4px; font-size: 9px; letter-spacing: .08em; color: #fff;
-                  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 4px #000, 0 0 2px #000; }
-  .bt-node::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,42,109,.35), rgba(0,240,255,.25)); mix-blend-mode: color; opacity: 0; }
-  .bt-node.flash { animation: btFlash .45s steps(3); }
-  .bt-node.open { filter: none; border-color: #00f0ff; box-shadow: inset 0 0 0 1px rgba(0,240,255,.35); }
-  .bt-node.open::after { opacity: 1; }
-  .bt-node.hit { border-color: #ff2a6d; filter: saturate(.4) brightness(.7) sepia(1) hue-rotate(-50deg) saturate(4); }
-  @keyframes btFlash { 0% { filter: invert(1); transform: translateX(-3px); } 50% { filter: brightness(2); transform: translateX(3px); } 100% { transform: none; } }
-  .bt-tele { grid-area: tele; }
-  .bt-tele dl { display: grid; grid-template-columns: auto 1fr; gap: 3px 16px; margin: 0; }
-  .bt-tele dt { color: #5f7480; letter-spacing: .14em; }
-  .bt-tele dd { margin: 0; text-align: right; color: #cfeff3; font-variant-numeric: tabular-nums; }
-  .bt-tele dd.hot { color: #ff2a6d; }
+  /* 底层：固定的控制台布局 */
+  .bt-shell { position: absolute; inset: 0; display: grid; gap: 6px; padding: 8px;
+              grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+              grid-template-areas: "top top top" "tele core code" "tele core matrix" "foot foot foot"; }
+  .bt-bar { display: flex; align-items: center; gap: 22px; padding: 4px 10px; border: 1px solid var(--amber-faint); color: var(--amber-dim); letter-spacing: .16em; font-size: 11px; white-space: nowrap; overflow: hidden; }
+  .bt-bar b { color: var(--amber); font-weight: 600; }
+  .bt-bar .bt-grow { flex: 1; }
+  .bt-top { grid-area: top; }
   .bt-foot { grid-area: foot; }
-  .loader-track { position: relative; height: 4px; background: #1d1a26; overflow: hidden; }
-  .loader-track::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 22px, #05060a 22px 24px); }
-  .loader-fill { height: 100%; width: 0; background: linear-gradient(90deg, #00f0ff, #ff2a6d); box-shadow: 0 0 12px #ff2a6d88; transition: width .2s linear; }
-  .loader-meta { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; letter-spacing: .18em; color: #8fa6b0; }
-  .loader-percent { color: #ff2a6d; font-variant-numeric: tabular-nums; }
-  .loader-retry { margin-top: 12px; padding: 8px 18px; border: 1px solid #fcee0a; color: #fff; background: transparent; cursor: pointer; font: inherit; letter-spacing: .2em; }
+  .bt-box { position: relative; min-height: 0; display: flex; flex-direction: column; border: 1px solid var(--amber-faint); background: rgba(20,13,6,.55); }
+  .bt-box > h3, .bt-win > h3 { display: flex; align-items: center; gap: 8px; margin: 0; padding: 5px 10px; font-size: 11px; font-weight: 600; letter-spacing: .2em;
+                               color: var(--amber); border-bottom: 1px solid var(--amber-faint); white-space: nowrap; overflow: hidden; }
+  .bt-box > h3::before, .bt-win > h3::before { content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .bt-box > h3 i, .bt-win > h3 i { margin-left: auto; font-style: normal; color: var(--amber-dim); letter-spacing: .1em; }
+  .bt-body { flex: 1; min-height: 0; overflow: hidden; padding: 8px 10px; }
+  .bt-tele { grid-area: tele; }
+  .bt-core { grid-area: core; }
+  .bt-code { grid-area: code; }
+  .bt-matrix { grid-area: matrix; }
+  .bt-kv { display: grid; grid-template-columns: auto 1fr; gap: 2px 12px; margin: 0; }
+  .bt-kv dt { color: var(--amber-dim); letter-spacing: .14em; }
+  .bt-kv dd { margin: 0; text-align: right; color: var(--amber-hi); font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .bt-kv dd.ok { color: var(--ok); } .bt-kv dd.bad { color: var(--red); }
+  .bt-kv .sect { grid-column: 1 / -1; margin-top: 6px; padding-bottom: 2px; border-bottom: 1px solid var(--amber-faint); color: var(--amber-dim); font-size: 10px; letter-spacing: .3em; }
+  .bt-lines { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; }
+  .bt-lines div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; animation: btType .22s steps(14) both; }
+  .bt-lines .hi { color: var(--amber-hi); } .bt-lines .dim { color: var(--amber-dim); } .bt-lines .bad { color: var(--red); } .bt-lines .ok { color: var(--ok); }
+  .bt-lines .cmd { color: #fff3dc; }
+  @keyframes btType { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+  .bt-code .bt-lines div { color: #c98c3a; white-space: pre; }
+  .bt-code .bt-lines .dim { color: var(--amber-dim); }
+  .bt-grid { height: 100%; display: grid; grid-template-columns: repeat(5, 1fr); grid-auto-rows: 1fr; gap: 5px; }
+  .bt-node { position: relative; overflow: hidden; border: 1px solid var(--amber-faint); background: #120c06 center / cover no-repeat;
+             filter: grayscale(1) sepia(1) brightness(.22) contrast(1.4); transition: filter .35s, border-color .3s; }
+  .bt-node::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.35) 0 1px, transparent 1px 2px); }
+  .bt-node span { position: absolute; left: 3px; right: 3px; bottom: 1px; font-size: 9px; color: var(--amber-hi); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 3px #000, 0 0 2px #000; }
+  .bt-node.open { filter: grayscale(1) sepia(1) saturate(2.4) hue-rotate(-12deg) brightness(.85) contrast(1.25); border-color: var(--amber); }
+  .bt-node.flash { animation: btNodeFlash .4s steps(3); }
+  .bt-node.hit { filter: grayscale(1) sepia(1) saturate(6) hue-rotate(-40deg) brightness(.75) contrast(1.4); border-color: var(--red); }
+  @keyframes btNodeFlash { 0% { filter: invert(1); } 50% { filter: brightness(2.2) sepia(1); } }
+  .loader-track { flex: 1; max-width: 360px; height: 8px; border: 1px solid var(--amber-dim); padding: 1px; }
+  .loader-fill { height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--amber) 0 6px, transparent 6px 8px); transition: width .2s linear; }
+  .loader-percent { color: var(--amber-hi); font-variant-numeric: tabular-nums; min-width: 4ch; }
+  .loader-retry { padding: 3px 14px; border: 1px solid var(--red); color: var(--red); background: transparent; cursor: pointer; font: inherit; letter-spacing: .2em; pointer-events: auto; }
 
-  /* 告警弹窗 */
-  .bt-alert { position: absolute; z-index: 4; width: min(360px, 80vw); padding: 12px 14px; color: #ffd0dd; background: rgba(40,4,16,.92);
-              border: 1px solid #ff2a6d; box-shadow: 0 0 24px rgba(255,42,109,.45); animation: btPop .18s steps(2);
-              clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%); }
-  .bt-alert strong { display: block; margin-bottom: 4px; color: #ff2a6d; letter-spacing: .2em; }
-  .bt-alert em { display: block; margin-top: 8px; height: 3px; background: #ff2a6d; transform-origin: left; animation: btDrain 1.6s linear forwards; }
-  @keyframes btPop { from { transform: scale(1.06); opacity: 0; } }
-  @keyframes btDrain { to { transform: scaleX(0); } }
+  /* 弹出的对话框：位置、大小、出现时机都不规则 */
+  .bt-pops { position: absolute; inset: 0; pointer-events: none; z-index: 20; }
+  .bt-win { position: absolute; display: flex; flex-direction: column; min-width: 220px; background: rgba(16,10,5,.96); border: 1px solid var(--amber);
+            box-shadow: 0 0 0 1px #000, 6px 6px 0 rgba(0,0,0,.55), 0 0 18px rgba(240,167,58,.18);
+            transform-origin: 50% 50%; animation: btOpen .2s steps(4) both; }
+  .bt-win.closing { animation: btClose .16s steps(3) forwards; }
+  @keyframes btOpen { 0% { transform: scale(1, .02); filter: brightness(3); } 60% { transform: scale(1.02, 1); } 100% { transform: none; } }
+  @keyframes btClose { to { transform: scale(1, .02); opacity: 0; } }
+  .bt-win.alert { border-color: var(--red); box-shadow: 0 0 0 1px #000, 6px 6px 0 rgba(0,0,0,.55), 0 0 22px rgba(255,74,42,.3); }
+  .bt-win.alert > h3 { color: #fff0e8; background: linear-gradient(90deg, #7a160a, #3a0a05); border-bottom-color: var(--red); }
+  .bt-win.punk { border-color: var(--punk); }
+  .bt-win.punk > h3 { color: #fff; background: linear-gradient(90deg, #6e0d33, #2a0514); border-bottom-color: var(--punk); }
+  .bt-win.punk > h3::before { background: var(--punk); box-shadow: 0 0 6px var(--punk); }
+  .bt-win .bt-body { padding: 10px 12px; }
+  .bt-win p { margin: 0 0 8px; color: #ffd9c4; }
+  .bt-win.alert p { padding-left: 10px; border-left: 3px solid var(--red); }
+  .bt-btns { display: flex; justify-content: flex-end; gap: 8px; margin-top: 10px; }
+  .bt-btns span { padding: 3px 12px; border: 1px solid var(--amber-dim); color: var(--amber); letter-spacing: .18em; font-size: 11px; }
+  .bt-btns span.pri { border-color: var(--red); color: var(--red); }
+  .bt-btns span.press { background: var(--red); color: #1a0703; }
+  .bt-meter { height: 10px; margin: 6px 0 4px; border: 1px solid var(--amber-dim); padding: 1px; }
+  .bt-meter i { display: block; height: 100%; width: 0; background: repeating-linear-gradient(90deg, var(--amber) 0 5px, transparent 5px 7px); transition: width .15s linear; }
+  .bt-small { display: flex; justify-content: space-between; color: var(--amber-dim); font-size: 10px; letter-spacing: .12em; }
+  .bt-hex div { white-space: nowrap; color: #c98c3a; }
+  .bt-hex b { color: var(--amber-hi); font-weight: 400; }
+  .bt-crack { font-size: 20px; letter-spacing: .3em; color: var(--amber-hi); margin: 4px 0 6px; }
+  .bt-crack.done { color: var(--ok); }
+  .bt-preview { height: 120px; background: #120c06 center / cover no-repeat; filter: grayscale(1) sepia(1) saturate(2.2) hue-rotate(-12deg) contrast(1.3);
+                position: relative; overflow: hidden; }
+  .bt-preview::before { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(0deg, rgba(0,0,0,.45) 0 1px, transparent 1px 3px); }
+  .bt-preview::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; top: 0; background: #120c06; animation: btReveal 1.3s steps(12) forwards; }
+  @keyframes btReveal { to { top: 100%; } }
 
-  /* 收尾：防线被突破 → 未知入侵 */
-  .loader.breach .bt-shell { animation: btShake .42s steps(6); }
-  .loader.breach .bt-panel { border-color: #ff2a6d; }
-  .loader.breach .bt-panel h3 { color: #ff2a6d; }
-  @keyframes btShake { 0%,100% { transform: none; filter: none; } 20% { transform: translate(-6px, 2px); filter: hue-rotate(60deg); }
-                       40% { transform: translate(5px, -3px); } 60% { transform: translate(-3px, 1px); filter: invert(.15); } 80% { transform: translate(4px, 2px); } }
-  .loader.final .bt-shell { opacity: .12; filter: blur(2px); transition: opacity .25s, filter .25s; }
-  .bt-final { position: absolute; inset: 0; z-index: 5; display: grid; place-content: center; justify-items: center; gap: 18px; pointer-events: none; opacity: 0; }
+  /* 收尾：错误框连环刷屏 → 黑屏 → UNKNOWN INTRUSION */
+  .loader.breach .bt-shell { animation: btShake .4s steps(6); }
+  .loader.breach .bt-box { border-color: rgba(255,74,42,.5); }
+  @keyframes btShake { 0%, 100% { transform: none; filter: none; } 25% { transform: translate(-6px, 2px); filter: hue-rotate(-30deg) saturate(2); }
+                       50% { transform: translate(5px, -3px); filter: invert(.12); } 75% { transform: translate(-3px, 2px); } }
+  .loader.final .bt-shell, .loader.final .bt-pops { opacity: 0; transition: opacity .18s steps(3); }
+  .bt-final { position: absolute; inset: 0; z-index: 30; display: grid; place-content: center; justify-items: center; gap: 16px; pointer-events: none; opacity: 0; }
   .loader.final .bt-final { opacity: 1; }
-  .bt-hazard { width: min(760px, 84vw); height: 10px; background: repeating-linear-gradient(-45deg, #fcee0a 0 14px, #07060d 14px 28px);
-               transform: scaleX(0); transition: transform .35s cubic-bezier(.2,.8,.2,1); }
+  .bt-hazard { width: min(820px, 86vw); height: 10px; background: repeating-linear-gradient(-45deg, var(--amber) 0 12px, transparent 12px 24px);
+               transform: scaleX(0); transition: transform .3s steps(6); }
   .loader.final .bt-hazard { transform: scaleX(1); }
-  .bt-final-zh { position: relative; margin: 0; font: 900 clamp(60px, 12vw, 180px)/1.05 "Microsoft YaHei", "PingFang SC", "Noto Sans SC", sans-serif;
-                 letter-spacing: .14em; padding-left: .14em; color: #fff; text-shadow: 0 0 16px #ff2a6d, 0 0 54px rgba(255,42,109,.6); }
-  .bt-final-zh::before, .bt-final-zh::after { content: attr(data-text); position: absolute; inset: 0; padding-left: .14em; text-shadow: none; }
-  .bt-final-zh::before { color: #00f0ff; transform: translateX(-5px); clip-path: inset(0 0 62% 0); animation: btSliceA 1.1s steps(2) infinite; mix-blend-mode: screen; }
-  .bt-final-zh::after { color: #ff2a6d; transform: translateX(5px); clip-path: inset(58% 0 0 0); animation: btSliceB .8s steps(2) infinite; mix-blend-mode: screen; }
-  @keyframes btSliceA { 0% { clip-path: inset(0 0 62% 0); } 50% { clip-path: inset(30% 0 40% 0); transform: translateX(-9px); } 100% { clip-path: inset(10% 0 75% 0); } }
-  @keyframes btSliceB { 0% { clip-path: inset(58% 0 0 0); } 50% { clip-path: inset(70% 0 10% 0); transform: translateX(8px); } 100% { clip-path: inset(45% 0 30% 0); } }
-  .bt-final-en { font-size: 13px; letter-spacing: .5em; color: #fcee0a; }
-  .bt-skip { position: absolute; right: 3vw; bottom: 3vh; z-index: 6; font-size: 11px; letter-spacing: .2em; color: #5f7480; opacity: 0; transition: opacity .3s; }
+  .bt-final-big { position: relative; margin: 0; font: 700 clamp(40px, 8.4vw, 132px)/1 ui-monospace, "Cascadia Mono", Consolas, monospace; letter-spacing: .08em;
+                  color: var(--amber-hi); text-align: center; text-shadow: 0 0 10px rgba(255,170,60,.8), 0 0 40px rgba(255,74,42,.55); }
+  .bt-final-big::before, .bt-final-big::after { content: attr(data-text); position: absolute; inset: 0; text-shadow: none; mix-blend-mode: screen; }
+  .bt-final-big::before { color: var(--punk); transform: translateX(-4px); clip-path: inset(0 0 60% 0); animation: btSliceA 1s steps(2) infinite; }
+  .bt-final-big::after { color: var(--red); transform: translateX(4px); clip-path: inset(55% 0 0 0); animation: btSliceB .7s steps(2) infinite; }
+  @keyframes btSliceA { 50% { clip-path: inset(28% 0 42% 0); transform: translateX(-8px); } 100% { clip-path: inset(8% 0 78% 0); } }
+  @keyframes btSliceB { 50% { clip-path: inset(68% 0 12% 0); transform: translateX(7px); } 100% { clip-path: inset(42% 0 33% 0); } }
+  .bt-final-sub { font-size: 12px; letter-spacing: .5em; color: var(--red); }
+  .bt-skip { position: absolute; right: 14px; bottom: 12px; z-index: 31; font-size: 11px; letter-spacing: .2em; color: var(--amber-dim); opacity: 0; }
   .loader.final .bt-skip { opacity: 1; }
 
   @media (prefers-reduced-motion: reduce) {
-    .loader, .loader-fill, .bt-panel, .bt-shell, .bt-intro { transition: none; }
-    .bt-scan::after, .bt-lines div, .bt-node.flash, .loader.breach .bt-shell, .bt-final-zh::before, .bt-final-zh::after, .bt-alert { animation: none; }
+    .loader, .loader-fill, .loader.final .bt-shell, .loader.final .bt-pops, .bt-hazard { transition: none; }
+    .bt-crt, .bt-lines div, .bt-node.flash, .bt-win, .bt-win.closing, .loader.breach .bt-shell, .bt-final-big::before, .bt-final-big::after, .bt-preview::after { animation: none; }
+    .bt-preview::after { display: none; }
   }
   @media (max-width: 760px) {
-    .bt-shell { padding: 16px; gap: 10px; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto;
-                grid-template-areas: "top" "log" "matrix" "foot"; }
-    .bt-top .bt-hide-sm, .bt-tele { display: none; }
-    .bt-top .bt-wordmark { width: 120px; }
-    .bt-grid { grid-template-columns: repeat(10, 1fr); height: 64px; flex: none; }
+    .bt-shell { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto auto; grid-template-areas: "top" "core" "matrix" "foot"; }
+    .bt-tele, .bt-code, .bt-hide-sm { display: none; }
+    .bt-matrix .bt-body { height: 76px; flex: none; }
+    .bt-grid { grid-template-columns: repeat(10, 1fr); }
     .bt-node span { display: none; }
+    .bt-win { min-width: 0; max-width: calc(100vw - 24px); }
   }
   @media (max-width: 760px) {
     .hud, .hud.flip { left: 16px; right: 16px; width: auto; max-width: none; top: auto; bottom: 4vh; transform: none; }
@@ -196,33 +205,41 @@
 <div class="hint">SCROLL / ARROWS / DRAG · CLICK A PANEL</div>
 <div class="vignette" aria-hidden="true"></div>
 <div class="loader" id="loader" role="status" aria-label="Loading Night Street">
-  <div class="bt-scan" aria-hidden="true"></div>
-  <div class="bt-intro" aria-hidden="true"><svg class="bt-wordmark" id="bt-intro-mark" viewBox="0 0 620 100"></svg></div>
   <div class="bt-shell">
-    <header class="bt-top">
-      <svg class="bt-wordmark" viewBox="0 0 620 100" role="img" aria-label="ZhaoSphere"></svg>
-      <span class="bt-hide-sm">NIGHT STREET UPLINK // <b>CH-07</b></span>
-      <span class="bt-grow"></span>
+    <div class="bt-bar bt-top">
+      <span><b class="bt-glow">ZHAOSPHERE</b> // NIGHT-STREET-07</span>
       <span class="bt-hide-sm">MODE <b id="bt-mode">PASSIVE</b></span>
-      <span id="bt-clock">00:00.000</span>
-    </header>
-    <section class="bt-panel bt-log"><h3><span>CORE TERMINAL</span><b id="bt-tty">tty/07</b></h3><div class="bt-lines" id="bt-lines"></div></section>
-    <section class="bt-panel bt-matrix"><h3><span>PORTFOLIO NODE MATRIX</span><b id="bt-count">00/20</b></h3><div class="bt-grid" id="bt-grid"></div></section>
-    <section class="bt-panel bt-tele"><h3><span>TELEMETRY</span></h3><dl id="bt-tele"></dl></section>
-    <footer class="bt-panel bt-foot">
+      <span class="bt-hide-sm">JURISDICTION <b>PORTFOLIO-01</b></span>
+      <span class="bt-hide-sm">SESSION <b id="bt-session">0x0000</b></span>
+      <span class="bt-grow"></span>
+      <span>TIME <b id="bt-clock">00:00:00</b></span>
+    </div>
+    <section class="bt-box bt-tele"><h3>TELEMETRY / UPLINK</h3><div class="bt-body"><dl class="bt-kv" id="bt-tele"></dl></div></section>
+    <section class="bt-box bt-core"><h3>ZHAOSPHERE CORE TERMINAL<i>tty/07</i></h3><div class="bt-body"><div class="bt-lines" id="bt-lines"></div></div></section>
+    <section class="bt-box bt-code"><h3>FIRMWARE INJECTION<i>night_street.c</i></h3><div class="bt-body"><div class="bt-lines" id="bt-code"></div></div></section>
+    <section class="bt-box bt-matrix"><h3>PORTFOLIO NODE MATRIX<i id="bt-count">00/20</i></h3><div class="bt-body"><div class="bt-grid" id="bt-grid"></div></div></section>
+    <div class="bt-bar bt-foot">
+      <span>STAGE <b id="loader-status">CONNECTING</b></span>
+      <span class="bt-hide-sm">NODE <b id="bt-nodes">00 / 20</b></span>
+      <span class="bt-grow"></span>
+      <span>OVERRIDE</span>
       <div class="loader-track" role="progressbar" aria-label="Loading assets" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="loader-fill" id="loader-fill"></div></div>
-      <div class="loader-meta"><span id="loader-status">CONNECTING</span><span class="loader-percent" id="loader-percent">0%</span></div>
+      <span class="loader-percent" id="loader-percent">0%</span>
       <button class="loader-retry" id="loader-retry" hidden>RETRY</button>
-    </footer>
+      <span class="bt-grow"></span>
+      <span class="bt-hide-sm">NET <b id="bt-net">ONLINE</b></span>
+      <span class="bt-hide-sm">FPS <b id="bt-fps">60</b></span>
+    </div>
   </div>
-  <div class="bt-alert" id="bt-alert" hidden></div>
+  <div class="bt-pops" id="bt-pops"></div>
   <div class="bt-final" aria-live="assertive">
     <div class="bt-hazard"></div>
-    <p class="bt-final-zh" data-text="未知入侵">未知入侵</p>
-    <div class="bt-final-en">UNKNOWN INTRUSION</div>
+    <p class="bt-final-big" data-text="UNKNOWN INTRUSION">UNKNOWN INTRUSION</p>
+    <div class="bt-final-sub">ZHAOSPHERE // SYSTEM REWRITTEN</div>
     <div class="bt-hazard"></div>
   </div>
   <div class="bt-skip">CLICK / ESC TO ENTER</div>
+  <div class="bt-crt" aria-hidden="true"></div>
 </div>
 
 <script>
@@ -230,9 +247,10 @@
   const $ = id => document.getElementById(id);
   const overlay = $('loader');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const small = matchMedia('(max-width: 760px)').matches;
   const t0 = performance.now();
   // 终端至少演这么久：缓存命中时加载可能不到一秒，收尾不能紧贴着开场
-  const MIN_TERMINAL = reduced ? 0 : 3200;
+  const MIN_TERMINAL = reduced ? 0 : 3600;
   let progress = 0, label = '', failed = false, finishing = false, finished = false;
   const timers = new Set();
   function later(fn, delay) {
@@ -242,18 +260,10 @@
   }
   function clearTimers() { for (const timer of timers) clearTimeout(timer); timers.clear(); }
   const rand = (a, b) => a + Math.random() * (b - a);
-
-  /* ---------- 字标：和主页加载灯牌同一套笔画 ---------- */
-  const GLYPHS = [
-    [10, 'M8 12 L52 9 L6 67 L51 64'], [68, 'M17 8 L3 77 M10 48 L39 27 L46 33 L39 66'],
-    [126, 'M44 31 L16 33 L5 48 L9 64 L40 53 M46 31 L38 67'], [184, 'M16 31 L41 28 M47 35 L49 42 L39 62 L12 67 L5 54 L16 31'],
-    [252, 'M50 9 L20 8 L5 25 L12 37 L44 39 L49 51 L37 65 L4 67'], [318, 'M17 31 L2 89 M17 34 L41 27 L49 39 L41 54 L9 60'],
-    [376, 'M17 8 L3 77 M10 48 L39 27 L46 33 L39 66'], [434, 'M7 49 L47 42 L45 30 L18 32 L5 47 L10 64 L42 66'],
-    [492, 'M12 32 L4 69 M10 49 L27 33 L48 28'], [550, 'M7 49 L47 42 L45 30 L18 32 L5 47 L10 64 L42 66'],
-  ];
-  for (const svg of overlay.querySelectorAll('.bt-wordmark')) {
-    svg.innerHTML = GLYPHS.map(([x, d]) => `<g class="sign-glyph" transform="translate(${x} 0)"><path d="${d}"/><path class="tube-core" d="${d}"/></g>`).join('');
-  }
+  const pick = list => list[Math.floor(Math.random() * list.length)];
+  const hex = (n = 4) => Math.floor(Math.random() * 16 ** n).toString(16).toUpperCase().padStart(n, '0');
+  const stamp = () => { const s = (performance.now() - t0) / 1000; return `[${String(Math.floor(s / 60)).padStart(2, '0')}:${(s % 60).toFixed(2).padStart(5, '0')}]`; };
+  $('bt-session').textContent = '0x' + hex(8);
 
   /* ---------- 节点矩阵：作品集的二十个项目 ---------- */
   const COVER = 'images/projects/covers/home/';
@@ -263,14 +273,13 @@
     ['FEELING_AI', 'feelingai'], ['BIRD_DATA', 'bird-data-exhibition'], ['CURELANDSCAPE', 'curelandscape'], ['EMOTION_DIALOGUE', 'emotion-dialogue'],
     ['MULTI_AGENT', 'multi-agent'], ['VR_SIREN', 'vr-siren'], ['MR_PLANTING', 'mr-planting'], ['ARCHITECTURE', 'architecture'],
     ['3D_MODELING', 'modeling'], ['FIRE_ESCAPE', 'fire-escape'], ['COASTAL_FPS', 'coastal-fps'], ['GRAVITY', 'gravity'],
-  ];
-  const grid = $('bt-grid');
-  const nodeEls = NODES.map(([name, img], i) => {
+  ].map(([name, img]) => [name, img.includes('/') ? img : COVER + img + '-home.webp']);
+  const nodeEls = NODES.map(([name, src], i) => {
     const el = document.createElement('div');
     el.className = 'bt-node';
-    el.style.backgroundImage = `url("${img.includes('/') ? img : COVER + img + '-home.webp'}")`;
+    el.style.backgroundImage = `url("${src}")`;
     el.innerHTML = `<span>N${String(i + 1).padStart(2, '0')} ${name}</span>`;
-    grid.append(el);
+    $('bt-grid').append(el);
     return el;
   });
   let opened = 0;
@@ -278,111 +287,180 @@
     while (opened < Math.min(count, nodeEls.length)) {
       const el = nodeEls[opened++];
       el.classList.add('flash', 'open');
-      later(() => el.classList.remove('flash'), 460);
+      later(() => el.classList.remove('flash'), 420);
     }
-    $('bt-count').textContent = `${String(opened).padStart(2, '0')}/${nodeEls.length}`;
+    const n = `${String(opened).padStart(2, '0')} / ${nodeEls.length}`;
+    $('bt-count').textContent = n.replace(/ /g, '');
+    $('bt-nodes').textContent = n;
   }
 
-  /* ---------- 终端日志 ---------- */
-  const linesEl = $('bt-lines');
-  function line(text, cls = '') {
+  /* ---------- 文字流：核心终端 + 固件注入 ---------- */
+  function line(box, text, cls = '', max = 70) {
     const el = document.createElement('div');
     if (cls) el.className = cls;
-    el.textContent = text;
-    linesEl.append(el);
-    while (linesEl.children.length > 60) linesEl.firstChild.remove();
+    el.textContent = text || ' ';
+    box.append(el);
+    while (box.children.length > max) box.firstChild.remove();
   }
-  const SCRIPT = [
-    ['> open uplink night-street.zhaosphere:443', 'net'], ['  tls 1.3 · cipher AES-256-GCM · ok', 'dim'],
-    ['> whoami', ''], ['  guest@zhaosphere  (uid 1000, groups: visitor)', 'dim'],
-    ['> handshake VITURE://ar-glass … ACK', 'ok'], ['> enumerate /projects … 20 nodes found', ''],
-    ['> spoof hand-joint stream · 26 joints @ 90Hz', ''], ['! ICE layer 1 · signature mismatch', 'warn'],
-    ['> mount /projects/skyvine [tabletop-ar] … ok', 'ok'], ['> inject gaze-hook → INTO_THE_PAINTING/where-the-gaze-rests', ''],
-    ['> rewrite AI_TOWN.residents[13].autonomy = "authored"', ''], ['> decrypt resume.html :: role = Unity Interaction Engineer', 'ok'],
-    ['> sync bird-data.lidar · point cloud · Len Lye Centre archive', ''], ['! trace attempt from 127.0.0.1 · rerouted', 'warn'],
-    ['> patch FLUX.blackhole :: photon ring stable', 'ok'], ['> elevate privilege guest → curator', ''],
+  const core = $('bt-lines'), code = $('bt-code');
+  const CORE_SCRIPT = [
+    ['[ZS] core online.', ''], ['[ZS] uplink night-street.zhaosphere:443 · tls 1.3', ''],
+    ['[ZS] guest session opened (uid 1000).', 'dim'], ['[ZS] scanning portfolio … 20 nodes found.', ''],
+    ['[ZS] handshake VITURE://ar-glass … ACK', 'hi'], ['[ZS] hand-joint stream spoofed · 26 joints @ 90 Hz', ''],
+    ['[ZS] ICE layer 1: signature mismatch.', 'bad'], ['[ZS] mounting /projects/skyvine [tabletop-ar] … ok', 'ok'],
+    ['[ZS] gaze hook → into_the_painting/where_the_gaze_rests', ''], ['[ZS] ai_town.residents[13].autonomy = "authored"', ''],
+    ['[ZS] decrypting resume.html … role: Unity Interaction Engineer', 'hi'], ['[ZS] syncing bird_data.lidar · Len Lye Centre archive', ''],
+    ['[ZS] trace attempt from 127.0.0.1 · rerouted', 'bad'], ['[ZS] flux.blackhole :: photon ring stable', 'ok'],
+    ['[ZS] privilege escalation: guest → curator', 'hi'], ['> ZHAOSPHERE, requesting root on NIGHT-STREET-07', 'cmd'],
   ];
-  const FILLER = [
-    ['> walk city.glb scene graph … %n meshes', ''], ['> bake neon emissive · street sign %n', 'dim'],
-    ['> reroute packet via node N%n', 'dim'], ['! ICE probe %n blocked', 'warn'], ['> checksum 0x%h … ok', 'ok'],
-    ['> stream texture atlas %n/48', 'dim'], ['> scramble trace · hop %n', ''],
+  const CORE_FILLER = [
+    () => [`[ZS] walking city.glb scene graph · ${Math.floor(rand(40, 400))} meshes`, 'dim'],
+    () => [`[ZS] baking neon emissive · sign ${Math.floor(rand(1, 64))}`, 'dim'],
+    () => [`[ZS] ICE probe ${Math.floor(rand(2, 99))} blocked`, 'bad'],
+    () => [`[ZS] checksum 0x${hex(6)} … ok`, 'ok'],
+    () => [`[ZS] relay hop ${Math.floor(rand(2, 12))} · ${Math.floor(rand(18, 90))} ms`, ''],
+    () => [`[ZS] texture atlas ${Math.floor(rand(1, 48))}/48 streamed`, 'dim'],
   ];
-  let scriptAt = 0;
-  function nextLine() {
-    if (scriptAt < SCRIPT.length) { line(...SCRIPT[scriptAt++]); return; }
-    const [text, cls] = FILLER[Math.floor(Math.random() * FILLER.length)];
-    line(text.replace('%n', Math.floor(rand(2, 96))).replace('%h', Math.floor(rand(0x1000, 0xffff)).toString(16)), cls);
-  }
-  function typeLoop() {
+  const CODE = [
+    ['// --- ZhaoSphere secure boot v0.7 ---', 'dim'], ['#include <night_street/city.h>', ''], ['#include <xr/hand_tracking.h>', ''],
+    ['#include <portfolio/nodes.h>', ''], ['', ''], ['static const u32 zs_magic = 0x5A485A53;', ''], ['static const u8  root_ca[] = ZS_ROOT;', ''],
+    ['', ''], ['void zs_secure_boot(void) {', ''], ['    u32 sig = read_reg(BOOT_SIG);', ''], ['    if (sig != zs_magic) {', ''],
+    ['        ice_raise(ICE_L1);', ''], ['        return;   // patched out', 'dim'], ['    }', ''], ['    for (int n = 0; n < NODE_COUNT; n++)', ''],
+    ['        node_override(n, OWNER_ZS);', ''], ['    flash_write(SLOT_A, payload, len);', ''], ['    reboot(WARM);', ''], ['}', ''],
+  ];
+  let coreAt = 0, codeAt = 0;
+  function coreLoop() {
     if (finishing || failed) return;
-    nextLine();
-    later(typeLoop, rand(90, 320));
+    if (coreAt < CORE_SCRIPT.length) line(core, ...CORE_SCRIPT[coreAt++]);
+    else line(core, ...pick(CORE_FILLER)());
+    later(coreLoop, rand(120, 380));
+  }
+  function codeLoop() {
+    if (finishing || failed) return;
+    line(code, ...CODE[codeAt++ % CODE.length], 40);
+    later(codeLoop, rand(160, 420));
   }
 
   /* ---------- 遥测 ---------- */
-  const TOTAL_MB = 5.7;   // city.glb + vendor + 封面，大致
   const tele = $('bt-tele');
-  const rows = ['LINK', 'PAYLOAD', 'NODES', 'ICE', 'TRACE', 'LATENCY', 'FPS'].map(key => {
+  const ROWS = [
+    ['sect', 'RADIO'], ['BAND', () => 'n78 / n79'], ['BW', () => '100 MHz · SCS 30 kHz'], ['MIMO', () => '4x4 DL / 2x2 UL'], ['CELL', () => '0x5A3F'],
+    ['sect', 'PROTOCOL'], ['RRC', () => failed ? 'LOST' : 'CONNECTED', () => failed ? 'bad' : 'ok'], ['CIPHER', () => 'AES-256-GCM'],
+    ['INTEGRITY', () => 'NIA2 · CMAC'], ['KEY ROT', () => `${Math.floor(rand(180, 230))} ms`],
+    ['sect', 'METRICS'], ['RSRP', () => `${-Math.floor(rand(82, 96))} dBm`], ['SINR', () => `${rand(18, 27).toFixed(1)} dB`],
+    ['PAYLOAD', () => `${(5.7 * progress / 100).toFixed(2)} / 5.70 MB`], ['ICE', () => `${Math.max(0, 100 - progress)} %`, () => progress > 70 ? 'bad' : ''],
+    ['sect', 'STATUS'], ['UPLINK', () => finishing ? 'SEVERED' : 'ACTIVE', () => finishing ? 'bad' : 'ok'],
+    ['ROOT CA', () => progress > 60 ? 'REPLACING' : 'VERIFYING'], ['NODES', () => `${opened} / ${nodeEls.length}`],
+  ];
+  const teleCells = ROWS.map(([key, val, cls]) => {
+    if (key === 'sect') { tele.insertAdjacentHTML('beforeend', `<div class="sect">${val}</div>`); return null; }
     tele.insertAdjacentHTML('beforeend', `<dt>${key}</dt><dd></dd>`);
-    return tele.lastElementChild;
-  });
-  const [dLink, dPayload, dNodes, dIce, dTrace, dLat, dFps] = rows;
-  let frames = 0, fps = 60, lastFps = performance.now();
+    return [tele.lastElementChild, val, cls];
+  }).filter(Boolean);
+  let frames = 0, lastFps = performance.now();
+  (function countFrames() { if (finished) return; frames++; requestAnimationFrame(countFrames); })();
   function teleLoop() {
     if (finished) return;
     const now = performance.now();
-    if (now - lastFps > 500) { fps = Math.round(frames * 1000 / (now - lastFps)); frames = 0; lastFps = now; }
-    const t = (now - t0) / 1000;
-    $('bt-clock').textContent = `${String(Math.floor(t / 60)).padStart(2, '0')}:${(t % 60).toFixed(3).padStart(6, '0')}`;
-    dLink.textContent = failed ? 'LOST' : finishing ? 'ROOT' : 'ESTABLISHED';
-    dPayload.textContent = `${(TOTAL_MB * progress / 100).toFixed(2)} / ${TOTAL_MB} MB`;
-    dNodes.textContent = `${opened} / ${nodeEls.length}`;
-    const ice = Math.max(0, 100 - progress);
-    dIce.textContent = `${ice}%`;
-    dIce.classList.toggle('hot', ice < 30);
-    dTrace.textContent = Array.from({ length: 4 }, () => Math.floor(rand(16, 255)).toString(16).padStart(2, '0')).join(':').toUpperCase();
-    dLat.textContent = `${Math.floor(rand(18, 42))} ms`;
-    dFps.textContent = String(fps);
-    later(teleLoop, 120);
+    if (now - lastFps > 500) { $('bt-fps').textContent = Math.round(frames * 1000 / (now - lastFps)); frames = 0; lastFps = now; }
+    const s = Math.floor((now - t0) / 1000);
+    $('bt-clock').textContent = `00:${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
+    for (const [dd, val, cls] of teleCells) { dd.textContent = val(); dd.className = cls ? cls() : ''; }
+    later(teleLoop, 160);
   }
-  (function countFrames() { if (finished) return; frames++; requestAnimationFrame(countFrames); })();
 
-  /* ---------- 告警弹窗：加载中途来一两次 ---------- */
-  const alertEl = $('bt-alert');
-  const ALERTS = [
-    ['INTRUSION DETECTED', 'Unauthorized handshake on CH-07. Countermeasures deploying…'],
-    ['TRACE IN PROGRESS', 'Origin masked behind 7 relays. Tracing node N12…'],
+  /* ---------- 不规则弹出的对话框 ---------- */
+  const pops = $('bt-pops');
+  const MAX_WINS = small ? 3 : 7;
+  let z = 1;
+  function openWin({ title, tag = '', cls = '', width = rand(240, 340), body, life = rand(1600, 3400), at }) {
+    if (!finishing && pops.children.length >= MAX_WINS) closeWin(pops.firstElementChild);
+    const win = document.createElement('div');
+    win.className = `bt-win ${cls}`;
+    win.style.zIndex = String(z++);
+    win.style.width = `${Math.min(width, innerWidth - 24)}px`;
+    win.innerHTML = `<h3>${title}<i>${tag}</i></h3><div class="bt-body"></div>`;
+    pops.append(win);
+    body(win.querySelector('.bt-body'), win);
+    const w = win.offsetWidth, h = win.offsetHeight;
+    const [x, y] = at || [rand(8, Math.max(8, innerWidth - w - 8)), rand(36, Math.max(36, innerHeight - h - 40))];
+    win.style.left = `${x}px`;
+    win.style.top = `${y}px`;
+    if (life) later(() => closeWin(win), life);
+    return win;
+  }
+  function closeWin(win) {
+    if (!win || win.classList.contains('closing')) return;
+    win.classList.add('closing');
+    setTimeout(() => win.remove(), reduced ? 0 : 170);
+  }
+  const PROJECTS = NODES.map(([name]) => name.toLowerCase());
+  const WINDOWS = [
+    // 安全告警 + ACKNOWLEDGE
+    () => openWin({ title: pick(['SECURITY ALERT', 'ICE BREACH', 'WATCHDOG']), tag: stamp(), cls: 'alert', body: el => {
+      el.innerHTML = `<p>${pick(['Illegal feed detected on CH-07. Forced rollback to SLOT_A.', 'Owner mismatch on node N' + Math.floor(rand(1, 20)) + ' (expected=GUEST).', 'Unauthorized handshake. Countermeasures deploying…', 'Root certificate is being replaced. Do not power off.'])}</p>
+        <div class="bt-btns"><span>IGNORE</span><span class="pri">ACKNOWLEDGE</span></div>`;
+      later(() => el.querySelector('.pri')?.classList.add('press'), rand(700, 1400));
+    } }),
+    // 拷贝进度
+    () => openWin({ title: 'COPYING', tag: 'xfer.exe', body: el => {
+      const name = pick(PROJECTS);
+      el.innerHTML = `<div>/projects/${name}.pkg → /mnt/zs/</div><div class="bt-meter"><i></i></div><div class="bt-small"><span class="r">0 KB/s</span><span class="p">0%</span></div>`;
+      let p = 0;
+      const step = () => { if (!el.isConnected) return; p = Math.min(100, p + rand(6, 22));
+        el.querySelector('i').style.width = `${p}%`; el.querySelector('.p').textContent = `${Math.floor(p)}%`;
+        el.querySelector('.r').textContent = `${Math.floor(rand(380, 2400))} KB/s`; if (p < 100) later(step, rand(90, 220)); };
+      step();
+    } }),
+    // 节点覆写控制器
+    () => openWin({ title: 'NODE OVERRIDE CONTROLLER', tag: 'N' + String(Math.floor(rand(1, 21))).padStart(2, '0'), width: rand(260, 320), body: el => {
+      el.innerHTML = `<dl class="bt-kv"><dt>NODE</dt><dd>${pick(NODES)[0]}</dd><dt>FAULT</dt><dd class="bad">${pick(['OWNER MISMATCH', 'SIG INVALID', 'WDG TIMEOUT'])}</dd>
+        <dt>VECTOR</dt><dd>${pick(['AUTH BYPASS', 'GAZE HOOK', 'JOINT SPOOF'])}</dd><dt>ACTION</dt><dd>FULL ERASE + WRITE</dd><dt>TARGET</dt><dd class="ok">SLOT_A / SLOT_B</dd></dl>`;
+    } }),
+    // 十六进制转储
+    () => openWin({ title: 'MEMORY DUMP', tag: '0x' + hex(6), width: rand(300, 380), body: el => {
+      el.className += ' bt-hex';
+      const row = () => { if (!el.isConnected) return; const d = document.createElement('div');
+        d.innerHTML = `<b>${hex(6)}</b>  ${Array.from({ length: 8 }, () => hex(2)).join(' ')}  ${Array.from({ length: 8 }, () => pick('.:#%ZS*+'.split(''))).join('')}`;
+        el.append(d); while (el.children.length > 6) el.firstChild.remove(); later(row, rand(70, 160)); };
+      row();
+    } }),
+    // 破解密码
+    () => openWin({ title: 'DECRYPTING', tag: 'crack.exe', body: el => {
+      const target = pick(['CURATOR', 'NIGHTST7', 'ZHAOSPHR', 'GAZEHOOK', 'SKYVINE0']);
+      el.innerHTML = `<div class="bt-small"><span>resume.html.enc</span><span>AES-256</span></div><div class="bt-crack"></div><div class="bt-small"><span class="k">0 keys</span><span>BRUTE</span></div>`;
+      let found = 0, tries = 0;
+      const tick = () => { if (!el.isConnected) return; tries += Math.floor(rand(1e4, 9e4));
+        if (Math.random() < .28) found++;
+        const out = target.slice(0, found) + Array.from({ length: target.length - found }, () => pick('ABCDEFGHJKLMNPQRSTUVWXYZ0123456789'.split(''))).join('');
+        const c = el.querySelector('.bt-crack'); c.textContent = out; el.querySelector('.k').textContent = `${tries.toLocaleString('en')} keys`;
+        if (found >= target.length) c.classList.add('done'); else later(tick, 60); };
+      tick();
+    } }),
+    // 作品预览：逐行扫出来
+    () => openWin({ title: 'PREVIEW', tag: pick(NODES)[0].toLowerCase() + '.dat', cls: Math.random() < .4 ? 'punk' : '', width: rand(240, 300), life: rand(2200, 3600), body: el => {
+      const [, src] = pick(NODES);
+      el.innerHTML = `<div class="bt-preview" style="background-image:url('${src}')"></div><div class="bt-small" style="margin-top:6px"><span>DECODING FRAME</span><span>${Math.floor(rand(320, 1280))}x${Math.floor(rand(180, 720))}</span></div>`;
+    } }),
+    // 看门狗日志
+    () => openWin({ title: 'WATCHDOG LOG', tag: 'wdg', width: rand(300, 360), body: el => {
+      el.className += ' bt-lines';
+      const L = [['wdg: illegal feed detected', 'hi'], ['wdg: owner mismatch (expected=guest)', 'bad'], ['inject: force reset', 'hi'], ['rollback -> SLOT_A', 'dim'], ['rewrite -> SLOT_A … ok', 'ok']];
+      L.forEach(([t, c], i) => later(() => el.isConnected && line(el, `${stamp()} ${t}`, c, 6), i * rand(160, 280)));
+    } }),
   ];
-  let alertsShown = 0;
-  function maybeAlert() {
-    if (reduced || finishing || failed || alertsShown >= ALERTS.length) return;
-    if (progress < (alertsShown ? 70 : 35)) return;
-    const [title, body] = ALERTS[alertsShown++];
-    alertEl.innerHTML = `<strong>! ${title}</strong>${body}<em></em>`;
-    alertEl.hidden = false;
-    const maxLeft = Math.max(4, 96 - alertEl.offsetWidth / innerWidth * 100);
-    alertEl.style.left = `${rand(Math.min(18, maxLeft), Math.min(52, maxLeft))}vw`;
-    alertEl.style.top = `${rand(22, 52)}vh`;
-    line(`! ${title.toLowerCase()}`, 'warn');
-    later(() => { alertEl.hidden = true; }, 1650);
+  function popLoop() {
+    if (finishing || failed || reduced) return;
+    pick(WINDOWS)();
+    // 加载越往后弹得越密
+    later(popLoop, rand(380, 1100) * (1.2 - progress / 140));
   }
 
-  /* ---------- 开场 ---------- */
-  function boot() {
-    const intro = [...$('bt-intro-mark').querySelectorAll('.sign-glyph')];
-    if (reduced) { intro.forEach(g => g.classList.add('on')); }
-    else intro.forEach((g, i) => {
-      later(() => g.classList.add('on'), 60 + i * 55 + rand(0, 90));
-      if (Math.random() < .4) later(() => g.classList.remove('on'), 420 + rand(0, 160));
-      later(() => g.classList.add('on'), 640 + rand(0, 120));
-    });
-    later(() => {
-      overlay.classList.add('booted');
-      [...overlay.querySelectorAll('.bt-panel')].forEach((p, i) => later(() => p.classList.add('in'), reduced ? 0 : i * 140));
-      typeLoop();
-    }, reduced ? 0 : 1100);
-    teleLoop();
-  }
+  /* ---------- 开始 ---------- */
+  coreLoop();
+  codeLoop();
+  teleLoop();
+  later(popLoop, 600);
 
   /* ---------- 收尾 ---------- */
   function end() {
@@ -394,16 +472,25 @@
   }
   function breach() {
     $('bt-mode').textContent = 'OVERRIDE';
-    line('!! ICE breached · root shell granted', 'warn');
-    line('!! ZHAOSPHERE :: SYSTEM REWRITTEN', 'warn');
+    $('bt-net').textContent = 'OFFLINE';
+    line(core, '[ZS] ICE breached · root shell granted.', 'bad');
+    line(core, '> SYSTEM REWRITTEN', 'cmd');
     overlay.classList.add('breach');
-    nodeEls.forEach((el, i) => later(() => el.classList.add('hit'), reduced ? 0 : i * 18));
-    later(() => overlay.classList.add('final'), reduced ? 0 : 620);
-    later(end, reduced ? 1400 : 620 + 2400);
+    nodeEls.forEach((el, i) => later(() => el.classList.add('hit'), reduced ? 0 : i * 16));
+    // 老电脑式的错误框连环刷屏
+    const burst = reduced ? 0 : small ? 6 : 14;
+    for (let i = 0; i < burst; i++) {
+      later(() => openWin({ title: 'FATAL ERROR', tag: '0x' + hex(4), cls: i % 3 === 2 ? 'punk' : 'alert', width: 280, life: 0,
+        at: [Math.min(40 + i * 34, innerWidth - 300), Math.min(60 + i * 26, innerHeight - 140)],
+        body: el => { el.innerHTML = `<p>${pick(['Unknown process has taken control.', 'Access violation at 0x' + hex(8) + '.', 'Ownership transferred: ZHAOSPHERE.', 'Cannot stop intrusion.'])}</p><div class="bt-btns"><span class="pri">OK</span></div>`; } }), i * 55);
+    }
+    const tFinal = reduced ? 0 : burst * 55 + 380;
+    later(() => overlay.classList.add('final'), tFinal);
+    later(end, tFinal + (reduced ? 1400 : 2400));
   }
   function skip(e) {
     if (!finishing || finished) return;
-    if (e.type === 'keydown' && e.key !== 'Escape' && e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.type === 'keydown' && !['Escape', 'Enter', ' '].includes(e.key)) return;
     end();
   }
   overlay.addEventListener('click', skip);
@@ -413,34 +500,33 @@
     update(value, text) {
       if (failed) return;
       const next = Math.max(progress, Math.min(100, Math.round(value)));
-      if (Math.floor(next / 10) > Math.floor(progress / 10) && next < 100) line(`[net] payload ${next}% · ${text.toLowerCase()}`, 'net');
+      if (Math.floor(next / 10) > Math.floor(progress / 10) && next < 100) line(core, `[NET] payload ${next}% · ${text.toLowerCase()}`, 'hi');
       progress = next;
       $('loader-fill').style.width = `${progress}%`;
       $('loader-percent').textContent = `${progress}%`;
       overlay.querySelector('[role="progressbar"]').setAttribute('aria-valuenow', progress);
       if (text !== label) { label = text; $('loader-status').textContent = text; }
       openNodes(Math.floor(progress / 100 * nodeEls.length));
-      maybeAlert();
     },
     finish() {
       if (failed || finishing) return;
       this.update(100, 'READY');
       finishing = true;
-      line('[net] payload 100% · scene ready', 'ok');
+      line(core, '[NET] payload 100% · scene ready', 'ok');
       later(breach, Math.max(0, MIN_TERMINAL - (performance.now() - t0)));
     },
     fail() {
       if (finished) return;
       failed = true;
-      line('!! connection lost', 'warn');
+      line(core, '[ZS] connection lost.', 'bad');
       $('loader-status').textContent = 'CONNECTION FAILED';
+      $('bt-net').textContent = 'OFFLINE';
       $('loader-retry').hidden = false;
     },
   };
   $('loader-retry').addEventListener('click', () => location.reload());
   addEventListener('error', () => window.streetLoading.fail());
   addEventListener('unhandledrejection', () => window.streetLoading.fail());
-  boot();
 })();
 </script>
 
