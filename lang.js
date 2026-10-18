@@ -56,7 +56,7 @@
   resume_res_hkust_detail_3: '开发 MR 英语学习助手，包含咖啡馆对话与演讲训练两个场景，接入腾讯云 STT/TTS 与阿里云 Qwen Flash，实现语音识别、AI 对话生成、语音播报、教练反馈与观众提问。',
   resume_res_1_title: '研究助理，奥克兰大学 Augmented Human Lab',
   resume_res_1_detail_1: '用 Unreal Engine 开发沉浸式 VR 系统，把实时的三维鸟类位置与物种数据转换成动态视觉标记与空间化鸟鸣，让生态数据同时以视觉和听觉的方式被感知。',
-  resume_res_1_detail_2: '整合 LiDAR 点云森林环境、数据驱动的事件触发与 Ambisonic 空间音频系统，构建数据驱动的生态叙事体验，计划在新西兰 Len Lye Centre 展出。',
+  resume_res_1_detail_2: '整合 LiDAR 点云森林环境、数据驱动的事件触发与 Ambisonic 空间音频系统，构建数据驱动的生态叙事体验；作品以 Simon Ingram 的 <em>Vibrating World: Rotokare Forest</em> 为名，于 2026 年 4–10 月在新西兰 Govett-Brewster Art Gallery | Len Lye Centre 展出。',
   resume_res_2_title: '研究实习生，香港城市大学 Narrative Space Lab',
   resume_res_2_detail_1: '参与一款以提升可持续意识为目标的多智能体叙事游戏，研究虚拟社区如何塑造个体对可持续行为的态度。',
   resume_res_2_detail_2: '设计玩法系统、AI 提示词结构、对话逻辑与视觉资产，用以建模情绪传染与认知影响，支撑一篇关于多智能体对可持续态度影响的 CHI PLAY 2026 投稿。',
@@ -203,7 +203,7 @@
   proj_feeling_title: 'Feeling AI \u53d9\u4e8b\u7cfb\u7edf Demo',
   proj_feeling_desc: '\u56f4\u7ed5\u4fe1\u4efb\u3001\u8bb0\u5fc6\u4e0e\u4e16\u754c\u72b6\u6001\u63a8\u7406\u6784\u5efa\u7684\u591a\u89d2\u8272 AI \u53d9\u4e8b\u6f14\u793a\u3002',
   proj_auckland_title: '\u9e1f\u7c7b\u6570\u636e\u6c89\u6d78\u5f0f XR \u7cfb\u7edf',
-  proj_auckland_desc: '\u57fa\u4e8e Unreal \u7684\u751f\u6001 XR \u7cfb\u7edf\uff0c\u5c06\u9e1f\u7c7b\u6570\u636e\u8f6c\u5316\u4e3a\u7a7a\u95f4\u5316\u89c6\u542c\u53d9\u4e8b\u3002',
+  proj_auckland_desc: '基于 Unreal 的生态 XR 系统，将鸟类数据转化为空间化视听叙事——2026 年于 Len Lye Centre 展出。',
   proj_cure_title: 'CureLandscape VR',
   proj_cure_desc: '\u4e00\u4e2a\u9762\u5411\u7559\u5b66\u751f\u601d\u4e61\u60c5\u7eea\u4e0e\u7597\u6108\u666f\u89c2\u8bbe\u8ba1\u7684\u5728\u7814 VR \u5b9e\u9a8c\u3002',
   proj_respire_title: 'Respire 2.0',
@@ -303,14 +303,17 @@
   auckland_system_title: '\u6280\u672f\u7cfb\u7edf',
   auckland_system_text:
     '\u9879\u76ee\u6574\u5408\u4e86 LiDAR \u70b9\u4e91\u68ee\u6797\u573a\u666f\u3001\u6570\u636e\u9a71\u52a8\u7684\u4e8b\u4ef6\u89e6\u53d1\u673a\u5236\u4ee5\u53ca Ambisonic \u7a7a\u95f4\u97f3\u9891\u7cfb\u7edf\uff0c\u6784\u5efa\u51fa\u4e00\u4e2a\u7531\u73af\u5883\u6570\u636e\u540c\u65f6\u5f71\u54cd\u89c6\u89c9\u4e0e\u58f0\u97f3\u611f\u77e5\u7684\u6c89\u6d78\u5f0f\u573a\u57df\u3002',
-  auckland_exhibition_title: '\u5c55\u51fa\u4ef7\u503c',
-  auckland_exhibition_text:
-    '\u8fd9\u4ef6\u4f5c\u54c1\u662f\u4e00\u79cd\u6570\u636e\u9a71\u52a8\u7684\u751f\u6001\u53d9\u4e8b\u4f53\u9a8c\uff0c\u8ba1\u5212\u5728\u65b0\u897f\u5170 Len Lye Centre \u827a\u672f\u535a\u7269\u9986\u5c55\u51fa\uff0c\u8fde\u63a5 XR \u7814\u7a76\u3001\u6570\u5b57\u751f\u6001\u4e0e\u516c\u5171\u5a92\u4f53\u88c5\u7f6e\u7684\u5b9e\u8df5\u573a\u666f\u3002',
+  auckland_exhibition_title: '展出',
+  auckland_exhibition_text: '作品以 Simon Ingram 的 <em>Vibrating World: Rotokare Forest</em>（2026）为名，于 2026 年 4 月至 10 月在新西兰新普利茅斯 Govett-Brewster Art Gallery | Len Lye Centre 的展览 <em>Direct Bodily Empathy — Sound, Signal, Feedback</em> 中展出。由 LiDAR 扫描构建的 pukatea–kahikatea 沼泽森林点云模型，被黎明鸟鸣的声能点亮，呈现在 16 米宽的双屏 UHD 装置上。',
   auckland_side_role_title: '\u89d2\u8272',
   auckland_side_role_text:
     '\u7814\u7a76\u52a9\u7406 / Unreal \u5f00\u53d1 / \u7a7a\u95f4\u97f3\u9891 / \u751f\u6001\u6570\u636e\u53ef\u89c6\u5316',
   auckland_side_lab_title: '\u5b9e\u9a8c\u5ba4',
   auckland_side_lab_text: '\u5965\u514b\u5170\u5927\u5b66 Augmented Human Lab',
+  auckland_side_exhibition_title: '展出',
+  auckland_side_exhibition_text: 'Govett-Brewster Art Gallery | Len Lye Centre，新普利茅斯 · 2026.04.04 – 10.11',
+  auckland_cap_install: 'Simon Ingram，<em>Vibrating World: Rotokare Forest</em>，2026。Govett-Brewster Art Gallery | Len Lye Centre 展览现场。图片由美术馆提供。',
+  auckland_cap_still: '最终作品画面——被黎明鸟鸣点亮的 LiDAR 点云沼泽森林。图片：LOT23。',
   auckland_side_keywords_title: '\u5173\u952e\u8bcd',
 
   respire_overview_title: '\u9879\u76ee\u6982\u8ff0',
