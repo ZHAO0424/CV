@@ -2017,6 +2017,48 @@ html {
   line-height: 1.7;
 }
 
+/* 简历项目下的文字链接：官网式「了解更多 ›」，不加下划线，悬停才出现 */
+.proj-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+  margin-top: 8px;
+}
+
+.proj-links a {
+  display: inline-flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: #0066cc;
+  text-decoration: none;
+  text-underline-offset: 3px;
+}
+
+.proj-links a::after {
+  content: "\203A";
+  margin-left: 4px;
+  font-size: 1.25em;
+  line-height: 1;
+  transform: translateY(-1px);
+  transition: transform 0.2s ease;
+}
+
+.proj-links a:hover {
+  text-decoration: underline;
+}
+
+.proj-links a:hover::after {
+  transform: translate(2px, -1px);
+}
+
+.proj-links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 .skill-rows {
   display: flex;
   flex-direction: column;

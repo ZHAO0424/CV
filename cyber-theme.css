@@ -65,6 +65,7 @@ html[data-theme="cyber"] .proj-stat-num { color: var(--accent); }
 html[data-theme="cyber"] :is(.side-title, .pill-label, .skill-k, .tag-label) { color: var(--cyan); letter-spacing: 0; }
 html[data-theme="cyber"] :is(.pill-value, .t-time, .pub-title, .pub-venue) { color: var(--text); }
 html[data-theme="cyber"] :is(.section-note, .t-meta, .proj-meta, .item-meta) { color: var(--text-mute); }
+html[data-theme="cyber"] .proj-links a { color: var(--cyan); }
 html[data-theme="cyber"] :is(.section-head, .side-block, .t-item, .proj, .skill-row, .item, .highlight) { border-color: #37373f; }
 html[data-theme="cyber"] .resume-section { border: 0; border-top: 1px solid #37373f; border-radius: 0; background: transparent; }
 html[data-theme="cyber"] .proj-section + .proj-section { border-color: #37373f; }

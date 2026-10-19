@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nexus 2086 | Zhao Zirui</title>
+  <link rel="stylesheet" href="../styles.css?v=20261011-perf" />
+  <script src="../theme-init.js"></script>
+  <link rel="stylesheet" href="../cyber-theme.css?v=20261011-perf" />
+  <script defer src="../assets/site-theme.js?v=20261011"></script>
+  <meta name="description" content="Three worlds on one flipping cylinder: an industrial harbour, an ecology research park and a wasteland ration station, built entirely in code as a WebXR diorama." />
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png" />
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Nexus 2086 | Zhao Zirui" />
+  <meta property="og:description" content="Three worlds on one flipping cylinder: an industrial harbour, an ecology research park and a wasteland ration station, built entirely in code as a WebXR diorama." />
+  <meta property="og:image" content="../images/projects/covers/home/jelly-harbor-home.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Nexus 2086 | Zhao Zirui" />
+  <meta name="twitter:description" content="Three worlds on one flipping cylinder: an industrial harbour, an ecology research park and a wasteland ration station, built entirely in code as a WebXR diorama." />
+  <meta name="twitter:image" content="../images/projects/covers/home/jelly-harbor-home.webp" />
+  <!-- /social preview -->
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">WebXR</span>
+            <span class="proj-pill">three.js</span>
+            <span class="proj-pill">Procedural Modelling</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_harbor_title">Nexus 2086</h1>
+          <p class="proj-subtitle" data-i18n="proj_harbor_card_desc">Three worlds on one flipping cylinder: an industrial harbour, an ecology research park and a wasteland ration station, every building, machine and texture generated in code.</p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="harbor_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="harbor_overview_text">
+              A tabletop diorama on top of a giant cylinder. Flip the disc and it turns 180&deg; in place to reveal the next world, cycling harbour &rarr; ecology park &rarr; wasteland. Each world runs on its own: ships are unloaded, carts shuttle, machines turn. It is a single three.js page. Apart from the library itself, nothing is loaded: no models, no image textures, no concept art in the background.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="harbor_worlds_title">Three Worlds</h2>
+            <p class="proj-p" data-i18n-html="harbor_worlds_text">
+              <b>Harbour &middot; Sector 07</b>: a freighter, container cranes, transport boats and searchlights, with a weather system that cycles through clear, sea breeze, thunderstorm and winter snow with local icing.<br />
+              <b>Ecology Park &middot; Eden 12</b>: terraced buildings linked by walkways, a glass roof that opens, evenly spaced carts on a twin track, and an automatic transfer from the shore down to an underwater receiving platform. The central pool has its own gentle standing waves and splash ripples, and the harbour's storms never reach it.<br />
+              <b>Wasteland &middot; Cinder 09</b>: patched-together housing, a broken concrete block, an arched workshop, a ration well and a steam power station. A flywheel, a fixed-length connecting rod and a slider drive a cargo lift and a mine cart; main power, the water pump and the gate can each be switched on their own.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="harbor_build_title">How It's Built</h2>
+            <p class="proj-p" data-i18n="harbor_build_text">
+              All geometry, materials, screens and sheet-metal textures are generated in code, with repeated parts drawn as instanced meshes. The machinery is kinematically constrained rather than keyframed: the slider position is solved from the crank radius and rod length, the lift travels between fixed heights with dwell time at each end, and pausing main power freezes the whole linked train while the pump and gate keep running. A test script flips the disc twelve times in a row and checks the scene order, that the model returns upright, the axis height, the transport cycles and the rod length.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="harbor_xr_title">In XR</h2>
+            <p class="proj-p" data-i18n="harbor_xr_text">
+              On a laptop you orbit with the mouse and zoom with the wheel. On a WebXR device the same page enters immersive mode, and a controller ray flips the disc and changes time of day and weather. So far it has been tested in desktop browsers only, not on real headset hardware.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="harbor_side_role_title">Role</div>
+            <div class="side-text" data-i18n="harbor_side_role_text">Solo: scene design, procedural modelling, mechanisms, WebXR</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="harbor_side_platform_title">Runs On</div>
+            <div class="side-text" data-i18n="harbor_side_platform_text">Desktop browser (mouse) · WebXR devices (controller ray)</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="harbor_side_links_title">Links</div>
+            <div class="side-text">
+              <a href="https://zhao0424.github.io/webxr-todo/jelly-harbor/" target="_blank" rel="noreferrer" data-i18n="proj_webxr_demo">Live Demo</a> ·
+              <a href="https://github.com/ZHAO0424/webxr-todo/tree/main/jelly-harbor" target="_blank" rel="noreferrer" data-i18n="proj_webxr_code">GitHub</a>
+            </div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="harbor_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">three.js</span>
+              <span class="tag">WebXR</span>
+              <span class="tag">Procedural Modelling</span>
+              <span class="tag">Kinematic Linkages</span>
+              <span class="tag">Diorama</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/home/jelly-harbor-home.webp" alt="Nexus 2086: the harbour side of the cylinder" />
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/jelly-harbor/harbor.webp" alt="Harbour world" />
+            <figcaption class="shot-cap" data-i18n="harbor_cap_harbor">Harbour: freighters, container cranes and the lattice tower on top of the cylinder</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/jelly-harbor/eco.webp" alt="Ecology park world" />
+            <figcaption class="shot-cap" data-i18n="harbor_cap_eco">Ecology Park: terraced buildings around the central pool</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/jelly-harbor/wasteland.webp" alt="Wasteland world" />
+            <figcaption class="shot-cap" data-i18n="harbor_cap_waste">Wasteland: the steam flywheel, mine-cart track and ration well</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">zzrsnow@outlook.com</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20261011-perf"></script>
+</body>
+</html>
