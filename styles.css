@@ -116,17 +116,11 @@ body {
 }
 
 .pixel-square {
-  width: 18px;
-  height: 18px;
-  background: conic-gradient(from 180deg, #3b82f6, #ec4899, #f97316, #3b82f6);
-  box-shadow: 0 0 14px rgba(59, 130, 246, 0.7);
-  image-rendering: pixelated;
-  animation: logo-rotate 10s linear infinite;
-  position: relative;
-}
-
-@keyframes logo-rotate {
-  to { transform: rotate(360deg); }
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  background: url("images/mark.svg?v=20261020-ginger7") center / contain no-repeat;
 }
 
 /* Apple Style Narrative Layout */

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Zirui Zhao">
+  <g fill="none" stroke="#a24435" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M23 40C19 30 16 22 16 13C16 6 20 3 25 3C31 3 35 8 35 15V23C39 17 42 8 47 7C53 6 56 11 54 16C51 25 44 29 40 34C37 39 39 44 45 47C48 49 47 52 43 54C36 59 24 56 15 51C9 48 5 42 8 37C11 32 17 33 21 37Z" stroke-width="3.7"/>
+    <path d="M18 14C23 11 29 10 34 12M37 22C41 22 45 24 49 27M17 24L27 20M42 14L48 19M16 42C21 42 24 40 27 38" stroke-width="2.2"/>
+  </g>
+</svg>

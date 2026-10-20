@@ -1,12 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Zirui Zhao">
-  <!-- 站点 logo 是一枚会转的锥形渐变方块（styles.css .pixel-square）。
-       SVG 没有 conic-gradient，用四个三角拼出同样的四色轮转，配色取自同一组：
-       #3b82f6 → #ec4899 → #f97316 → #3b82f6。 -->
-  <rect width="64" height="64" rx="12" fill="#0f172a"/>
-  <g transform="translate(32 32)">
-    <path d="M0 0 L-18 -18 L18 -18 Z" fill="#3b82f6"/>
-    <path d="M0 0 L18 -18 L18 18 Z" fill="#ec4899"/>
-    <path d="M0 0 L18 18 L-18 18 Z" fill="#f97316"/>
-    <path d="M0 0 L-18 18 L-18 -18 Z" fill="#3b82f6"/>
-  </g>
+  <mask id="engraving">
+    <rect width="64" height="64" fill="#fff"/>
+    <path d="M18 15C23 12 29 12 33 14M19 25C23 22 27 21 30 21M41 17C45 18 48 21 50 24" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round"/>
+  </mask>
+  <path d="M23 40C19 30 16 22 16 13C16 6 20 3 25 3C31 3 35 8 35 15V23C39 17 42 8 47 7C53 6 56 11 54 16C51 25 44 29 40 34C37 39 39 44 45 47C48 49 47 52 43 54C36 59 24 56 15 51C9 48 5 42 8 37C11 32 17 33 21 37Z" fill="#a24435" mask="url(#engraving)"/>
 </svg>
