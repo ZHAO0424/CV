@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel Village | Zhao Zirui</title>
+  <link rel="stylesheet" href="../styles.css?v=20261020-ginger7" />
+  <script src="../theme-init.js"></script>
+  <link rel="stylesheet" href="../cyber-theme.css?v=20261020-ginger7" />
+  <script defer src="../assets/site-theme.js?v=20261011"></script>
+  <meta name="description" content="A stone village in the Taihang Mountains as a 2.5D pixel-art voxel diorama for WebXR: 28 villagers live out a full day on their own schedules." />
+  <link rel="icon" type="image/svg+xml" href="../images/favicon.svg?v=20261020-ginger8" />
+  <link rel="icon" type="image/png" sizes="32x32" href="../images/favicon-32.png?v=20261020-ginger8" />
+  <link rel="apple-touch-icon" href="../images/apple-touch-icon.png?v=20261020-ginger7" />
+  <!-- social preview (generated) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Zhao Zirui" />
+  <meta property="og:title" content="Pixel Village | Zhao Zirui" />
+  <meta property="og:description" content="A stone village in the Taihang Mountains as a 2.5D pixel-art voxel diorama for WebXR: 28 villagers live out a full day on their own schedules." />
+  <meta property="og:image" content="../images/projects/covers/home/pixel-village-home.webp" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Pixel Village | Zhao Zirui" />
+  <meta name="twitter:description" content="A stone village in the Taihang Mountains as a 2.5D pixel-art voxel diorama for WebXR: 28 villagers live out a full day on their own schedules." />
+  <meta name="twitter:image" content="../images/projects/covers/home/pixel-village-home.webp" />
+  <!-- /social preview -->
+</head>
+<body>
+  <div class="page">
+    <header class="top-bar">
+      <div class="logo">
+        <span class="pixel-square" aria-hidden="true"></span>
+        <span class="logo-text" data-i18n="name">Zirui Zhao</span>
+      </div>
+      <nav class="nav">
+        <a href="../index.html" class="nav-link">Home</a>
+        <a href="../resume.html" class="nav-link">Resume</a>
+        <a href="https://www.linkedin.com/in/zhao000424" class="nav-link" target="_blank" rel="noreferrer">LinkedIn</a>
+        <a href="../photography.html" class="nav-link">Photography</a>
+        <a href="../projects/architecture-portfolio.html" class="nav-link">Architecture</a>
+      </nav>
+      <div class="lang-switch">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <span class="divider">/</span>
+        <button class="lang-btn" data-lang="zh">&#20013;</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <section class="proj-hero glass reveal">
+        <div class="proj-hero-inner">
+          <a class="proj-back" href="../index.html" data-i18n="proj_back">Back</a>
+          <div class="proj-kicker">
+            <span class="proj-pill">WebXR</span>
+            <span class="proj-pill">three.js</span>
+            <span class="proj-pill">Agent Simulation</span>
+          </div>
+          <h1 class="proj-title" data-i18n="proj_village_title">Pixel Village</h1>
+          <p class="proj-subtitle" data-i18n="proj_village_card_desc">A stone village in the Taihang Mountains as a 2.5D pixel-art voxel diorama: 28 villagers with their own trades, families and schedules live out a full day, from breakfast smoke at dawn to the night watchman's last round.</p>
+        </div>
+      </section>
+
+      <section class="proj-layout">
+        <section class="proj-main glass reveal">
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="village_overview_title">Project Overview</h2>
+            <p class="proj-p" data-i18n="village_overview_text">
+              Shiyu is a fictional stone village in the Taihang Mountains of northern China at harvest time. Courtyards sit on terraces that follow the contour lines, stone-stepped lanes wind between them, and an arched bridge crosses the stream. Twenty-eight voxel villagers and dozens of animals live there. Nobody is scripted shot by shot: each villager has a trade, a home, friends and a daily schedule, and the village runs on its own. You can sit and watch it like a miniature, or pick out one person and follow them through the day. It is a plain three.js page with no build step; on a PC it runs in the browser, and the same page enters WebXR on smart glasses.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="village_life_title">A Day in the Village</h2>
+            <p class="proj-p" data-i18n-html="village_life_text">
+              <b>Daily life</b>: the village clock runs a full day at uneven speeds (slow during daytime work, fast through the night). Wives cook breakfast before dawn and feed the chickens, the tofu mill starts grinding at four, the children go to school, the shepherd drives his flock up the hill, and at noon and dusk families eat from their bowls on their own doorsteps.<br />
+              <b>Village events</b>: one event a day in rotation: an opera on the stage, a market, a bonfire with storytelling, threshing, an open-air film, an offering at the earth-god shrine and a village meeting. Villagers with roles arrive early to set up; everyone else decides whether to go based on age, role and taste, and takes one place each, filling the rings from the inside out.<br />
+              <b>Calendar and weather</b>: a lunar calendar (market on days ending in 5 and 0), sun, cloud and rain fixed per day, and four seasons that change crops, foliage, snow and festival decorations while keeping every tree and stone in place.<br />
+              <b>Second scene</b>: west of the village, the West Gully adds a red sandstone cliff, a road carved into the cliff face, a cliffside shrine, a waterfall and a working watermill whose gears visibly drive the millstone. Villagers walk there to farm, cut wood and grind flour.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="village_build_title">How It's Built</h2>
+            <p class="proj-p" data-i18n="village_build_text">
+              Villagers walk a 0.25 m navigation grid with A*: they overtake slower walkers, pass oncoming people on the outside, ask someone standing in the way to step aside, and push courtyard gates open and closed. Animals respond to people: chickens gather at feeding time, the ox follows to the threshing floor, dogs and pigs nose gates open but never close them. Characters are carved from procedurally drawn front, side and back views into voxels, with limbs and tools on separate joints. Because EffectComposer does not work in WebXR and screen-space pixelation shimmers in stereo, all pixelation, colour grading and glow are done in materials and geometry instead. Static houses are merged into about 60 draw calls, and greedy voxel meshing cut a villager from 100k to 20k faces. A build-time audit checks for floating props, unreachable doors, broken paths and z-fighting (657 coplanar faces found and fixed), and a seeded headless simulation reports collisions and how long people stand waiting for each other.
+            </p>
+          </div>
+          <div class="proj-section">
+            <h2 class="proj-h2" data-i18n="village_xr_title">In XR</h2>
+            <p class="proj-p" data-i18n="village_xr_text">
+              On a PC the page runs in Chrome and enters XR through OpenXR on VITURE glasses. The diorama appears about a metre in front of you, below eye level. Grab it with both hands to move, turn or pull it closer; a quick double pinch slides it back in front of you. A single pinch selects a villager, animal or object and opens the same pixel-art info card as on the web, floating above it and facing you. Ray hits use a BVH (one test went from 15 ms to 0.5 ms). The background is black so that it is transparent on optical see-through glasses.
+            </p>
+          </div>
+        </section>
+
+        <aside class="proj-side glass reveal">
+          <div class="side-block">
+            <div class="side-title" data-i18n="village_side_role_title">Role</div>
+            <div class="side-text" data-i18n="village_side_role_text">Solo: world design, villager simulation, voxel art pipeline, pixel UI, WebXR interaction</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="village_side_platform_title">Runs On</div>
+            <div class="side-text" data-i18n="village_side_platform_text">Desktop browser (mouse) · WebXR on VITURE glasses via PC (hand tracking)</div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="village_side_links_title">Links</div>
+            <div class="side-text">
+              <a href="https://zhao0424.github.io/webxr-todo/pixel-village/" target="_blank" rel="noreferrer" data-i18n="proj_webxr_demo">Live Demo</a> ·
+              <a href="https://github.com/ZHAO0424/webxr-todo/tree/main/pixel-village" target="_blank" rel="noreferrer" data-i18n="proj_webxr_code">GitHub</a>
+            </div>
+          </div>
+          <div class="side-block">
+            <div class="side-title" data-i18n="village_side_keywords_title">Keywords</div>
+            <div class="side-tags">
+              <span class="tag">three.js</span>
+              <span class="tag">WebXR</span>
+              <span class="tag">Voxel Art</span>
+              <span class="tag">Agent Simulation</span>
+              <span class="tag">Pathfinding</span>
+              <span class="tag">Diorama</span>
+            </div>
+          </div>
+          <div class="side-cover-box">
+            <img src="../images/projects/covers/home/pixel-village-home.webp" alt="Pixel Village: market day in front of the opera stage" />
+          </div>
+        </aside>
+      </section>
+
+      <section class="proj-gallery glass reveal">
+        <div class="gallery-head">
+          <h2 class="section-title" data-i18n="gallery_title">Gallery</h2>
+        </div>
+        <div class="gallery-grid">
+          <figure class="shot shot-wide">
+            <img class="shot-img" src="../images/projects/pixel-village/overview.webp" alt="The whole village on its terraced hillside" />
+            <figcaption class="shot-cap" data-i18n="village_cap_overview">The village: twelve courtyards on a terraced hillside, with the stream and stone bridge in front</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/market.webp" alt="Market day" />
+            <figcaption class="shot-cap" data-i18n="village_cap_market">Market day: stalls set up in front of the opera stage</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/opera.webp" alt="Evening opera" />
+            <figcaption class="shot-cap" data-i18n="village_cap_opera">Evening opera: the shepherd sings, the barber plays the banhu</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/courtyard.webp" alt="A farmhouse courtyard" />
+            <figcaption class="shot-cap" data-i18n="village_cap_courtyard">A farmhouse courtyard with its stove shed and gate</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/ducks.webp" alt="Ducks on the stream" />
+            <figcaption class="shot-cap" data-i18n="village_cap_ducks">Ducks on the stream below the arched bridge</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/lanterns.webp" alt="Lamps lit at night" />
+            <figcaption class="shot-cap" data-i18n="village_cap_lanterns">After dark: windows, lanterns and torches lit lane by lane</figcaption>
+          </figure>
+          <figure class="shot">
+            <img class="shot-img" src="../images/projects/pixel-village/bonfire.webp" alt="Bonfire at the village entrance" />
+            <figcaption class="shot-cap" data-i18n="village_cap_bonfire">Bonfire night at the village entrance</figcaption>
+          </figure>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-left">
+        <span data-i18n="footer_contact_label">Contact</span>
+        <a href="mailto:zzrsnow@outlook.com" class="footer-link">zzrsnow@outlook.com</a>
+      </div>
+    </footer>
+  </div>
+  <script src="../lang.js"></script>
+  <script src="../interactions.js?v=20261011-perf"></script>
+</body>
+</html>
