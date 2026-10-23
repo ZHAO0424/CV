@@ -741,6 +741,7 @@
   village_side_links_title: '链接',
   village_side_keywords_title: '关键词',
   village_cap_overview: '村子全貌：梯田山坡上的十二座院落，前面是小溪和石拱桥',
+  village_cap_west: '西沟：红石崖上的山神庙和瀑布，崖下是山林和梯田，溪边是水磨坊',
   village_cap_market: '赶集：戏台前摆开的摊子',
   village_cap_opera: '夜戏：羊倌上台唱，剃头匠拉板胡',
   village_cap_courtyard: '农家小院：灶棚和院门',
