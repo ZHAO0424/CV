@@ -3615,5 +3615,64 @@ img[loading='lazy'] {
 .btn-future { margin: 0 8px; }
 @media (prefers-reduced-motion: reduce) { .btn-future, .btn-future::after, .btn-future:hover { animation: none; } }
 
+/* ===== 首页 → WebXR 星系主页（webxr-todo）的入口：和「Enter the Future」并排的像素星空按钮 =====
+   像素格 = 3px。外形是阶梯切角（clip-path），橙色描边的四个内角补一格，拐角才连得上。
+   ::before 是星点（一个 2px 方块 + box-shadow 复制），::after 是左侧带环的像素星球（3px 方块 + box-shadow 拼像素画）。
+   文字由 lang.js 用 textContent 换，伪元素不受影响。 */
+.btn-galaxy {
+  --gp: 3px; --go: #f08a2c; --gd: #0b0a14;
+  position: relative; isolation: isolate; overflow: hidden;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 46px; padding: 0 22px 0 62px; margin: 0 8px; line-height: 1.2;
+  font-family: "Silkscreen", "Orbitron", monospace; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase;
+  color: #ffe3b0; text-decoration: none;
+  background:
+    linear-gradient(var(--go) 0 0) var(--gp) var(--gp) / var(--gp) var(--gp) no-repeat,
+    linear-gradient(var(--go) 0 0) right var(--gp) top var(--gp) / var(--gp) var(--gp) no-repeat,
+    linear-gradient(var(--go) 0 0) left var(--gp) bottom var(--gp) / var(--gp) var(--gp) no-repeat,
+    linear-gradient(var(--go) 0 0) right var(--gp) bottom var(--gp) / var(--gp) var(--gp) no-repeat,
+    var(--gd);
+  box-shadow: inset 0 0 0 var(--gp) var(--go);
+  clip-path: polygon(
+    0 6px, 3px 6px, 3px 3px, 6px 3px, 6px 0,
+    calc(100% - 6px) 0, calc(100% - 6px) 3px, calc(100% - 3px) 3px, calc(100% - 3px) 6px, 100% 6px,
+    100% calc(100% - 6px), calc(100% - 3px) calc(100% - 6px), calc(100% - 3px) calc(100% - 3px), calc(100% - 6px) calc(100% - 3px), calc(100% - 6px) 100%,
+    6px 100%, 6px calc(100% - 3px), 3px calc(100% - 3px), 3px calc(100% - 6px), 0 calc(100% - 6px));
+  text-shadow: 2px 2px 0 #6a2408;
+  transition: transform 0.15s steps(2), color 0.2s;
+}
+/* 星点：坐标都是相对按钮左上角，按 3px 网格摆 */
+.btn-galaxy::before {
+  content: ''; position: absolute; left: 0; top: 0; z-index: -1; width: 2px; height: 2px; pointer-events: none;
+  box-shadow:
+    48px 9px #fff, 75px 33px #9fd8ff, 102px 12px #fff, 129px 36px #ffd27a, 156px 9px #9fd8ff,
+    183px 30px #fff, 210px 15px #fff, 237px 33px #9fd8ff, 264px 9px #ffd27a, 291px 27px #fff,
+    90px 24px #ffffff66, 144px 21px #ffffff66, 198px 39px #ffffff66, 252px 21px #ffffff66;
+  animation: galaxy-twinkle 2.4s steps(1) infinite;
+  transition: transform 0.6s steps(4);
+}
+/* 带环的像素星球：半径 4 格的圆 + 倾斜 18° 的青色椭圆环（前半圈亮、压在星球前；后半圈暗、被星球挡住）。
+   坐标是按圆/椭圆方程算好再取整到 3px 网格的，改形状就重算，别手调单格 */
+.btn-galaxy::after {
+  content: ''; position: absolute; left: 30px; top: calc(50% - 2px); width: var(--gp); height: var(--gp); pointer-events: none;
+  box-shadow:
+    -9px -12px #ffb35c, -6px -12px #ffb35c, -3px -12px #ffb35c, 0 -12px #f08a2c, 3px -12px #f08a2c, 6px -12px #f08a2c,
+    -12px -9px #ffb35c, -9px -9px #ffb35c, -6px -9px #ffb35c, -3px -9px #f08a2c, 0 -9px #f08a2c, 3px -9px #f08a2c, 6px -9px #f08a2c, 9px -9px #f08a2c, 12px -9px #5b8fb0, 15px -9px #5b8fb0, 18px -9px #5b8fb0, 21px -9px #bfe9ff,
+    -12px -6px #ffb35c, -9px -6px #ffb35c, -6px -6px #f08a2c, -3px -6px #f08a2c, 0 -6px #f08a2c, 3px -6px #f08a2c, 6px -6px #f08a2c, 9px -6px #f08a2c, 18px -6px #bfe9ff, 21px -6px #bfe9ff,
+    -15px -3px #5b8fb0, -12px -3px #ffb35c, -9px -3px #f08a2c, -6px -3px #f08a2c, -3px -3px #f08a2c, 0 -3px #f08a2c, 3px -3px #f08a2c, 6px -3px #f08a2c, 9px -3px #f08a2c, 12px -3px #bfe9ff, 15px -3px #bfe9ff, 18px -3px #bfe9ff,
+    -21px 0 #5b8fb0, -18px 0 #5b8fb0, -15px 0 #5b8fb0, -12px 0 #f08a2c, -9px 0 #f08a2c, -6px 0 #f08a2c, -3px 0 #f08a2c, 0 0 #f08a2c, 3px 0 #bfe9ff, 6px 0 #bfe9ff, 9px 0 #bfe9ff, 12px 0 #bfe9ff,
+    -24px 3px #5b8fb0, -21px 3px #5b8fb0, -12px 3px #f08a2c, -9px 3px #f08a2c, -6px 3px #bfe9ff, -3px 3px #bfe9ff, 0 3px #bfe9ff, 3px 3px #bfe9ff, 6px 3px #a83d14, 9px 3px #a83d14,
+    -24px 6px #bfe9ff, -21px 6px #bfe9ff, -18px 6px #bfe9ff, -15px 6px #bfe9ff, -12px 6px #bfe9ff, -9px 6px #bfe9ff, -6px 6px #bfe9ff, -3px 6px #f08a2c, 0 6px #f08a2c, 3px 6px #a83d14, 6px 6px #a83d14, 9px 6px #a83d14,
+    -9px 9px #f08a2c, -6px 9px #f08a2c, -3px 9px #f08a2c, 0 9px #a83d14, 3px 9px #a83d14, 6px 9px #a83d14;
+  animation: galaxy-bob 2.4s steps(1) infinite;
+}
+.btn-galaxy:hover { transform: translateY(-3px); color: #fff; }
+.btn-galaxy:hover::before { transform: translateX(-12px); }   /* 悬停时星点按像素格往后退，像在往前飞 */
+.btn-galaxy:active { transform: translateY(0); }
+.btn-galaxy:focus-visible { outline: none; color: #fff; box-shadow: inset 0 0 0 var(--gp) #ffd27a; }   /* outline 会被 clip-path 剪掉，改亮描边 */
+@keyframes galaxy-twinkle { 0%, 100% { opacity: 1; } 33% { opacity: 0.55; } 66% { opacity: 0.85; } }
+@keyframes galaxy-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .btn-galaxy::before, .btn-galaxy::after { animation: none; transition: none; } }
+
 /* 简历按钮放进链接行时，和胶囊同高 */
 .hero-links .btn-primary { min-height: 38px; padding: 0 16px; }
