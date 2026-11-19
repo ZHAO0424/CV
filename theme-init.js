@@ -1,9 +1,10 @@
 (() => {
   try {
-    if (localStorage.getItem('portfolio-theme') === 'cyber') {
+    // Cyberpunk is the default; only a visitor who switched back to the original theme keeps it.
+    if (localStorage.getItem('portfolio-theme') !== 'original') {
       document.documentElement.dataset.theme = 'cyber';
     }
-  } catch (_) { /* Theme switching still works when storage is unavailable. */ }
+  } catch (_) { document.documentElement.dataset.theme = 'cyber'; }
 
   // Every page loads this file, so it also boots the visitor analytics.
   const self = document.currentScript;
