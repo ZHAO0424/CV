@@ -3572,10 +3572,10 @@ img[loading='lazy'] {
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   /* 第 3 层：青色外框，比主框大一圈 */
   outline: 1px solid rgba(252, 238, 10, 0.7); outline-offset: 3px;
-  /* 框内正中一个舞女剪影（images/future-dancer.svg，品红实影 + 青色残影），身后一团淡品红光晕；
+  /* 框内一个放大裁切的舞女剪影（images/future-dancer.svg，品红主影 + 多层半透明错位重影），身后一团淡品红光晕；
      不填底色，透出页面本身的底色。和旁边「Enter the Galaxy」的星空对应。 */
   background:
-    url('images/future-dancer.svg') center / auto 100% no-repeat,
+    url('images/future-dancer.svg') 50% 36% / auto 300% no-repeat,   /* 放大 3 倍，只露出上半身、手臂和飘带的一段 */
     radial-gradient(ellipse 34% 70% at 50% 60%, rgba(255, 42, 109, 0.16), transparent 70%),
     repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.07) 0 1px, transparent 1px 4px);   /* 框内淡扫描线 */
 }
