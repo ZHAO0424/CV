@@ -3572,17 +3572,12 @@ img[loading='lazy'] {
   clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
   /* 第 3 层：青色外框，比主框大一圈 */
   outline: 1px solid rgba(252, 238, 10, 0.7); outline-offset: 3px;
-  /* 框内的霓虹图案（和旁边「Enter the Galaxy」的星空对应）：只画线不填色，底下透出页面本身的底色。
-     左下一轮只露上半的霓虹落日（品红外圈 + 黄内圈），下 38% 是复古透视网格（品红竖线 + 青色横线 + 地平线），
-     横线靠 --fgy 往下滚，像在往前开；整层跟着框一起斜切。 */
+  /* 框内正中一个舞女剪影（images/future-dancer.svg，品红实影 + 青色残影），身后一团淡品红光晕；
+     不填底色，透出页面本身的底色。和旁边「Enter the Galaxy」的星空对应。 */
   background:
-    radial-gradient(circle at 34px 108%, transparent 0 20px, rgba(255, 42, 109, 0.85) 20px 21.5px, transparent 22.5px),
-    radial-gradient(circle at 34px 108%, transparent 0 13px, rgba(252, 238, 10, 0.6) 13px 14px, transparent 15px),
-    linear-gradient(rgba(0, 240, 255, 0.6), rgba(0, 240, 255, 0.6)) 0 62% / 100% 1px no-repeat,
-    repeating-linear-gradient(90deg, rgba(255, 42, 109, 0.3) 0 1px, transparent 1px 16px) 0 100% / 100% 38% no-repeat,
-    repeating-linear-gradient(180deg, transparent 0 var(--fgy), rgba(0, 240, 255, 0.4) var(--fgy) calc(var(--fgy) + 1px), transparent calc(var(--fgy) + 1px) 6px) 0 100% / 100% 38% no-repeat,
+    url('images/future-dancer.svg') center / auto 100% no-repeat,
+    radial-gradient(ellipse 34% 70% at 50% 60%, rgba(255, 42, 109, 0.16), transparent 70%),
     repeating-linear-gradient(0deg, rgba(0, 240, 255, 0.07) 0 1px, transparent 1px 4px);   /* 框内淡扫描线 */
-  animation: future-grid 1.2s linear infinite;
 }
 /* 第 2 层：品红框，斜向错位，像另一块玻璃叠在后面；会轻微抖动 */
 .btn-future::after {
@@ -3622,10 +3617,7 @@ img[loading='lazy'] {
 }
 /* 和旁边两个按钮同一行、同一高度；斜框会伸出去一点，留点横向余量 */
 .btn-future { margin: 0 8px; }
-@property --fgy { syntax: '<length>'; inherits: false; initial-value: 0px; }
-@keyframes future-grid { from { --fgy: 0px; } to { --fgy: 5px; } }
-.btn-future:hover::before { animation-duration: 0.4s; }   /* 悬停时网格滚得更快 */
-@media (prefers-reduced-motion: reduce) { .btn-future, .btn-future::before, .btn-future::after, .btn-future:hover { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .btn-future, .btn-future::after, .btn-future:hover { animation: none; } }
 
 /* ===== 首页 → WebXR 星系主页（webxr-todo）的入口：和「Enter the Future」并排的像素星空按钮 =====
    像素格 = 3px。外形是阶梯切角（clip-path），橙色描边的四个内角补一格，拐角才连得上。

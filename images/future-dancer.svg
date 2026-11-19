@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 200">
+  <!-- 「Enter the Future」按钮框里的舞女剪影：芭蕾舞者踮脚站立，双臂在头顶合成弧，一条腿抬膝（passé），蓬蓬裙。
+       品红实影 + 往右错开的青色残影，像全息投影。
+       按钮框整体 skewX(-16deg)，这里先反向 skewX(16) 抵消，人物保持直立。 -->
+  <defs>
+    <g id="d">
+      <ellipse cx="50" cy="44" rx="7" ry="8.5" transform="rotate(-12 50 44)"/>
+      <circle cx="44.5" cy="36.5" r="4.5"/>
+      <path d="M47 50 L53 50 L54 61 L47 61 Z"/>
+      <path d="M39 63 Q50 58 62 62 Q63 70 60 74 Q65 80 61 86 Q57 92 57 98 Q60 104 61 110 L41 110 Q43 103 45 97 Q44 84 41 72 Z"/>
+      <path d="M41 105 L61 105 Q74 113 86 119 Q68 126 51 124 Q33 126 15 118 Q28 112 41 105 Z"/>
+      <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M59 64 Q70 52 70 38" stroke-width="5"/>
+        <path d="M70 38 Q68 22 54 14" stroke-width="3.8"/>
+        <path d="M42 64 Q31 52 31 38" stroke-width="5"/>
+        <path d="M31 38 Q33 22 47 14" stroke-width="3.8"/>
+        <path d="M47 118 Q46 140 47 158" stroke-width="7"/>
+        <path d="M47 158 Q46 178 48 190 L49 197" stroke-width="4.5"/>
+        <path d="M55 118 Q64 134 73 146" stroke-width="7"/>
+        <path d="M73 146 Q62 154 50 157" stroke-width="4.5"/>
+      </g>
+    </g>
+  </defs>
+  <g transform="translate(50 100) skewX(16) translate(-50 -100)">
+    <use href="#d" x="3" fill="#00f0ff" stroke="#00f0ff" opacity="0.3"/>
+    <use href="#d" fill="#ff2a6d" stroke="#ff2a6d" opacity="0.55"/>
+  </g>
+</svg>
